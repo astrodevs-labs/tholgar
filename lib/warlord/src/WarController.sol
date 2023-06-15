@@ -14,7 +14,7 @@ import {SafeERC20} from "openzeppelin/token/ERC20/utils/SafeERC20.sol";
 import {Pausable} from "openzeppelin/security/Pausable.sol";
 import {ReentrancyGuard} from "openzeppelin/security/ReentrancyGuard.sol";
 import {Errors} from "./utils/Errors.sol";
-import {IHarvestable} from "interfaces/IHarvestable.sol";
+import {IHarvestable} from "./interfaces/IHarvestable.sol";
 import {IMinter} from "./interfaces/IMinter.sol";
 import {IStaker} from "./interfaces/IStaker.sol";
 import {IFarmer} from "./interfaces/IFarmer.sol";
