@@ -7,6 +7,4 @@ interface IStaker {
   function stake(uint256 amount, address receiver) external returns (uint256);
 
   function unstake(uint256 amount, address receiver) external returns (uint256);
-
-  function balanceOf(address account) external view returns (uint256);
 }
