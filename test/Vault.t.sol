@@ -29,7 +29,6 @@ contract VaultTest is Test {
 
     function test_deploy_asset() public {
         assertEq(WAR, address(vault.asset()));
-
     }
 
     function test_deploy_staker() public {

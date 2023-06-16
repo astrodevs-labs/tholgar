@@ -11,6 +11,5 @@ contract SwapTest is Test {
     address public alice = vm.addr(0x1);
     address public bernard = vm.addr(0x2);
 
-    function setUp() public {
-    }
+    function setUp() public {}
 }

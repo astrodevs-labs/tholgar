@@ -15,7 +15,9 @@ contract Vault is ERC4626, Owner {
     address public swap;
     address public staker;
 
-    constructor(address initialStaker, address initialSwap, address definitiveAsset) ERC4626(ERC20(definitiveAsset), "acWARToken", "acWAR") {
+    constructor(address initialStaker, address initialSwap, address definitiveAsset)
+        ERC4626(ERC20(definitiveAsset), "acWARToken", "acWAR")
+    {
         swap = initialSwap;
         staker = initialStaker;
     }
@@ -31,11 +33,11 @@ contract Vault is ERC4626, Owner {
         staker = newStaker;
     }
 
-    function afterDeposit(uint256 assets, uint256 /* shares */) internal override {
+    function afterDeposit(uint256 assets, uint256 /* shares */ ) internal override {
         IStaker(staker).stake(assets, address(this));
     }
 
-    function beforeWithdraw(uint256 assets, uint256 /*shares */) internal override {
+    function beforeWithdraw(uint256 assets, uint256 /*shares */ ) internal override {
         IStaker(staker).unstake(assets, address(this));
     }
 
