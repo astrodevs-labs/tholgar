@@ -3,15 +3,15 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
-import {ACWarToken} from "../src/ACWarToken.sol";
+import {ACZap} from "../src/ACZap.sol";
 
-contract ACWarTokenTest is Test {
-    ACWarToken token;
+contract ACZapTest is Test {
+    ACZap token;
 
     address public alice = vm.addr(0x1);
     address public bernard = vm.addr(0x2);
 
     function setUp() public {
-        token = new ACWarToken();
+        token = new ACZap();
     }
 }

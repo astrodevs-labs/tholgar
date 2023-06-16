@@ -2,6 +2,8 @@
     "solidity.packageDefaultDependenciesContractsDirectory": "src",
     "solidity.packageDefaultDependenciesDirectory": "lib",
     "solidity.compileUsingRemoteVersion": "v0.8.16",
+    "[solidity]": {
+        "editor.defaultFormatter": "JuanBlanco.solidity" 
+    },
     "solidity.formatter": "forge",
-    "search.exclude": { "lib": true },
 }
