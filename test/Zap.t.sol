@@ -3,15 +3,14 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
-import {ACSwap} from "../src/ACSwap.sol";
+import {Zap} from "../src/Zap.sol";
 
-contract ACSwapTest is Test {
-    ACSwap token;
+contract ZapTest is Test {
+    Zap token;
 
     address public alice = vm.addr(0x1);
     address public bernard = vm.addr(0x2);
 
     function setUp() public {
-        token = new ACSwap();
     }
 }
