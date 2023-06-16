@@ -5,4 +5,6 @@ interface IStaker {
   function queueRewards(address rewardToken, uint256 amount) external returns (bool);
 
   function stake(uint256 amount, address receiver) external returns (uint256);
+
+  function unstake(uint256 amount, address receiver) external returns (uint256);
 }
