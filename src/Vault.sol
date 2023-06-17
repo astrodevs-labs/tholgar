@@ -8,7 +8,6 @@ import {ISwap} from "./interfaces/ISwap.sol";
 import {Owner} from "warlord/utils/Owner.sol";
 import {ERC4626} from "solmate/mixins/ERC4626.sol";
 import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
-import {WAR} from "./utils/constants.sol";
 
 /// @author 0xtekgrinder
 /// @title Vault contract
@@ -25,7 +24,7 @@ contract Vault is ERC4626, Owner {
         swap = initialSwap;
         staker = initialStaker;
 
-        ERC20(WAR).approve(initialStaker, type(uint256).max);
+        ERC20(definitiveAsset).approve(initialStaker, type(uint256).max);
     }
 
     /**
@@ -58,10 +57,10 @@ contract Vault is ERC4626, Owner {
             IStaker(staker).unstake(stakerBalance, address(this));
         }
         // revoke allowance from old staker
-        ERC20(WAR).approve(staker, 0);
+        ERC20(address(asset)).approve(staker, 0);
 
         // approve all war tokens to be spent by new staker
-        ERC20(WAR).approve(newStaker, type(uint256).max);
+        ERC20(address(asset)).approve(newStaker, type(uint256).max);
 
         // Restake all tokens
         uint256 warBalance = asset.balanceOf(address(this));
