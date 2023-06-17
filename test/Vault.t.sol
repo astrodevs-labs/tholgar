@@ -5,6 +5,7 @@ pragma solidity 0.8.16;
 import "forge-std/Test.sol";
 import {Vault} from "../src/Vault.sol";
 import {Swap} from "../src/Swap.sol";
+import {Ratios} from "../src/Ratios.sol";
 import {ISwap} from "../src/interfaces/ISwap.sol";
 import {STAKER, WAR} from "../src/utils/constants.sol";
 import {WarStaker} from "warlord/WarStaker.sol";
@@ -13,6 +14,7 @@ import {ERC20} from "solmate/tokens/ERC20.sol";
 contract VaultTest is Test {
     Vault vault;
     Swap swap;
+    Ratios ratios;
     // doesn't fork the staker as it causes too much problem
     WarStaker staker;
 
@@ -23,13 +25,18 @@ contract VaultTest is Test {
     function setUp() public {
         vm.startPrank(owner);
         swap = new Swap();
+        ratios = new Ratios();
         staker = new WarStaker(WAR);
-        vault = new Vault(address(staker), address(swap), WAR);
+        vault = new Vault(address(staker), address(swap), address(ratios), WAR);
         vm.stopPrank();
     }
 
     function test_deploy_swap() public {
         assertEq(vault.swap(), address(swap));
+    }
+
+    function test_deploy_ratios() public {
+        assertEq(vault.ratios(), address(ratios));
     }
 
     function test_deploy_asset() public {
@@ -55,6 +62,22 @@ contract VaultTest is Test {
         vm.expectRevert("Ownable: caller is not the owner");
         vm.prank(alice);
         vault.setSwap(address(newSwap));
+    }
+
+    function test_setRatios_normal() public {
+        Ratios newRatios = new Ratios();
+
+        vm.prank(owner);
+        vault.setRatios(address(newRatios));
+        assertEq(vault.ratios(), address(newRatios));
+    }
+
+    function testCannot_setRatios_NotOwner() public {
+        Ratios newRatios = new Ratios();
+
+        vm.expectRevert("Ownable: caller is not the owner");
+        vm.prank(alice);
+        vault.setRatios(address(newRatios));
     }
 
     function test_setStaker_ZeroBalance() public {
