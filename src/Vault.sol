@@ -17,12 +17,14 @@ contract Vault is ERC4626, Owner {
 
     address public swap;
     address public staker;
+    address public ratios;
 
-    constructor(address initialStaker, address initialSwap, address definitiveAsset)
+    constructor(address initialStaker, address initialSwap, address initialRatios, address definitiveAsset)
         ERC4626(ERC20(definitiveAsset), "acWARToken", "acWAR")
     {
         swap = initialSwap;
         staker = initialStaker;
+        ratios = initialRatios;
 
         ERC20(definitiveAsset).approve(initialStaker, type(uint256).max);
     }
@@ -43,6 +45,15 @@ contract Vault is ERC4626, Owner {
      */
     function setSwap(address newSwap) external onlyOwner {
         swap = newSwap;
+    }
+
+    /**
+     * @notice update the ratios contract to a new one
+     * @param newRatios the new ratios contract
+     * @custom:requires owner
+     */
+    function setRatios(address newRatios) external onlyOwner {
+        ratios = newRatios;
     }
 
     /**
