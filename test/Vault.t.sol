@@ -44,7 +44,6 @@ contract VaultTest is Test {
     function test_setSwap_normal() public {
         Swap newSwap = new Swap();
 
-
         vm.prank(owner);
         vault.setSwap(address(newSwap));
         assertEq(vault.swap(), address(newSwap));
