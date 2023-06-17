@@ -3,8 +3,9 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Script.sol";
+import {Ratios} from "../src/Ratios.sol";
 
-contract ACSwapScript is Script {
+contract RatiosScript is Script {
     function setUp() public {}
 
     function run() external {
