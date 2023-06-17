@@ -3,8 +3,9 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Script.sol";
+import {Zap} from "../src/Zap.sol";
 
-contract ACWarTokenScript is Script {
+contract ZapScript is Script {
     function setUp() public {}
 
     function run() external {
