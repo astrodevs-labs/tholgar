@@ -1,7 +1,8 @@
 SHELL := /bin/bash
 
-test: load_env
-	forge test --fork-url $(FORK_URL)
+test:
+	source .env; \
+	forge test --fork-url $${FORK_URL}
 
 compile:
 	forge compile
@@ -9,5 +10,4 @@ compile:
 fmt:
 	forge fmt
 
-load_env:
-	source .envs
+.PHONY: test compile fmt
