@@ -18,4 +18,4 @@ compile:
 fmt:
 	forge fmt
 
-.PHONY: test compile fmt
+.PHONY: test compile fmt gas-report coverage
