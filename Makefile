@@ -8,6 +8,10 @@ coverage:
 	source .env; \
 	forge coverage --fork-url $${FORK_URL}
 
+gas-report:
+	source .env; \
+	forge test --fork-url $${FORK_URL} --gas-report
+
 compile:
 	forge compile
 
