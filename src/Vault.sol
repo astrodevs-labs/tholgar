@@ -19,6 +19,19 @@ contract Vault is ERC4626, Owner {
     address public staker;
     address public ratios;
 
+    /**
+     * @notice Event emitted when a staker is updated
+     */
+    event StakerUpdated(address oldStaker, address newStaker);
+    /**
+     * @notice Event emitted when a swapper is updated
+     */
+    event SwapperUpdated(address oldSwapper, address newSwapper);
+    /**
+     * @notice Event emitted when a ratios is updated
+     */
+    event RatiosUpdated(address oldRatios, address newRatios);
+
     constructor(address initialStaker, address initialSwapper, address initialRatios, address definitiveAsset)
         ERC4626(ERC20(definitiveAsset), "acWARToken", "acWAR")
     {
@@ -44,7 +57,10 @@ contract Vault is ERC4626, Owner {
      * @custom:requires owner
      */
     function setSwapper(address newSwapper) external onlyOwner {
+        oldSwapper = swapper;
         swapper = newSwapper;
+
+        emit SwapperUpdated(oldSwapper, newSwapper);
     }
 
     /**
@@ -53,7 +69,10 @@ contract Vault is ERC4626, Owner {
      * @custom:requires owner
      */
     function setRatios(address newRatios) external onlyOwner {
+        oldRatios = ratios;
         ratios = newRatios;
+
+        emit RatiosUpdated(oldRatios, newRatios);
     }
 
     /**
@@ -62,13 +81,15 @@ contract Vault is ERC4626, Owner {
      * @custom:requires owner
      */
     function setStaker(address newStaker) external onlyOwner {
+        address oldStaker = staker;
+
         // Unstake all wars from old staker
-        uint256 stakerBalance = ERC20(staker).balanceOf(address(this));
+        uint256 stakerBalance = ERC20(oldStaker).balanceOf(address(this));
         if (stakerBalance != 0) {
-            IStaker(staker).unstake(stakerBalance, address(this));
+            IStaker(oldStaker).unstake(stakerBalance, address(this));
         }
         // revoke allowance from old staker
-        ERC20(address(asset)).approve(staker, 0);
+        ERC20(address(asset)).approve(oldStaker, 0);
 
         // approve all war tokens to be spent by new staker
         ERC20(address(asset)).approve(newStaker, type(uint256).max);
@@ -80,6 +101,8 @@ contract Vault is ERC4626, Owner {
         }
 
         staker = newStaker;
+
+        emit StakerUpdated(oldStaker, newStaker);
     }
 
     /**
