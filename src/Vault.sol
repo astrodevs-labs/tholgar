@@ -46,7 +46,10 @@ contract Vault is ERC4626, Owner {
     constructor(address initialStaker, address initialSwapper, address initialRatios, address definitiveAsset)
         ERC4626(ERC20(definitiveAsset), "acWARToken", "acWAR")
     {
-        if (initialStaker == address(0) || initialSwapper == address(0) || initialRatios == address(0) || definitiveAsset == address(0)) revert ZeroAddress();
+        if (
+            initialStaker == address(0) || initialSwapper == address(0) || initialRatios == address(0)
+                || definitiveAsset == address(0)
+        ) revert ZeroAddress();
 
         swapper = initialSwapper;
         staker = initialStaker;
