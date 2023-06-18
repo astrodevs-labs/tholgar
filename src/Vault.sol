@@ -7,12 +7,14 @@ import {IStaker} from "warlord/interfaces/IStaker.sol";
 import {ISwapper} from "./interfaces/ISwapper.sol";
 import {Owner} from "warlord/utils/Owner.sol";
 import {ERC4626} from "solmate/mixins/ERC4626.sol";
+import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
 import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
 
 /// @author 0xtekgrinder
 /// @title Vault contract
 /// @notice Auto compounding vault for the warlord protocol with token to deposit being WAR and asset being stkWAR
 contract Vault is ERC4626, Owner {
+    using SafeTransferLib for ERC20;
     using FixedPointMathLib for uint256;
 
     /**
@@ -55,7 +57,7 @@ contract Vault is ERC4626, Owner {
         staker = initialStaker;
         ratios = initialRatios;
 
-        ERC20(definitiveAsset).approve(initialStaker, type(uint256).max);
+        ERC20(definitiveAsset).safeApprove(initialStaker, type(uint256).max);
     }
 
     /**
@@ -104,26 +106,25 @@ contract Vault is ERC4626, Owner {
         if (newStaker == address(0)) revert ZeroAddress();
         address oldStaker = staker;
 
+        staker = newStaker;
+        emit StakerUpdated(oldStaker, newStaker);
+
         // Unstake all wars from old staker
         uint256 stakerBalance = ERC20(oldStaker).balanceOf(address(this));
         if (stakerBalance != 0) {
             IStaker(oldStaker).unstake(stakerBalance, address(this));
         }
         // revoke allowance from old staker
-        ERC20(address(asset)).approve(oldStaker, 0);
+        ERC20(address(asset)).safeApprove(oldStaker, 0);
 
         // approve all war tokens to be spent by new staker
-        ERC20(address(asset)).approve(newStaker, type(uint256).max);
+        ERC20(address(asset)).safeApprove(newStaker, type(uint256).max);
 
         // Restake all tokens
         uint256 warBalance = asset.balanceOf(address(this));
         if (warBalance != 0) {
             IStaker(newStaker).stake(warBalance, address(this));
         }
-
-        staker = newStaker;
-
-        emit StakerUpdated(oldStaker, newStaker);
     }
 
     /**
