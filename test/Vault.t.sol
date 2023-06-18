@@ -4,9 +4,8 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import {Vault} from "../src/Vault.sol";
-import {Swap} from "../src/Swap.sol";
+import {Swapper} from "../src/Swapper.sol";
 import {Ratios} from "../src/Ratios.sol";
-import {ISwap} from "../src/interfaces/ISwap.sol";
 import {WAR} from "../src/utils/constants.sol";
 import {WarStaker} from "warlord/WarStaker.sol";
 import {WarToken} from "warlord/WarToken.sol";
@@ -14,7 +13,7 @@ import {ERC20} from "solmate/tokens/ERC20.sol";
 
 contract VaultTest is Test {
     Vault vault;
-    Swap swap;
+    Swapper swapper;
     Ratios ratios;
     // doesn't fork the staker as it causes too much problem
     WarStaker staker;
@@ -25,15 +24,15 @@ contract VaultTest is Test {
 
     function setUp() public {
         vm.startPrank(owner);
-        swap = new Swap();
+        swapper = new Swapper();
         ratios = new Ratios();
         staker = new WarStaker(WAR);
-        vault = new Vault(address(staker), address(swap), address(ratios), WAR);
+        vault = new Vault(address(staker), address(swapper), address(ratios), WAR);
         vm.stopPrank();
     }
 
-    function test_deploy_swap() public {
-        assertEq(vault.swap(), address(swap));
+    function test_deploy_swapper() public {
+        assertEq(vault.swapper(), address(swapper));
     }
 
     function test_deploy_ratios() public {
@@ -50,19 +49,19 @@ contract VaultTest is Test {
     }
 
     function test_setSwap_normal() public {
-        Swap newSwap = new Swap();
+        Swapper newSwapper = new Swapper();
 
         vm.prank(owner);
-        vault.setSwap(address(newSwap));
-        assertEq(vault.swap(), address(newSwap));
+        vault.setSwapper(address(newSwapper));
+        assertEq(vault.swapper(), address(newSwapper));
     }
 
     function testCannot_setSwap_NotOwner() public {
-        Swap newSwap = new Swap();
+        Swapper newSwapper = new Swapper();
 
         vm.expectRevert("Ownable: caller is not the owner");
         vm.prank(alice);
-        vault.setSwap(address(newSwap));
+        vault.setSwapper(address(newSwapper));
     }
 
     function test_setRatios_normal() public {

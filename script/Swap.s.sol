@@ -3,9 +3,9 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Script.sol";
-import {Swap} from "../src/Swap.sol";
+import {Swapper} from "../src/Swapper.sol";
 
-contract SwapScript is Script {
+contract SwapperScript is Script {
     function setUp() public {}
 
     function run() external {

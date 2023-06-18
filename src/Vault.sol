@@ -4,7 +4,7 @@ pragma solidity 0.8.16;
 
 import {ERC20} from "solmate/tokens/ERC20.sol";
 import {IStaker} from "warlord/interfaces/IStaker.sol";
-import {ISwap} from "./interfaces/ISwap.sol";
+import {ISwapper} from "./interfaces/ISwapper.sol";
 import {Owner} from "warlord/utils/Owner.sol";
 import {ERC4626} from "solmate/mixins/ERC4626.sol";
 import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
@@ -15,14 +15,14 @@ import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
 contract Vault is ERC4626, Owner {
     using FixedPointMathLib for uint256;
 
-    address public swap;
+    address public swapper;
     address public staker;
     address public ratios;
 
-    constructor(address initialStaker, address initialSwap, address initialRatios, address definitiveAsset)
+    constructor(address initialStaker, address initialSwapper, address initialRatios, address definitiveAsset)
         ERC4626(ERC20(definitiveAsset), "acWARToken", "acWAR")
     {
-        swap = initialSwap;
+        swapper = initialSwapper;
         staker = initialStaker;
         ratios = initialRatios;
 
@@ -40,11 +40,11 @@ contract Vault is ERC4626, Owner {
 
     /**
      * @notice update the swapper contract to a new one
-     * @param newSwap the new swapper contract
+     * @param newSwapper the new swapper contract
      * @custom:requires owner
      */
-    function setSwap(address newSwap) external onlyOwner {
-        swap = newSwap;
+    function setSwapper(address newSwapper) external onlyOwner {
+        swapper = newSwapper;
     }
 
     /**
