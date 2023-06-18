@@ -15,8 +15,17 @@ import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
 contract Vault is ERC4626, Owner {
     using FixedPointMathLib for uint256;
 
+    /**
+     * @notice Address of the contract to swap rewards
+     */
     address public swapper;
+    /**
+     * @notice Address of the stkWAR token
+     */
     address public staker;
+    /**
+     * @notice Address of the contract to get the ratios of token to swap
+     */
     address public ratios;
 
     error ZeroAddress();
@@ -63,7 +72,7 @@ contract Vault is ERC4626, Owner {
     function setSwapper(address newSwapper) external onlyOwner {
         if (newSwapper == address(0)) revert ZeroAddress();
 
-        oldSwapper = swapper;
+        address oldSwapper = swapper;
         swapper = newSwapper;
 
         emit SwapperUpdated(oldSwapper, newSwapper);
@@ -75,9 +84,9 @@ contract Vault is ERC4626, Owner {
      * @custom:requires owner
      */
     function setRatios(address newRatios) external onlyOwner {
-        if (newSwapper == address(0)) revert ZeroAddress();
+        if (newRatios == address(0)) revert ZeroAddress();
 
-        oldRatios = ratios;
+        address oldRatios = ratios;
         ratios = newRatios;
 
         emit RatiosUpdated(oldRatios, newRatios);
