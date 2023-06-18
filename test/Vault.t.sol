@@ -48,12 +48,18 @@ contract VaultTest is Test {
         assertEq(ERC20(WAR).allowance(address(vault), address(staker)), UINT256_MAX);
     }
 
-    function test_setSwap_normal() public {
+    function test_setSwapper_normal() public {
         Swapper newSwapper = new Swapper();
 
         vm.prank(owner);
         vault.setSwapper(address(newSwapper));
         assertEq(vault.swapper(), address(newSwapper));
+    }
+
+    function testCannot_setSwapper_ZeroAddress() public {
+        vm.expectRevert(Vault.ZeroAddress.selector);
+        vm.prank(owner);
+        vault.setSwapper(address(0));
     }
 
     function testCannot_setSwap_NotOwner() public {
@@ -70,6 +76,12 @@ contract VaultTest is Test {
         vm.prank(owner);
         vault.setRatios(address(newRatios));
         assertEq(vault.ratios(), address(newRatios));
+    }
+
+    function testCannot_setRatios_ZeroAddress() public {
+        vm.expectRevert(Vault.ZeroAddress.selector);
+        vm.prank(owner);
+        vault.setRatios(address(0));
     }
 
     function testCannot_setRatios_NotOwner() public {
@@ -92,6 +104,12 @@ contract VaultTest is Test {
         assertEq(staker.balanceOf(address(vault)), 0);
         assertEq(ERC20(WAR).allowance(address(vault), address(newStaker)), UINT256_MAX);
         assertEq(ERC20(WAR).allowance(address(vault), address(staker)), 0);
+    }
+
+    function testCannot_setStaker_ZeroAddress() public {
+        vm.expectRevert(Vault.ZeroAddress.selector);
+        vm.prank(owner);
+        vault.setStaker(address(0));
     }
 
     function test_setStaker_NotOwner() public {
