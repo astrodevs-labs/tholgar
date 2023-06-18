@@ -19,6 +19,8 @@ contract Vault is ERC4626, Owner {
     address public staker;
     address public ratios;
 
+    error ZeroAddress();
+
     /**
      * @notice Event emitted when a staker is updated
      */
@@ -35,6 +37,8 @@ contract Vault is ERC4626, Owner {
     constructor(address initialStaker, address initialSwapper, address initialRatios, address definitiveAsset)
         ERC4626(ERC20(definitiveAsset), "acWARToken", "acWAR")
     {
+        if (initialStaker == address(0) || initialSwapper == address(0) || initialRatios == address(0) || definitiveAsset == address(0)) revert ZeroAddress();
+
         swapper = initialSwapper;
         staker = initialStaker;
         ratios = initialRatios;
@@ -57,6 +61,8 @@ contract Vault is ERC4626, Owner {
      * @custom:requires owner
      */
     function setSwapper(address newSwapper) external onlyOwner {
+        if (newSwapper == address(0)) revert ZeroAddress();
+
         oldSwapper = swapper;
         swapper = newSwapper;
 
@@ -69,6 +75,8 @@ contract Vault is ERC4626, Owner {
      * @custom:requires owner
      */
     function setRatios(address newRatios) external onlyOwner {
+        if (newSwapper == address(0)) revert ZeroAddress();
+
         oldRatios = ratios;
         ratios = newRatios;
 
@@ -81,6 +89,7 @@ contract Vault is ERC4626, Owner {
      * @custom:requires owner
      */
     function setStaker(address newStaker) external onlyOwner {
+        if (newStaker == address(0)) revert ZeroAddress();
         address oldStaker = staker;
 
         // Unstake all wars from old staker
