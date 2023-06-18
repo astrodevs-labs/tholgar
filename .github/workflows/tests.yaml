@@ -14,15 +14,19 @@ jobs:
           version: nightly
 
       - name: Check formatting
+        working-directory: contracts
         run: forge fmt --check
 
       - name: Install dependencies
+        working-directory: contracts
         run: forge install
 
       - name: Check contract sizes
+        working-directory: contracts
         run: forge build --sizes
 
       - name: Run tests
+        working-directory: contracts
         run: forge test --fork-url ${{secrets.fork_url}}
         env:
           # Only fuzz intensely if we're running this action on a push to main or for a PR going into main:
