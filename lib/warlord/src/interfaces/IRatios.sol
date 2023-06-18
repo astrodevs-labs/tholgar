@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Unlicensed
-pragma solidity 0.8.16;
+pragma solidity ^0.8.0;
 
 interface IRatios {
   function getTokenRatio(address token) external view returns (uint256);

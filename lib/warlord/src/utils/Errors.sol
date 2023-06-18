@@ -1,4 +1,4 @@
-pragma solidity 0.8.16;
+pragma solidity ^0.8.0;
 //SPDX-License-Identifier: Unlicensed
 
 library Errors {

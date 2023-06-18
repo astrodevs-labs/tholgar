@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Unlicensed
-pragma solidity 0.8.16;
+pragma solidity ^0.8.0;
 
 interface IFarmer {
   // the index stored by the farmer represents all the recevied tokens
