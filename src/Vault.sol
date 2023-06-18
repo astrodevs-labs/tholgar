@@ -11,7 +11,7 @@ import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
 
 /// @author 0xtekgrinder
 /// @title Vault contract
-/// @notice This contract is the auto compounding vault for the warlord protocol
+/// @notice Auto compounding vault for the warlord protocol with token to deposit being WAR and asset being stkWAR
 contract Vault is ERC4626, Owner {
     using FixedPointMathLib for uint256;
 
