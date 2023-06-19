@@ -444,13 +444,14 @@ contract WarStaker is ERC20, ReentrancyGuard, Pausable, Owner {
 
   // Internal functions
 
-  function _beforeTokenTransfer(address from, address to, uint256 /*amount*/ ) internal override {
+  function _update(address from, address to, uint256 amount ) internal override {
     if (from != address(0)) {
       _updateAllUserRewardStates(from);
     }
     if (to != address(0)) {
       _updateAllUserRewardStates(to);
     }
+    super._update(from, to, amount);
   }
 
   /**

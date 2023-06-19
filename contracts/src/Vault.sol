@@ -5,7 +5,7 @@ pragma solidity 0.8.20;
 import {ERC20} from "solmate/tokens/ERC20.sol";
 import {IStaker} from "warlord/interfaces/IStaker.sol";
 import {ISwapper} from "./interfaces/ISwapper.sol";
-import {Owner} from "warlord/utils/Owner.sol";
+import {Ownable2Step, Ownable} from "openzeppelin-contracts/access/Ownable2Step.sol";
 import {ERC4626} from "solmate/mixins/ERC4626.sol";
 import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
 import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
@@ -13,7 +13,7 @@ import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
 /// @author 0xtekgrinder
 /// @title Vault contract
 /// @notice Auto compounding vault for the warlord protocol with token to deposit being WAR and asset being stkWAR
-contract Vault is ERC4626, Owner {
+contract Vault is ERC4626, Ownable2Step {
     using SafeTransferLib for ERC20;
     using FixedPointMathLib for uint256;
 
@@ -46,6 +46,7 @@ contract Vault is ERC4626, Owner {
     event RatiosUpdated(address oldRatios, address newRatios);
 
     constructor(address initialStaker, address initialSwapper, address initialRatios, address definitiveAsset)
+        Ownable(msg.sender)
         ERC4626(ERC20(definitiveAsset), "acWARToken", "acWAR")
     {
         if (

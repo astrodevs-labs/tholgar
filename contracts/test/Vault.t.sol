@@ -10,6 +10,7 @@ import {WAR} from "../src/utils/constants.sol";
 import {WarStaker} from "warlord/WarStaker.sol";
 import {WarToken} from "warlord/WarToken.sol";
 import {ERC20} from "solmate/tokens/ERC20.sol";
+import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 
 contract VaultTest is Test {
     Vault vault;
@@ -65,7 +66,7 @@ contract VaultTest is Test {
     function testCannot_setSwap_NotOwner() public {
         Swapper newSwapper = new Swapper();
 
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, alice));
         vm.prank(alice);
         vault.setSwapper(address(newSwapper));
     }
@@ -87,7 +88,7 @@ contract VaultTest is Test {
     function testCannot_setRatios_NotOwner() public {
         Ratios newRatios = new Ratios();
 
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, alice));
         vm.prank(alice);
         vault.setRatios(address(newRatios));
     }
@@ -115,7 +116,7 @@ contract VaultTest is Test {
     function test_setStaker_NotOwner() public {
         WarStaker newStaker = new WarStaker(WAR);
 
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, alice));
         vm.prank(alice);
         vault.setStaker(address(newStaker));
     }
