@@ -66,7 +66,7 @@ contract VaultTest is Test {
     function testCannot_setSwap_NotOwner() public {
         Swapper newSwapper = new Swapper();
 
-        vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, alice));
+        vm.expectRevert("Ownable: caller is not the owner");
         vm.prank(alice);
         vault.setSwapper(address(newSwapper));
     }
@@ -88,7 +88,7 @@ contract VaultTest is Test {
     function testCannot_setRatios_NotOwner() public {
         Ratios newRatios = new Ratios();
 
-        vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, alice));
+        vm.expectRevert("Ownable: caller is not the owner");
         vm.prank(alice);
         vault.setRatios(address(newRatios));
     }
@@ -116,7 +116,7 @@ contract VaultTest is Test {
     function test_setStaker_NotOwner() public {
         WarStaker newStaker = new WarStaker(WAR);
 
-        vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, alice));
+        vm.expectRevert("Ownable: caller is not the owner");
         vm.prank(alice);
         vault.setStaker(address(newStaker));
     }

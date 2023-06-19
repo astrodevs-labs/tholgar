@@ -46,7 +46,6 @@ contract Vault is ERC4626, Ownable2Step {
     event RatiosUpdated(address oldRatios, address newRatios);
 
     constructor(address initialStaker, address initialSwapper, address initialRatios, address definitiveAsset)
-        Ownable(msg.sender)
         ERC4626(ERC20(definitiveAsset), "acWARToken", "acWAR")
     {
         if (

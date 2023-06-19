@@ -17,7 +17,7 @@ contract Owner is Ownable {
   error CallerNotPendingOwner();
   error OwnerAddressZero();
 
-  constructor() Ownable(_msgSender()) {}
+  constructor() {}
 
   function transferOwnership(address newOwner) public virtual override onlyOwner {
     if (newOwner == address(0)) revert OwnerAddressZero();
