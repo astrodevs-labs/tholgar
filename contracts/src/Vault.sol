@@ -6,6 +6,7 @@ import {ERC20} from "solmate/tokens/ERC20.sol";
 import {IStaker} from "warlord/interfaces/IStaker.sol";
 import {ISwapper} from "./interfaces/ISwapper.sol";
 import {Ownable2Step} from "openzeppelin-contracts/access/Ownable2Step.sol";
+import {Pausable} from "openzeppelin-contracts/security/Pausable.sol";
 import {ERC4626} from "solmate/mixins/ERC4626.sol";
 import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
 import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
@@ -13,7 +14,7 @@ import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
 /// @author 0xtekgrinder
 /// @title Vault contract
 /// @notice Auto compounding vault for the warlord protocol with token to deposit being WAR and asset being stkWAR
-contract Vault is ERC4626, Ownable2Step {
+contract Vault is ERC4626, Ownable2Step, Pausable {
     using SafeTransferLib for ERC20;
     using FixedPointMathLib for uint256;
 
@@ -38,7 +39,7 @@ contract Vault is ERC4626, Ownable2Step {
     error ZeroValue();
 
     /*//////////////////////////////////////////////////////////////
-                               ERRORS
+                          MUTABLE VARIABLES
     //////////////////////////////////////////////////////////////*/
 
     /**
@@ -132,6 +133,20 @@ contract Vault is ERC4626, Ownable2Step {
         return true;
     }
 
+    /**
+     * @notice Pause the contract
+     */
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    /**
+     * @notice Unpause the contract
+     */
+    function unpause() external onlyOwner {
+        _unpause();
+    }
+
     /*//////////////////////////////////////////////////////////////
                             ERC4626 LOGIC
     //////////////////////////////////////////////////////////////*/
@@ -143,6 +158,42 @@ contract Vault is ERC4626, Ownable2Step {
         uint256 assets = ERC20(staker).balanceOf(address(this));
 
         return assets;
+    }
+
+    /**
+     * @custom:notpaused when not paused
+     */
+    function deposit(uint256 assets, address receiver) public virtual override whenNotPaused returns (uint256 shares) {
+        return super.deposit(assets, receiver);
+    }
+
+    /**
+     * @custom:notpaused when not paused
+     */
+    function mint(uint256 shares, address receiver) public virtual override whenNotPaused returns (uint256 assets) {
+        return super.mint(shares, receiver);
+    }
+
+    /**
+     * @custom:notpaused when not paused
+     */
+    function withdraw(
+        uint256 assets,
+        address receiver,
+        address owner
+    ) public virtual override whenNotPaused returns (uint256 shares) {
+        return super.withdraw(assets, receiver, owner);
+    }
+
+    /**
+     * @custom:notpaused when not paused
+     */
+    function redeem(
+        uint256 shares,
+        address receiver,
+        address owner
+    ) public virtual override whenNotPaused returns (uint256 assets) {
+        return super.redeem(shares, receiver, owner);
     }
 
     /**
@@ -158,4 +209,5 @@ contract Vault is ERC4626, Ownable2Step {
     function beforeWithdraw(uint256 assets, uint256 /*shares */ ) internal override {
         IStaker(staker).unstake(assets, address(this));
     }
+
 }
