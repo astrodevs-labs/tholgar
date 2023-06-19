@@ -5,7 +5,6 @@ pragma solidity 0.8.20;
 import "forge-std/Test.sol";
 import {Vault} from "../src/Vault.sol";
 import {Swapper} from "../src/Swapper.sol";
-import {Ratios} from "../src/Ratios.sol";
 import {WAR} from "../src/utils/constants.sol";
 import {WarStaker} from "warlord/WarStaker.sol";
 import {WarToken} from "warlord/WarToken.sol";
@@ -15,7 +14,6 @@ import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 contract VaultTest is Test {
     Vault vault;
     Swapper swapper;
-    Ratios ratios;
     // doesn't fork the staker as it causes too much problem
     WarStaker staker;
 
@@ -26,18 +24,13 @@ contract VaultTest is Test {
     function setUp() public {
         vm.startPrank(owner);
         swapper = new Swapper();
-        ratios = new Ratios();
         staker = new WarStaker(WAR);
-        vault = new Vault(address(staker), address(swapper), address(ratios), WAR);
+        vault = new Vault(address(staker), address(swapper), WAR);
         vm.stopPrank();
     }
 
     function test_deploy_swapper() public {
         assertEq(vault.swapper(), address(swapper));
-    }
-
-    function test_deploy_ratios() public {
-        assertEq(vault.ratios(), address(ratios));
     }
 
     function test_deploy_asset() public {
@@ -69,28 +62,6 @@ contract VaultTest is Test {
         vm.expectRevert("Ownable: caller is not the owner");
         vm.prank(alice);
         vault.setSwapper(address(newSwapper));
-    }
-
-    function test_setRatios_normal() public {
-        Ratios newRatios = new Ratios();
-
-        vm.prank(owner);
-        vault.setRatios(address(newRatios));
-        assertEq(vault.ratios(), address(newRatios));
-    }
-
-    function testCannot_setRatios_ZeroAddress() public {
-        vm.expectRevert(Vault.ZeroAddress.selector);
-        vm.prank(owner);
-        vault.setRatios(address(0));
-    }
-
-    function testCannot_setRatios_NotOwner() public {
-        Ratios newRatios = new Ratios();
-
-        vm.expectRevert("Ownable: caller is not the owner");
-        vm.prank(alice);
-        vault.setRatios(address(newRatios));
     }
 
     function test_setStaker_ZeroBalance() public {

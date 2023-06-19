@@ -5,7 +5,7 @@ pragma solidity 0.8.20;
 import {ERC20} from "solmate/tokens/ERC20.sol";
 import {IStaker} from "warlord/interfaces/IStaker.sol";
 import {ISwapper} from "./interfaces/ISwapper.sol";
-import {Ownable2Step, Ownable} from "openzeppelin-contracts/access/Ownable2Step.sol";
+import {Ownable2Step} from "openzeppelin-contracts/access/Ownable2Step.sol";
 import {ERC4626} from "solmate/mixins/ERC4626.sol";
 import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
 import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
@@ -17,20 +17,9 @@ contract Vault is ERC4626, Ownable2Step {
     using SafeTransferLib for ERC20;
     using FixedPointMathLib for uint256;
 
-    /**
-     * @notice Address of the contract to swap rewards
-     */
-    address public swapper;
-    /**
-     * @notice Address of the stkWAR token
-     */
-    address public staker;
-    /**
-     * @notice Address of the contract to get the ratios of token to swap
-     */
-    address public ratios;
-
-    error ZeroAddress();
+    /*//////////////////////////////////////////////////////////////
+                                 EVENTS
+    //////////////////////////////////////////////////////////////*/
 
     /**
      * @notice Event emitted when a staker is updated
@@ -40,34 +29,46 @@ contract Vault is ERC4626, Ownable2Step {
      * @notice Event emitted when a swapper is updated
      */
     event SwapperUpdated(address oldSwapper, address newSwapper);
-    /**
-     * @notice Event emitted when a ratios is updated
-     */
-    event RatiosUpdated(address oldRatios, address newRatios);
 
-    constructor(address initialStaker, address initialSwapper, address initialRatios, address definitiveAsset)
+    /*//////////////////////////////////////////////////////////////
+                               ERRORS
+    //////////////////////////////////////////////////////////////*/
+
+    error ZeroAddress();
+
+    /*//////////////////////////////////////////////////////////////
+                               ERRORS
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     * @notice Address of the contract to swap rewards
+     */
+    address public swapper;
+    /**
+     * @notice Address of the stkWAR token
+     */
+    address public staker;
+
+    /*//////////////////////////////////////////////////////////////
+                               CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
+    constructor(address initialStaker, address initialSwapper, address definitiveAsset)
         ERC4626(ERC20(definitiveAsset), "acWARToken", "acWAR")
     {
-        if (
-            initialStaker == address(0) || initialSwapper == address(0) || initialRatios == address(0)
-                || definitiveAsset == address(0)
-        ) revert ZeroAddress();
+        if (initialStaker == address(0) || initialSwapper == address(0) || definitiveAsset == address(0)) {
+            revert ZeroAddress();
+        }
 
         swapper = initialSwapper;
         staker = initialStaker;
-        ratios = initialRatios;
 
         ERC20(definitiveAsset).safeApprove(initialStaker, type(uint256).max);
     }
 
-    /**
-     * @dev totalAssets is the total number of stkWAR
-     */
-    function totalAssets() public view override returns (uint256) {
-        uint256 assets = ERC20(staker).balanceOf(address(this));
-
-        return assets;
-    }
+    /*//////////////////////////////////////////////////////////////
+                            ADMIN LOGIC
+    //////////////////////////////////////////////////////////////*/
 
     /**
      * @notice update the swapper contract to a new one
@@ -81,20 +82,6 @@ contract Vault is ERC4626, Ownable2Step {
         swapper = newSwapper;
 
         emit SwapperUpdated(oldSwapper, newSwapper);
-    }
-
-    /**
-     * @notice update the ratios contract to a new one
-     * @param newRatios the new ratios contract
-     * @custom:requires owner
-     */
-    function setRatios(address newRatios) external onlyOwner {
-        if (newRatios == address(0)) revert ZeroAddress();
-
-        address oldRatios = ratios;
-        ratios = newRatios;
-
-        emit RatiosUpdated(oldRatios, newRatios);
     }
 
     /**
@@ -125,6 +112,19 @@ contract Vault is ERC4626, Ownable2Step {
         if (warBalance != 0) {
             IStaker(newStaker).stake(warBalance, address(this));
         }
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                            ERC4626 LOGIC
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     * @dev totalAssets is the total number of stkWAR
+     */
+    function totalAssets() public view override returns (uint256) {
+        uint256 assets = ERC20(staker).balanceOf(address(this));
+
+        return assets;
     }
 
     /**
