@@ -10,11 +10,12 @@ import {Pausable} from "openzeppelin-contracts/security/Pausable.sol";
 import {ERC4626} from "solmate/mixins/ERC4626.sol";
 import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
 import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
+import {ReentrancyGuard} from "solmate/utils/ReentrancyGuard.sol";
 
 /// @author 0xtekgrinder
 /// @title Vault contract
 /// @notice Auto compounding vault for the warlord protocol with token to deposit being WAR and asset being stkWAR
-contract Vault is ERC4626, Ownable2Step, Pausable {
+contract Vault is ERC4626, Ownable2Step, Pausable, ReentrancyGuard {
     using SafeTransferLib for ERC20;
     using FixedPointMathLib for uint256;
 
@@ -91,7 +92,7 @@ contract Vault is ERC4626, Ownable2Step, Pausable {
      * @param newStaker the new staker contract
      * @custom:requires owner
      */
-    function setStaker(address newStaker) external onlyOwner {
+    function setStaker(address newStaker) external nonReentrant onlyOwner {
         if (newStaker == address(0)) revert ZeroAddress();
         address oldStaker = staker;
 
