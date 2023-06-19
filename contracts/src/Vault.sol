@@ -35,6 +35,7 @@ contract Vault is ERC4626, Ownable2Step {
     //////////////////////////////////////////////////////////////*/
 
     error ZeroAddress();
+    error ZeroValue();
 
     /*//////////////////////////////////////////////////////////////
                                ERRORS
@@ -112,6 +113,23 @@ contract Vault is ERC4626, Ownable2Step {
         if (warBalance != 0) {
             IStaker(newStaker).stake(warBalance, address(this));
         }
+    }
+
+    /**
+     * @notice Recover ERC2O tokens in the contract
+     * @dev Recover ERC2O tokens in the contract
+     * @param token Address of the ERC2O token
+     * @return bool: success
+     */
+    function recoverERC20(address token) external onlyOwner returns (bool) {
+        if (token == address(0)) revert ZeroAddress();
+
+        uint256 amount = ERC20(token).balanceOf(address(this));
+        if (amount == 0) revert ZeroValue();
+
+        ERC20(token).safeTransfer(owner(), amount);
+
+        return true;
     }
 
     /*//////////////////////////////////////////////////////////////
