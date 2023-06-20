@@ -4,7 +4,7 @@ pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import {Vault} from "../src/Vault.sol";
-import {Swapper} from "../src/Swapper.sol";
+import {Swapper, OutputToken} from "../src/Swapper.sol";
 import {WAR} from "../src/utils/constants.sol";
 import {WarStaker} from "warlord/WarStaker.sol";
 import {WarToken} from "warlord/WarToken.sol";
@@ -23,7 +23,10 @@ contract VaultTest is Test {
 
     function setUp() public {
         vm.startPrank(owner);
-        swapper = new Swapper();
+        OutputToken[] memory tokens = new OutputToken[](1);
+        tokens[0] = OutputToken(0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57, 1e5, 18);
+        swapper = new Swapper(0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57);
+        swapper.setOutputTokens(tokens);
         staker = new WarStaker(WAR);
         vault = new Vault(address(staker), address(swapper), WAR);
         vm.stopPrank();
@@ -43,7 +46,10 @@ contract VaultTest is Test {
     }
 
     function test_setSwapper_normal() public {
-        Swapper newSwapper = new Swapper();
+        OutputToken[] memory tokens = new OutputToken[](1);
+        tokens[0] = OutputToken(0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57, 1e5, 18);
+        Swapper newSwapper = new Swapper(0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57);
+        newSwapper.setOutputTokens(tokens);
 
         vm.prank(owner);
         vault.setSwapper(address(newSwapper));
@@ -57,7 +63,11 @@ contract VaultTest is Test {
     }
 
     function testCannot_setSwap_NotOwner() public {
-        Swapper newSwapper = new Swapper();
+        OutputToken[] memory tokens = new OutputToken[](1);
+        tokens[0] = OutputToken(0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57, 1e5, 18);
+        Swapper newSwapper = new Swapper(0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57);
+        newSwapper.setOutputTokens(tokens);
+
 
         vm.expectRevert("Ownable: caller is not the owner");
         vm.prank(alice);

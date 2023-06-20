@@ -10,25 +10,25 @@ import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
 
 import {MAX_WEIGHT} from "./utils/constants.sol";
 
+/*//////////////////////////////////////////////////////////////
+                                 TYPES
+//////////////////////////////////////////////////////////////*/
+
+/**
+    *  @notice Struct that represent a element in the list of output token and the respective ratio to perform the swap
+    */
+struct OutputToken {
+    address token;
+    uint256 ratio; // weight (on MAX_WEIGHT total)
+    uint256 decimals;
+}
+
 /**
  *  @author 0xMemoryGrinder
  */
 contract Swapper is Ownable2Step {
     using SafeTransferLib for ERC20;
     using FixedPointMathLib for uint256;
-
-    /*//////////////////////////////////////////////////////////////
-                                 TYPES
-    //////////////////////////////////////////////////////////////*/
-
-    /**
-     *  @notice Struct that represent a element in the list of output token and the respective ratio to perform the swap
-     */
-    struct OutputToken {
-        address token;
-        uint256 ratio; // weight (on MAX_WEIGHT total)
-        uint256 decimals;
-    }
 
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
@@ -102,7 +102,7 @@ contract Swapper is Ownable2Step {
     /**
      *  @notice Modifier implementation to check if output tokens array does not have total weight that exceeds MAX_WEIGHT or if the array is empty
      */
-    function _checkRatios(OutputToken[] memory newOutputTokens) internal view {
+    function _checkRatios(OutputToken[] memory newOutputTokens) internal pure {
         uint256 total;
         uint256 length = newOutputTokens.length;
 
@@ -128,11 +128,10 @@ contract Swapper is Ownable2Step {
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor(OutputToken[] memory initialTokens, address initialSwapRouter) verifyRatios(initialTokens) {
+    constructor(address initialSwapRouter) {
         if (initialSwapRouter == address(0)) revert ZeroAddress();
 
         swapRouter = initialSwapRouter;
-        outputTokens = initialTokens;
     }
 
 
@@ -140,8 +139,11 @@ contract Swapper is Ownable2Step {
                             ADMIN LOGIC
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     *  @notice Must calll this function in order to let the contract work correctly
+     */
     function setOutputTokens(OutputToken[] calldata newOutputTokens) external onlyOwner verifyRatios(newOutputTokens) {
-        outputTokens = newOutputTokens;
+        _copy(outputTokens, newOutputTokens);
 
         emit OutputTokensUpdated(newOutputTokens);
     }
@@ -204,6 +206,17 @@ contract Swapper is Ownable2Step {
     function _approveTokenIfNeeded(address _token, address _spender) private {
         if (ERC20(_token).allowance(address(this), _spender) == 0) {
             ERC20(_token).safeApprove(_spender, type(uint).max);
+        }
+    }
+
+    function _copy(OutputToken[] storage dest, OutputToken[] calldata src) private {
+        uint256 length = src.length;
+
+        for (uint256 i; i < length;) {
+            dest.push(src[i]);
+            unchecked {
+                ++i;
+            }
         }
     }
 }
