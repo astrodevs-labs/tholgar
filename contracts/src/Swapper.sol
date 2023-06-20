@@ -2,4 +2,208 @@
 
 pragma solidity 0.8.20;
 
-contract Swapper {}
+import {ERC20} from "solmate/tokens/ERC20.sol";
+import {IERC20} from "openzeppelin-contracts/token/ERC20/IERC20.sol";
+import {Ownable2Step} from "openzeppelin-contracts/access/Ownable2Step.sol";
+import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
+import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
+
+import {MAX_WEIGHT} from "./utils/constants.sol";
+
+/**
+ *  @author 0xMemoryGrinder
+ */
+contract Swapper is Ownable2Step {
+    using SafeTransferLib for ERC20;
+    using FixedPointMathLib for uint256;
+
+    /*//////////////////////////////////////////////////////////////
+                                 TYPES
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     *  @notice Struct that represent a element in the list of output token and the respective ratio to perform the swap
+     */
+    struct OutputToken {
+        address token;
+        uint256 ratio; // weight (on MAX_WEIGHT total)
+        uint256 decimals;
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                                 EVENTS
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     * @notice Event emitted when a output tokens and/or ratios are updated
+     */
+    event OutputTokensUpdated(OutputToken[] tokens);
+
+    /**
+     *  @notice Event emitted when an input reward token is swapped to feeToken
+     */
+    event InputTokenSwapped(address indexed token, uint256 amount);
+
+    /**
+     *  @notice Event emitted when feeToken is swapped to an output token
+     */
+    event OutputTokenSwapped(address indexed token, uint256 amount);
+
+    /*//////////////////////////////////////////////////////////////
+                               ERRORS
+    //////////////////////////////////////////////////////////////*/
+
+    error NoOutputTokens();
+
+    error RatioOverflow();
+
+    error ZeroAddress();
+
+    error NotGelato();
+
+    error SwapError(bytes error);
+
+    /*//////////////////////////////////////////////////////////////
+                               STATE
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     *  @notice list of tokens to swap to when receiving harvest rewards
+     */
+    OutputToken[] public outputTokens;
+
+    /**
+     *  @notice gelato caller address to allow access only to web3 function
+     */
+    address public gelato;
+
+    /**
+     *  @notice Dex/aggregaor router to call to perform swaps
+     */
+    address public swapRouter;
+
+    /**
+     *  @notice Central token all input token are swapped to to pay fees
+     */
+    address public feeToken;
+
+    /*//////////////////////////////////////////////////////////////
+                               MODIFIERS
+    //////////////////////////////////////////////////////////////*/
+
+    /** 
+        @notice Modifier used to check if output tokens array does not have total weight that exceeds MAX_WEIGHT or if the array is empty
+     */
+    modifier verifyRatios(OutputToken[] memory newOutputTokens) {
+        _checkRatios(newOutputTokens);
+        _;
+    }
+
+    /**
+     *  @notice Modifier implementation to check if output tokens array does not have total weight that exceeds MAX_WEIGHT or if the array is empty
+     */
+    function _checkRatios(OutputToken[] memory newOutputTokens) internal view {
+        uint256 total;
+        uint256 length = newOutputTokens.length;
+
+        if (length == 0) revert NoOutputTokens();
+        for (uint256 i; i < length;) {
+            total += newOutputTokens[i].ratio;
+            unchecked {
+                ++i;
+            }
+        }
+        if (total > MAX_WEIGHT) revert RatioOverflow();
+    }
+
+    /**
+     *  @notice Modifier to allow only gelato to call functions
+     */
+    modifier onlyGelato() {
+        if (msg.sender != gelato) revert NotGelato();
+        _;
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                               CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
+    constructor(OutputToken[] memory initialTokens, address initialSwapRouter) verifyRatios(initialTokens) {
+        if (initialSwapRouter == address(0)) revert ZeroAddress();
+
+        swapRouter = initialSwapRouter;
+        outputTokens = initialTokens;
+    }
+
+
+    /*//////////////////////////////////////////////////////////////
+                            ADMIN LOGIC
+    //////////////////////////////////////////////////////////////*/
+
+    function setOutputTokens(OutputToken[] calldata newOutputTokens) external onlyOwner verifyRatios(newOutputTokens) {
+        outputTokens = newOutputTokens;
+
+        emit OutputTokensUpdated(newOutputTokens);
+    }
+
+    function setSwapRouter(address newSwapRouter) external onlyOwner {
+        if (newSwapRouter == address(0)) revert ZeroAddress();
+        
+        swapRouter = newSwapRouter;
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                            SWAP LOGIC
+    //////////////////////////////////////////////////////////////*/
+
+    function swap(address[] calldata inputTokens, bytes[] calldata inputCallsData, bytes[] calldata outputCallsData) public onlyGelato {
+        _swapInput(inputTokens, inputCallsData);
+        _swapOutput(outputCallsData);
+    }
+
+    function _swapInput(address[] calldata inputTokens, bytes[] calldata inputCallsData) private {
+        uint256 length = inputTokens.length;
+
+        for (uint256 i; i < length;) {
+            address token = inputTokens[i];
+            emit InputTokenSwapped(token, ERC20(token).balanceOf(address(this)));
+            _approveTokenIfNeeded(token, address(swapRouter));
+            _performRouterSwap(inputCallsData[i]);
+            unchecked {
+                ++i;
+            }
+        }
+    }
+
+    function _swapOutput(bytes[] calldata outputCallsData) private {
+        uint256 length = outputCallsData.length;
+
+        for (uint256 i; i < length;) {
+            _performRouterSwap(outputCallsData[i]);
+            address token = outputTokens[i].token;
+            emit OutputTokenSwapped(token, ERC20(token).balanceOf(address(this)));
+            unchecked {
+                ++i;
+            }
+        }
+    }
+
+    function _performRouterSwap(bytes calldata callData) private {
+        (bool success, bytes memory retData) = swapRouter.call(callData);
+
+        if (!success) revert SwapError(retData);
+    }
+
+
+
+
+    /*//////////////////////////////////////////////////////////////
+                                UTILS
+    //////////////////////////////////////////////////////////////*/
+
+    function _approveTokenIfNeeded(address _token, address _spender) private {
+        if (ERC20(_token).allowance(address(this), _spender) == 0) {
+            ERC20(_token).safeApprove(_spender, type(uint).max);
+        }
+    }
+}
