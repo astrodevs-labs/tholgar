@@ -7,6 +7,7 @@ import {ERC4626} from "solmate/mixins/ERC4626.sol";
 import {IERC20} from "openzeppelin-contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "openzeppelin-contracts/token/ERC20/utils/SafeERC20.sol";
 import {IMinter} from "warlord/interfaces/IMinter.sol";
+import {Errors} from "./utils/Errors.sol";
 
 /// @author 0xtekgrinder
 /// @title Zap contract
@@ -22,15 +23,6 @@ contract Zap is ReentrancyGuard {
      * @notice Event emitted when a zap happens
      */
     event ZapHappened(address indexed sender, address indexed receiver, uint256 shares);
-
-    /*//////////////////////////////////////////////////////////////
-                             ERRORS
-    //////////////////////////////////////////////////////////////*/
-
-    error ZeroAddress();
-    error EmptyArray();
-    error ZeroValue();
-    error DifferentSizeArrays(uint256 length1, uint256 length2);
 
     /*//////////////////////////////////////////////////////////////
                             MUTABLE VARIABLES
@@ -55,7 +47,7 @@ contract Zap is ReentrancyGuard {
 
     constructor(address definitiveAsset, address definitiveVault, address definitiveMinter) {
         if (definitiveAsset == address(0) || definitiveVault == address(0) || definitiveMinter == address(0)) {
-            revert ZeroAddress();
+            revert Errors.ZeroAddress();
         }
         asset = definitiveAsset;
         vault = definitiveVault;
@@ -76,8 +68,8 @@ contract Zap is ReentrancyGuard {
      * @return uint256 : Amount of shares minted
      */
     function zap(address token, uint256 amount, address receiver) external nonReentrant returns (uint256) {
-        if (amount == 0) revert ZeroValue();
-        if (token == address(0) || receiver == address(0)) revert ZeroAddress();
+        if (amount == 0) revert Errors.ZeroValue();
+        if (token == address(0) || receiver == address(0)) revert Errors.ZeroAddress();
 
         uint256 prevBalance = IERC20(asset).balanceOf(address(this));
 
@@ -110,10 +102,10 @@ contract Zap is ReentrancyGuard {
         nonReentrant
         returns (uint256)
     {
-        if (receiver == address(0)) revert ZeroAddress();
+        if (receiver == address(0)) revert Errors.ZeroAddress();
         uint256 length = vlTokens.length;
-        if (length != amounts.length) revert DifferentSizeArrays(length, amounts.length);
-        if (length == 0) revert EmptyArray();
+        if (length != amounts.length) revert Errors.DifferentSizeArrays(length, amounts.length);
+        if (length == 0) revert Errors.EmptyArray();
 
         uint256 prevBalance = IERC20(asset).balanceOf(address(this));
 
@@ -121,8 +113,8 @@ contract Zap is ReentrancyGuard {
         for (uint256 i; i < length;) {
             address token = vlTokens[i];
             uint256 amount = amounts[i];
-            if (amount == 0) revert ZeroValue();
-            if (token == address(0)) revert ZeroAddress();
+            if (amount == 0) revert Errors.ZeroValue();
+            if (token == address(0)) revert Errors.ZeroAddress();
 
             // Pull the token
             IERC20(token).safeTransferFrom(msg.sender, address(this), amount);
