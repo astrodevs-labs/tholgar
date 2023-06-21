@@ -7,6 +7,7 @@ import {IERC20} from "openzeppelin-contracts/token/ERC20/IERC20.sol";
 import {Ownable2Step} from "openzeppelin-contracts/access/Ownable2Step.sol";
 import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
 import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
+import {Errors} from "../utils/Errors.sol";
 
 /*//////////////////////////////////////////////////////////////
                                  TYPES
@@ -38,30 +39,14 @@ contract ASwapper is Ownable2Step {
      * @notice Event emitted when a output tokens and/or ratios are updated
      */
     event OutputTokensUpdated(OutputToken[] tokens);
-
     /**
      *  @notice Event emitted when an input reward token is swapped to feeToken
      */
     event InputTokenSwapped(address indexed token, uint256 amount);
-
     /**
      *  @notice Event emitted when feeToken is swapped to an output token
      */
     event OutputTokenSwapped(address indexed token, uint256 amount);
-
-    /*//////////////////////////////////////////////////////////////
-                               ERRORS
-    //////////////////////////////////////////////////////////////*/
-
-    error NoOutputTokens();
-
-    error RatioOverflow();
-
-    error ZeroAddress();
-
-    error NotGelato();
-
-    error SwapError(bytes error);
 
     /*//////////////////////////////////////////////////////////////
                                STATE
@@ -71,12 +56,10 @@ contract ASwapper is Ownable2Step {
      *  @notice list of tokens to swap to when receiving harvest rewards
      */
     OutputToken[] public outputTokens;
-
     /**
      *  @notice gelato caller address to allow access only to web3 function
      */
     address public gelato;
-
     /**
      *  @notice Dex/aggregaor router to call to perform swaps
      */
@@ -101,21 +84,21 @@ contract ASwapper is Ownable2Step {
         uint256 total;
         uint256 length = newOutputTokens.length;
 
-        if (length == 0) revert NoOutputTokens();
+        if (length == 0) revert Errors.NoOutputTokens();
         for (uint256 i; i < length;) {
             total += newOutputTokens[i].ratio;
             unchecked {
                 ++i;
             }
         }
-        if (total > MAX_WEIGHT) revert RatioOverflow();
+        if (total > MAX_WEIGHT) revert Errors.RatioOverflow();
     }
 
     /**
      *  @notice Modifier to allow only gelato to call functions
      */
     modifier onlyGelato() {
-        if (msg.sender != gelato) revert NotGelato();
+        if (msg.sender != gelato) revert Errors.NotGelato();
         _;
     }
 
@@ -124,7 +107,7 @@ contract ASwapper is Ownable2Step {
     //////////////////////////////////////////////////////////////*/
 
     constructor(address initialSwapRouter) {
-        if (initialSwapRouter == address(0)) revert ZeroAddress();
+        if (initialSwapRouter == address(0)) revert Errors.ZeroAddress();
 
         swapRouter = initialSwapRouter;
     }
@@ -143,7 +126,7 @@ contract ASwapper is Ownable2Step {
     }
 
     function setSwapRouter(address newSwapRouter) external onlyOwner {
-        if (newSwapRouter == address(0)) revert ZeroAddress();
+        if (newSwapRouter == address(0)) revert Errors.ZeroAddress();
 
         swapRouter = newSwapRouter;
     }
@@ -190,7 +173,7 @@ contract ASwapper is Ownable2Step {
     function _performRouterSwap(bytes calldata callData) private {
         (bool success, bytes memory retData) = swapRouter.call(callData);
 
-        if (!success) revert SwapError(retData);
+        if (!success) revert Errors.SwapError(retData);
     }
 
     /*//////////////////////////////////////////////////////////////

@@ -10,4 +10,12 @@ library Errors {
 
     // Fee errors
     error InvalidFee();
+
+    // Swapper errors
+    error NoOutputTokens();
+    error RatioOverflow();
+    error SwapError(bytes error);
+
+    // Gelato errors
+    error NotGelato();
 }
