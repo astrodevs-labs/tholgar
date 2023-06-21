@@ -40,6 +40,10 @@ contract VaultTest is Test {
         assertEq(address(vault.feeToken()), USDC);
     }
 
+    function test_deploy_paused() public {
+        assertEq(vault.paused(), false);
+    }
+
     function test_deploy_owner() public {
         assertEq(vault.owner(), owner);
     }
@@ -298,5 +302,59 @@ contract VaultTest is Test {
         assertEq(staker.balanceOf(address(vault)), amount - assets);
         assertEq(vault.balanceOf(alice), 0);
         assertEq(vault.totalAssets(), amount - assets);
+    }
+
+    function testFuzz_recoverERC20_normal(uint256 amount) public {
+        vm.assume(amount != 0);
+
+        deal(USDC, address(vault), amount);
+
+        vm.prank(owner);
+        vault.recoverERC20(USDC);
+        assertEq(ERC20(USDC).balanceOf(owner), amount);
+    }
+
+    function testCannot_recoverERC20_ZeroAddress() public {
+        vm.prank(owner);
+        vm.expectRevert(Errors.ZeroAddress.selector);
+        vault.recoverERC20(address(0));
+    }
+
+    function testCannot_recoverERC20_ZeroValue() public {
+        vm.prank(owner);
+        vm.expectRevert(Errors.ZeroValue.selector);
+        vault.recoverERC20(USDC);
+    }
+
+    function testCannot_recoverERC20_NotOwner() public {
+        vm.prank(alice);
+        vm.expectRevert("Ownable: caller is not the owner");
+        vault.recoverERC20(USDC);
+    }
+
+    function test_pause_normal() public {
+        vm.prank(owner);
+        vault.pause();
+        assertEq(vault.paused(), true);
+    }
+
+    function testCannot_pause_NotOwner() public {
+        vm.prank(alice);
+        vm.expectRevert("Ownable: caller is not the owner");
+        vault.pause();
+    }
+
+    function test_unpause_normal() public {
+        vm.startPrank(owner);
+        vault.pause();
+        vault.unpause();
+        vm.stopPrank();
+        assertEq(vault.paused(), false);
+    }
+
+    function testCannot_unpause_NotOwner() public {
+        vm.prank(alice);
+        vm.expectRevert("Ownable: caller is not the owner");
+        vault.unpause();
     }
 }
