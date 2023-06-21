@@ -4,7 +4,6 @@ pragma solidity 0.8.20;
 
 import {ERC20} from "solmate/tokens/ERC20.sol";
 import {IStaker} from "warlord/interfaces/IStaker.sol";
-import {ISwapper} from "./interfaces/ISwapper.sol";
 import {Ownable2Step} from "openzeppelin-contracts/access/Ownable2Step.sol";
 import {Pausable} from "openzeppelin-contracts/security/Pausable.sol";
 import {ERC4626} from "solmate/mixins/ERC4626.sol";

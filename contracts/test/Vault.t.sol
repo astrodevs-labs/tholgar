@@ -6,9 +6,7 @@ import "forge-std/Test.sol";
 import {Vault, Errors} from "../src/Vault.sol";
 import {WAR, USDC, AUGUSTUS_SWAPPER} from "./utils/constants.sol";
 import {WarStaker} from "warlord/WarStaker.sol";
-import {WarToken} from "warlord/WarToken.sol";
 import {ERC20} from "solmate/tokens/ERC20.sol";
-import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 import {ASwapper} from "../src/abstracts/ASwapper.sol";
 
 contract VaultTest is Test {
