@@ -3,7 +3,7 @@
 pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
-import {Vault} from "../src/Vault.sol";
+import {Vault, Errors} from "../src/Vault.sol";
 import {Swapper, OutputToken} from "../src/Swapper.sol";
 import {WAR} from "../src/utils/constants.sol";
 import {WarStaker} from "warlord/WarStaker.sol";
@@ -28,7 +28,7 @@ contract VaultTest is Test {
         swapper = new Swapper(0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57);
         swapper.setOutputTokens(tokens);
         staker = new WarStaker(WAR);
-        vault = new Vault(address(staker), address(swapper), WAR);
+        vault = new Vault(address(staker), address(swapper), 1000, owner, WAR, WAR);
         vm.stopPrank();
     }
 
@@ -57,7 +57,7 @@ contract VaultTest is Test {
     }
 
     function testCannot_setSwapper_ZeroAddress() public {
-        vm.expectRevert(Vault.ZeroAddress.selector);
+        vm.expectRevert(Errors.ZeroAddress.selector);
         vm.prank(owner);
         vault.setSwapper(address(0));
     }
@@ -88,7 +88,7 @@ contract VaultTest is Test {
     }
 
     function testCannot_setStaker_ZeroAddress() public {
-        vm.expectRevert(Vault.ZeroAddress.selector);
+        vm.expectRevert(Errors.ZeroAddress.selector);
         vm.prank(owner);
         vault.setStaker(address(0));
     }
@@ -102,7 +102,6 @@ contract VaultTest is Test {
     }
 
     function testFuzz_setStaker_normal(uint256 amount) public {
-        vm.assume(amount < type(uint256).max);
         WarStaker newStaker = new WarStaker(WAR);
 
         deal(WAR, address(staker), amount);
