@@ -39,8 +39,17 @@ abstract contract AFees is Ownable2Step {
                             MUTABLE VARIABLES
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @notice fee to be applied when harvesting rewards
+     */
     uint256 public harvestFee;
+    /**
+     * @notice address to receive the harvest fee
+     */
     address public feeRecipient;
+    /**
+     * @notice token to be used to pay the harvest fee
+     */
     address public feeToken;
 
     /*//////////////////////////////////////////////////////////////
