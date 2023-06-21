@@ -15,8 +15,8 @@ import {MAX_WEIGHT} from "./utils/constants.sol";
 //////////////////////////////////////////////////////////////*/
 
 /**
-    *  @notice Struct that represent a element in the list of output token and the respective ratio to perform the swap
-    */
+ *  @notice Struct that represent a element in the list of output token and the respective ratio to perform the swap
+ */
 struct OutputToken {
     address token;
     uint256 ratio; // weight (on MAX_WEIGHT total)
@@ -91,8 +91,8 @@ contract Swapper is Ownable2Step {
                                MODIFIERS
     //////////////////////////////////////////////////////////////*/
 
-    /** 
-        @notice Modifier used to check if output tokens array does not have total weight that exceeds MAX_WEIGHT or if the array is empty
+    /**
+     * @notice Modifier used to check if output tokens array does not have total weight that exceeds MAX_WEIGHT or if the array is empty
      */
     modifier verifyRatios(OutputToken[] memory newOutputTokens) {
         _checkRatios(newOutputTokens);
@@ -134,7 +134,6 @@ contract Swapper is Ownable2Step {
         swapRouter = initialSwapRouter;
     }
 
-
     /*//////////////////////////////////////////////////////////////
                             ADMIN LOGIC
     //////////////////////////////////////////////////////////////*/
@@ -150,7 +149,7 @@ contract Swapper is Ownable2Step {
 
     function setSwapRouter(address newSwapRouter) external onlyOwner {
         if (newSwapRouter == address(0)) revert ZeroAddress();
-        
+
         swapRouter = newSwapRouter;
     }
 
@@ -158,7 +157,10 @@ contract Swapper is Ownable2Step {
                             SWAP LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function swap(address[] calldata inputTokens, bytes[] calldata inputCallsData, bytes[] calldata outputCallsData) public onlyGelato {
+    function swap(address[] calldata inputTokens, bytes[] calldata inputCallsData, bytes[] calldata outputCallsData)
+        public
+        onlyGelato
+    {
         _swapInput(inputTokens, inputCallsData);
         _swapOutput(outputCallsData);
     }
@@ -196,16 +198,13 @@ contract Swapper is Ownable2Step {
         if (!success) revert SwapError(retData);
     }
 
-
-
-
     /*//////////////////////////////////////////////////////////////
                                 UTILS
     //////////////////////////////////////////////////////////////*/
 
     function _approveTokenIfNeeded(address _token, address _spender) private {
         if (ERC20(_token).allowance(address(this), _spender) == 0) {
-            ERC20(_token).safeApprove(_spender, type(uint).max);
+            ERC20(_token).safeApprove(_spender, type(uint256).max);
         }
     }
 

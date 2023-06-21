@@ -68,7 +68,6 @@ contract VaultTest is Test {
         Swapper newSwapper = new Swapper(0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57);
         newSwapper.setOutputTokens(tokens);
 
-
         vm.expectRevert("Ownable: caller is not the owner");
         vm.prank(alice);
         vault.setSwapper(address(newSwapper));

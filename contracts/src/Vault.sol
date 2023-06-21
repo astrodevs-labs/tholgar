@@ -178,22 +178,26 @@ contract Vault is ERC4626, Ownable2Step, Pausable, ReentrancyGuard {
     /**
      * @custom:notpaused when not paused
      */
-    function withdraw(
-        uint256 assets,
-        address receiver,
-        address owner
-    ) public virtual override whenNotPaused returns (uint256 shares) {
+    function withdraw(uint256 assets, address receiver, address owner)
+        public
+        virtual
+        override
+        whenNotPaused
+        returns (uint256 shares)
+    {
         return super.withdraw(assets, receiver, owner);
     }
 
     /**
      * @custom:notpaused when not paused
      */
-    function redeem(
-        uint256 shares,
-        address receiver,
-        address owner
-    ) public virtual override whenNotPaused returns (uint256 assets) {
+    function redeem(uint256 shares, address receiver, address owner)
+        public
+        virtual
+        override
+        whenNotPaused
+        returns (uint256 assets)
+    {
         return super.redeem(shares, receiver, owner);
     }
 
@@ -210,5 +214,4 @@ contract Vault is ERC4626, Ownable2Step, Pausable, ReentrancyGuard {
     function beforeWithdraw(uint256 assets, uint256 /*shares */ ) internal override {
         IStaker(staker).unstake(assets, address(this));
     }
-
 }
