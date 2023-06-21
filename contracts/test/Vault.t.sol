@@ -4,20 +4,19 @@ pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import {Vault, Errors} from "../src/Vault.sol";
-import {Swapper, OutputToken} from "../src/Swapper.sol";
-import {WAR} from "../src/utils/constants.sol";
+import {WAR, USDC} from "../src/utils/constants.sol";
 import {WarStaker} from "warlord/WarStaker.sol";
 import {WarToken} from "warlord/WarToken.sol";
 import {ERC20} from "solmate/tokens/ERC20.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
+import {OutputToken} from "../src/abstracts/ASwapper.sol";
 
 contract VaultTest is Test {
     Vault vault;
-    Swapper swapper;
     // doesn't fork the staker as it causes too much problem
     WarStaker staker;
 
-    address public constant USDC = 0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57;
+    address public constant AUGUSTUS_SWAPPER = 0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57;
 
     address public alice = vm.addr(0x1);
     address public bernard = vm.addr(0x2);
@@ -27,10 +26,9 @@ contract VaultTest is Test {
         vm.startPrank(owner);
         OutputToken[] memory tokens = new OutputToken[](1);
         tokens[0] = OutputToken(USDC, 1e5, 18);
-        swapper = new Swapper(USDC);
-        swapper.setOutputTokens(tokens);
         staker = new WarStaker(WAR);
-        vault = new Vault(address(staker), address(swapper), 500, owner, USDC, WAR);
+        vault = new Vault(address(staker), 500, owner, USDC, AUGUSTUS_SWAPPER, WAR);
+        vault.setOutputTokens(tokens);
         vm.stopPrank();
     }
 
@@ -48,10 +46,6 @@ contract VaultTest is Test {
 
     function test_deploy_owner() public {
         assertEq(vault.owner(), owner);
-    }
-
-    function test_deploy_swapper() public {
-        assertEq(vault.swapper(), address(swapper));
     }
 
     function test_deploy_asset() public {
@@ -115,34 +109,6 @@ contract VaultTest is Test {
         vm.expectRevert(Errors.ZeroAddress.selector);
         vm.prank(owner);
         vault.setFeeToken(address(0));
-    }
-
-    function test_setSwapper_normal() public {
-        OutputToken[] memory tokens = new OutputToken[](1);
-        tokens[0] = OutputToken(USDC, 1e5, 18);
-        Swapper newSwapper = new Swapper(USDC);
-        newSwapper.setOutputTokens(tokens);
-
-        vm.prank(owner);
-        vault.setSwapper(address(newSwapper));
-        assertEq(vault.swapper(), address(newSwapper));
-    }
-
-    function testCannot_setSwapper_ZeroAddress() public {
-        vm.expectRevert(Errors.ZeroAddress.selector);
-        vm.prank(owner);
-        vault.setSwapper(address(0));
-    }
-
-    function testCannot_setSwap_NotOwner() public {
-        OutputToken[] memory tokens = new OutputToken[](1);
-        tokens[0] = OutputToken(USDC, 1e5, 18);
-        Swapper newSwapper = new Swapper(USDC);
-        newSwapper.setOutputTokens(tokens);
-
-        vm.expectRevert("Ownable: caller is not the owner");
-        vm.prank(alice);
-        vault.setSwapper(address(newSwapper));
     }
 
     function test_setStaker_ZeroBalance() public {

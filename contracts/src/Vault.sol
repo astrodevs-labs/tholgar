@@ -12,12 +12,13 @@ import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
 import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
 import {ReentrancyGuard} from "solmate/utils/ReentrancyGuard.sol";
 import {AFees} from "./abstracts/AFees.sol";
+import {ASwapper} from "./abstracts/ASwapper.sol";
 import {Errors} from "./utils/Errors.sol";
 
 /// @author 0xtekgrinder
 /// @title Vault contract
 /// @notice Auto compounding vault for the warlord protocol with token to deposit being WAR and asset being stkWAR
-contract Vault is ERC4626, Ownable2Step, Pausable, ReentrancyGuard, AFees {
+contract Vault is ERC4626, Ownable2Step, Pausable, ReentrancyGuard, AFees, ASwapper {
     using SafeTransferLib for ERC20;
     using FixedPointMathLib for uint256;
 
@@ -29,19 +30,11 @@ contract Vault is ERC4626, Ownable2Step, Pausable, ReentrancyGuard, AFees {
      * @notice Event emitted when a staker is updated
      */
     event StakerUpdated(address oldStaker, address newStaker);
-    /**
-     * @notice Event emitted when a swapper is updated
-     */
-    event SwapperUpdated(address oldSwapper, address newSwapper);
 
     /*//////////////////////////////////////////////////////////////
                           MUTABLE VARIABLES
     //////////////////////////////////////////////////////////////*/
 
-    /**
-     * @notice Address of the contract to swap rewards
-     */
-    address public swapper;
     /**
      * @notice Address of the stkWAR token
      */
@@ -53,20 +46,20 @@ contract Vault is ERC4626, Ownable2Step, Pausable, ReentrancyGuard, AFees {
 
     constructor(
         address initialStaker,
-        address initialSwapper,
         uint256 initialHarvestFee,
         address initialFeeRecipient,
         address initialFeeToken,
+        address initialSwapRouter,
         address definitiveAsset
     )
         ERC4626(ERC20(definitiveAsset), "acWARToken", "acWAR")
         AFees(initialHarvestFee, initialFeeRecipient, initialFeeToken)
+        ASwapper(initialSwapRouter)
     {
-        if (initialStaker == address(0) || initialSwapper == address(0) || definitiveAsset == address(0)) {
+        if (initialStaker == address(0) || definitiveAsset == address(0)) {
             revert Errors.ZeroAddress();
         }
 
-        swapper = initialSwapper;
         staker = initialStaker;
 
         ERC20(definitiveAsset).safeApprove(initialStaker, type(uint256).max);
@@ -75,20 +68,6 @@ contract Vault is ERC4626, Ownable2Step, Pausable, ReentrancyGuard, AFees {
     /*//////////////////////////////////////////////////////////////
                             ADMIN LOGIC
     //////////////////////////////////////////////////////////////*/
-
-    /**
-     * @notice update the swapper contract to a new one
-     * @param newSwapper the new swapper contract
-     * @custom:requires owner
-     */
-    function setSwapper(address newSwapper) external onlyOwner {
-        if (newSwapper == address(0)) revert Errors.ZeroAddress();
-
-        address oldSwapper = swapper;
-        swapper = newSwapper;
-
-        emit SwapperUpdated(oldSwapper, newSwapper);
-    }
 
     /**
      * @notice update the staker contract to a new one

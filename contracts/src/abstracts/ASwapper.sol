@@ -8,7 +8,7 @@ import {Ownable2Step} from "openzeppelin-contracts/access/Ownable2Step.sol";
 import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
 import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
 
-import {MAX_WEIGHT} from "./utils/constants.sol";
+import {MAX_WEIGHT} from "../utils/constants.sol";
 
 /*//////////////////////////////////////////////////////////////
                                  TYPES
@@ -26,7 +26,7 @@ struct OutputToken {
 /**
  *  @author 0xMemoryGrinder
  */
-contract Swapper is Ownable2Step {
+contract ASwapper is Ownable2Step {
     using SafeTransferLib for ERC20;
     using FixedPointMathLib for uint256;
 
@@ -81,11 +81,6 @@ contract Swapper is Ownable2Step {
      *  @notice Dex/aggregaor router to call to perform swaps
      */
     address public swapRouter;
-
-    /**
-     *  @notice Central token all input token are swapped to to pay fees
-     */
-    address public feeToken;
 
     /*//////////////////////////////////////////////////////////////
                                MODIFIERS
