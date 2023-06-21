@@ -9,27 +9,12 @@ import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
 import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
 import {Errors} from "../utils/Errors.sol";
 
-/*//////////////////////////////////////////////////////////////
-                                 TYPES
-//////////////////////////////////////////////////////////////*/
-
-/**
- *  @notice Struct that represent a element in the list of output token and the respective ratio to perform the swap
- */
-struct OutputToken {
-    address token;
-    uint256 ratio; // weight (on MAX_WEIGHT total)
-    uint256 decimals;
-}
-
 /**
  *  @author 0xMemoryGrinder
  */
 contract ASwapper is Ownable2Step {
     using SafeTransferLib for ERC20;
     using FixedPointMathLib for uint256;
-
-    uint256 public constant MAX_WEIGHT = 100_000;
 
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
@@ -49,13 +34,28 @@ contract ASwapper is Ownable2Step {
     event OutputTokenSwapped(address indexed token, uint256 amount);
 
     /*//////////////////////////////////////////////////////////////
-                               STATE
+                                CONSTANTS
     //////////////////////////////////////////////////////////////*/
 
+    uint256 public constant MAX_WEIGHT = 100_000;
+
+    /*//////////////////////////////////////////////////////////////
+                            MUTABLE VARIABLES
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     *  @notice Struct that represent a element in the list of output token and the respective ratio to perform the swap
+     */
+    struct OutputToken {
+        address token;
+        uint256 ratio; // weight (on MAX_WEIGHT total)
+        uint256 decimals;
+    }
     /**
      *  @notice list of tokens to swap to when receiving harvest rewards
      */
     OutputToken[] public outputTokens;
+
     /**
      *  @notice gelato caller address to allow access only to web3 function
      */

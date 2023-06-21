@@ -9,7 +9,7 @@ import {WarStaker} from "warlord/WarStaker.sol";
 import {WarToken} from "warlord/WarToken.sol";
 import {ERC20} from "solmate/tokens/ERC20.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
-import {OutputToken} from "../src/abstracts/ASwapper.sol";
+import {ASwapper} from "../src/abstracts/ASwapper.sol";
 
 contract VaultTest is Test {
     Vault vault;
@@ -22,8 +22,8 @@ contract VaultTest is Test {
 
     function setUp() public {
         vm.startPrank(owner);
-        OutputToken[] memory tokens = new OutputToken[](1);
-        tokens[0] = OutputToken(USDC, 1e5, 18);
+        ASwapper.OutputToken[] memory tokens = new ASwapper.OutputToken[](1);
+        tokens[0] = ASwapper.OutputToken(USDC, 1e5, 18);
         staker = new WarStaker(WAR);
         vault = new Vault(address(staker), 500, owner, USDC, AUGUSTUS_SWAPPER, WAR);
         vault.setOutputTokens(tokens);
