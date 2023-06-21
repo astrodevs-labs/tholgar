@@ -9,7 +9,7 @@ import {Errors} from "./Errors.sol";
 /// @title Abstract Fees contract
 /// @notice Abstract contract to manage fees
 abstract contract AFees is Ownable2Step {
-     /*//////////////////////////////////////////////////////////////
+    /*//////////////////////////////////////////////////////////////
                                   EVENTS
     //////////////////////////////////////////////////////////////*/
 
@@ -60,7 +60,7 @@ abstract contract AFees is Ownable2Step {
                               FEES LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function setHarvestFee(uint256 newHarvestFee) onlyOwner external virtual {
+    function setHarvestFee(uint256 newHarvestFee) external virtual onlyOwner {
         if (newHarvestFee > MAX_BPS) {
             revert Errors.InvalidFee();
         }
@@ -71,7 +71,7 @@ abstract contract AFees is Ownable2Step {
         emit HarvestFeeUpdated(oldHarvestFee, newHarvestFee);
     }
 
-    function setFeeRecipient(address newFeeRecipient) onlyOwner external virtual {
+    function setFeeRecipient(address newFeeRecipient) external virtual onlyOwner {
         if (newFeeRecipient == address(0)) revert Errors.ZeroAddress();
 
         address oldFeeRecipient = feeRecipient;
@@ -80,7 +80,7 @@ abstract contract AFees is Ownable2Step {
         emit FeeRecipientUpdated(oldFeeRecipient, newFeeRecipient);
     }
 
-    function setFeeToken(address newFeeToken) onlyOwner external virtual {
+    function setFeeToken(address newFeeToken) external virtual onlyOwner {
         if (newFeeToken == address(0)) revert Errors.ZeroAddress();
 
         address oldFeeToken = feeToken;

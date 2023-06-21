@@ -42,7 +42,7 @@ contract VaultTest is Test {
 
     function test_deploy_staker() public {
         assertEq(vault.staker(), address(staker));
-        assertEq(ERC20(WAR).allowance(address(vault), address(staker)), UINT256_MAX);
+        assertEq(vault.asset().allowance(address(vault), address(staker)), UINT256_MAX);
     }
 
     function test_setSwapper_normal() public {
@@ -74,17 +74,17 @@ contract VaultTest is Test {
     }
 
     function test_setStaker_ZeroBalance() public {
-        WarStaker newStaker = new WarStaker(WAR);
+        WarStaker newStaker = new WarStaker(address(vault.asset()));
 
         vm.prank(owner);
         vault.setStaker(address(newStaker));
 
         assertEq(vault.staker(), address(newStaker));
-        assertEq(ERC20(WAR).balanceOf(address(vault)), 0);
+        assertEq(vault.asset().balanceOf(address(vault)), 0);
         assertEq(newStaker.balanceOf(address(vault)), 0);
         assertEq(staker.balanceOf(address(vault)), 0);
-        assertEq(ERC20(WAR).allowance(address(vault), address(newStaker)), UINT256_MAX);
-        assertEq(ERC20(WAR).allowance(address(vault), address(staker)), 0);
+        assertEq(vault.asset().allowance(address(vault), address(newStaker)), UINT256_MAX);
+        assertEq(vault.asset().allowance(address(vault), address(staker)), 0);
     }
 
     function testCannot_setStaker_ZeroAddress() public {
@@ -94,7 +94,7 @@ contract VaultTest is Test {
     }
 
     function test_setStaker_NotOwner() public {
-        WarStaker newStaker = new WarStaker(WAR);
+        WarStaker newStaker = new WarStaker(address(vault.asset()));
 
         vm.expectRevert("Ownable: caller is not the owner");
         vm.prank(alice);
@@ -102,20 +102,20 @@ contract VaultTest is Test {
     }
 
     function testFuzz_setStaker_normal(uint256 amount) public {
-        WarStaker newStaker = new WarStaker(WAR);
+        WarStaker newStaker = new WarStaker(address(vault.asset()));
 
-        deal(WAR, address(staker), amount);
+        deal(address(vault.asset()), address(staker), amount);
         deal(address(staker), address(vault), amount);
 
         vm.prank(owner);
         vault.setStaker(address(newStaker));
 
         assertEq(vault.staker(), address(newStaker));
-        assertEq(ERC20(WAR).balanceOf(address(vault)), 0);
+        assertEq(vault.asset().balanceOf(address(vault)), 0);
         assertEq(newStaker.balanceOf(address(vault)), amount);
         assertEq(staker.balanceOf(address(vault)), 0);
-        assertEq(ERC20(WAR).allowance(address(vault), address(newStaker)), UINT256_MAX);
-        assertEq(ERC20(WAR).allowance(address(vault), address(staker)), 0);
+        assertEq(vault.asset().allowance(address(vault), address(newStaker)), UINT256_MAX);
+        assertEq(vault.asset().allowance(address(vault), address(staker)), 0);
     }
 
     function testFuzz_totalAssets_normal(uint256 amount) public {
@@ -133,15 +133,15 @@ contract VaultTest is Test {
 
     function testFuzz_deposit_normal(uint256 amount) public {
         vm.assume(amount != 0);
-        deal(WAR, alice, amount);
+        deal(address(vault.asset()), alice, amount);
 
         vm.startPrank(alice);
-        ERC20(WAR).approve(address(vault), amount);
+        vault.asset().approve(address(vault), amount);
         vault.deposit(amount, alice);
         vm.stopPrank();
 
-        assertEq(ERC20(WAR).balanceOf(address(staker)), amount);
-        assertEq(ERC20(WAR).balanceOf(address(vault)), 0);
+        assertEq(vault.asset().balanceOf(address(staker)), amount);
+        assertEq(vault.asset().balanceOf(address(vault)), 0);
         assertEq(staker.balanceOf(address(vault)), amount);
         assertEq(vault.totalAssets(), amount);
         assertEq(vault.balanceOf(alice), amount);
@@ -153,21 +153,21 @@ contract VaultTest is Test {
         vm.assume(amount1 < 3000 ether);
         vm.assume(amount2 < 3000 ether);
 
-        deal(WAR, alice, amount1);
-        deal(WAR, bernard, amount2);
+        deal(address(vault.asset()), alice, amount1);
+        deal(address(vault.asset()), bernard, amount2);
 
         vm.startPrank(alice);
-        ERC20(WAR).approve(address(vault), amount1);
+        vault.asset().approve(address(vault), amount1);
         vault.deposit(amount1, alice);
         vm.stopPrank();
 
         vm.startPrank(bernard);
-        ERC20(WAR).approve(address(vault), amount2);
+        vault.asset().approve(address(vault), amount2);
         vault.deposit(amount2, bernard);
         vm.stopPrank();
 
-        assertEq(ERC20(WAR).balanceOf(address(staker)), amount1 + amount2);
-        assertEq(ERC20(WAR).balanceOf(address(vault)), 0);
+        assertEq(vault.asset().balanceOf(address(staker)), amount1 + amount2);
+        assertEq(vault.asset().balanceOf(address(vault)), 0);
         assertEq(staker.balanceOf(address(vault)), amount1 + amount2);
         assertEq(vault.totalAssets(), amount1 + amount2);
         assertEq(vault.balanceOf(alice), amount1);
@@ -178,15 +178,15 @@ contract VaultTest is Test {
         vm.assume(amount != 0);
 
         uint256 assets = vault.convertToAssets(amount);
-        deal(WAR, alice, assets);
+        deal(address(vault.asset()), alice, assets);
 
         vm.startPrank(alice);
-        ERC20(WAR).approve(address(vault), assets);
+        vault.asset().approve(address(vault), assets);
         vault.mint(amount, alice);
         vm.stopPrank();
 
-        assertEq(ERC20(WAR).balanceOf(address(staker)), amount);
-        assertEq(ERC20(WAR).balanceOf(address(vault)), 0);
+        assertEq(vault.asset().balanceOf(address(staker)), amount);
+        assertEq(vault.asset().balanceOf(address(vault)), 0);
         assertEq(staker.balanceOf(address(vault)), amount);
         assertEq(vault.totalAssets(), assets);
         assertEq(vault.balanceOf(alice), amount);
@@ -200,21 +200,21 @@ contract VaultTest is Test {
 
         uint256 assets1 = vault.convertToAssets(amount1);
         uint256 assets2 = vault.convertToAssets(amount2);
-        deal(WAR, alice, assets1);
-        deal(WAR, bernard, assets2);
+        deal(address(vault.asset()), alice, assets1);
+        deal(address(vault.asset()), bernard, assets2);
 
         vm.startPrank(alice);
-        ERC20(WAR).approve(address(vault), assets1);
+        vault.asset().approve(address(vault), assets1);
         vault.mint(amount1, alice);
         vm.stopPrank();
 
         vm.startPrank(bernard);
-        ERC20(WAR).approve(address(vault), assets2);
+        vault.asset().approve(address(vault), assets2);
         vault.mint(amount2, bernard);
         vm.stopPrank();
 
-        assertEq(ERC20(WAR).balanceOf(address(staker)), amount1 + amount2);
-        assertEq(ERC20(WAR).balanceOf(address(vault)), 0);
+        assertEq(vault.asset().balanceOf(address(staker)), amount1 + amount2);
+        assertEq(vault.asset().balanceOf(address(vault)), 0);
         assertEq(staker.balanceOf(address(vault)), amount1 + amount2);
         assertEq(vault.totalAssets(), assets1 + assets2);
         assertEq(vault.balanceOf(alice), amount1);
@@ -233,14 +233,14 @@ contract VaultTest is Test {
         vm.assume(amount > amount2);
 
         deal(address(staker), address(vault), amount);
-        deal(WAR, address(staker), amount);
+        deal(address(vault.asset()), address(staker), amount);
         deal(address(vault), alice, amount2);
 
         vm.startPrank(alice);
         uint256 assets = vault.redeem(amount2, alice, alice);
         vm.stopPrank();
 
-        assertEq(ERC20(WAR).balanceOf(alice), assets);
+        assertEq(vault.asset().balanceOf(alice), assets);
         assertEq(staker.balanceOf(address(vault)), amount - assets);
         assertEq(vault.balanceOf(alice), 0);
         assertEq(vault.totalAssets(), amount - assets);
@@ -251,7 +251,7 @@ contract VaultTest is Test {
         vm.assume(amount > amount2);
 
         deal(address(staker), address(vault), amount);
-        deal(WAR, address(staker), amount);
+        deal(address(vault.asset()), address(staker), amount);
         deal(address(vault), alice, amount2);
 
         uint256 assets = vault.convertToAssets(amount2);
@@ -260,7 +260,7 @@ contract VaultTest is Test {
         vault.withdraw(assets, alice, alice);
         vm.stopPrank();
 
-        assertEq(ERC20(WAR).balanceOf(alice), assets);
+        assertEq(vault.asset().balanceOf(alice), assets);
         assertEq(staker.balanceOf(address(vault)), amount - assets);
         assertEq(vault.balanceOf(alice), 0);
         assertEq(vault.totalAssets(), amount - assets);
