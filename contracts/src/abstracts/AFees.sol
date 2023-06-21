@@ -3,11 +3,11 @@
 pragma solidity 0.8.20;
 
 import {Ownable2Step} from "openzeppelin-contracts/access/Ownable2Step.sol";
-import {Errors} from "./Errors.sol";
+import {Errors} from "../utils/Errors.sol";
 
 /// @author 0xtekgrinder
-/// @title Abstract Fees contract
-/// @notice Abstract contract to manage fees
+/// @title Fees contract
+/// @notice contract to manage fees
 abstract contract AFees is Ownable2Step {
     /*//////////////////////////////////////////////////////////////
                                   EVENTS

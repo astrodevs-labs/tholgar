@@ -11,7 +11,7 @@ import {ERC4626} from "solmate/mixins/ERC4626.sol";
 import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
 import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
 import {ReentrancyGuard} from "solmate/utils/ReentrancyGuard.sol";
-import {AFees} from "./utils/AFees.sol";
+import {AFees} from "./abstracts/AFees.sol";
 import {Errors} from "./utils/Errors.sol";
 
 /// @author 0xtekgrinder

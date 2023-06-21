@@ -17,6 +17,8 @@ contract VaultTest is Test {
     // doesn't fork the staker as it causes too much problem
     WarStaker staker;
 
+    address public constant USDC = 0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57;
+
     address public alice = vm.addr(0x1);
     address public bernard = vm.addr(0x2);
     address public owner = vm.addr(0x3);
@@ -24,12 +26,28 @@ contract VaultTest is Test {
     function setUp() public {
         vm.startPrank(owner);
         OutputToken[] memory tokens = new OutputToken[](1);
-        tokens[0] = OutputToken(0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57, 1e5, 18);
-        swapper = new Swapper(0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57);
+        tokens[0] = OutputToken(USDC, 1e5, 18);
+        swapper = new Swapper(USDC);
         swapper.setOutputTokens(tokens);
         staker = new WarStaker(WAR);
-        vault = new Vault(address(staker), address(swapper), 1000, owner, WAR, WAR);
+        vault = new Vault(address(staker), address(swapper), 500, owner, USDC, WAR);
         vm.stopPrank();
+    }
+
+    function test_deploy_harvestFee() public {
+        assertEq(vault.harvestFee(), 500);
+    }
+
+    function test_deploy_feeRecipient() public {
+        assertEq(vault.feeRecipient(), owner);
+    }
+
+    function test_deploy_feeToken() public {
+        assertEq(address(vault.feeToken()), USDC);
+    }
+
+    function test_deploy_owner() public {
+        assertEq(vault.owner(), owner);
     }
 
     function test_deploy_swapper() public {
@@ -45,10 +63,64 @@ contract VaultTest is Test {
         assertEq(vault.asset().allowance(address(vault), address(staker)), UINT256_MAX);
     }
 
+    function test_setHarvestFee_normal() public {
+        vm.prank(owner);
+        vault.setHarvestFee(100);
+        assertEq(vault.harvestFee(), 100);
+    }
+
+    function testCannot_setHarvestFee_NotOwner() public {
+        vm.expectRevert("Ownable: caller is not the owner");
+        vm.prank(alice);
+        vault.setHarvestFee(100);
+    }
+
+    function testCannot_setHarvestFee_InvalidFee() public {
+        vm.expectRevert(Errors.InvalidFee.selector);
+        vm.prank(owner);
+        vault.setHarvestFee(10001);
+    }
+
+    function test_setFeeRecipient_normal() public {
+        vm.prank(owner);
+        vault.setFeeRecipient(alice);
+        assertEq(vault.feeRecipient(), alice);
+    }
+
+    function testCannot_setFeeRecipient_NotOwner() public {
+        vm.expectRevert("Ownable: caller is not the owner");
+        vm.prank(alice);
+        vault.setFeeRecipient(alice);
+    }
+
+    function testCannot_setFeeRecipient_ZeroAddress() public {
+        vm.expectRevert(Errors.ZeroAddress.selector);
+        vm.prank(owner);
+        vault.setFeeRecipient(address(0));
+    }
+
+    function test_setFeeToken_normal() public {
+        vm.prank(owner);
+        vault.setFeeToken(USDC);
+        assertEq(address(vault.feeToken()), USDC);
+    }
+
+    function testCannot_setFeeToken_NotOwner() public {
+        vm.expectRevert("Ownable: caller is not the owner");
+        vm.prank(alice);
+        vault.setFeeToken(USDC);
+    }
+
+    function testCannot_setFeeToken_ZeroAddress() public {
+        vm.expectRevert(Errors.ZeroAddress.selector);
+        vm.prank(owner);
+        vault.setFeeToken(address(0));
+    }
+
     function test_setSwapper_normal() public {
         OutputToken[] memory tokens = new OutputToken[](1);
-        tokens[0] = OutputToken(0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57, 1e5, 18);
-        Swapper newSwapper = new Swapper(0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57);
+        tokens[0] = OutputToken(USDC, 1e5, 18);
+        Swapper newSwapper = new Swapper(USDC);
         newSwapper.setOutputTokens(tokens);
 
         vm.prank(owner);
@@ -64,8 +136,8 @@ contract VaultTest is Test {
 
     function testCannot_setSwap_NotOwner() public {
         OutputToken[] memory tokens = new OutputToken[](1);
-        tokens[0] = OutputToken(0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57, 1e5, 18);
-        Swapper newSwapper = new Swapper(0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57);
+        tokens[0] = OutputToken(USDC, 1e5, 18);
+        Swapper newSwapper = new Swapper(USDC);
         newSwapper.setOutputTokens(tokens);
 
         vm.expectRevert("Ownable: caller is not the owner");
