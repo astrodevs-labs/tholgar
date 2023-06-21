@@ -8,6 +8,9 @@ import {IERC20} from "openzeppelin-contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "openzeppelin-contracts/token/ERC20/utils/SafeERC20.sol";
 import {IMinter} from "warlord/interfaces/IMinter.sol";
 
+/// @author 0xtekgrinder
+/// @title Zap contract
+/// @notice Contract to zap tokens to mint WAR and deposit it into the vault
 contract Zap is ReentrancyGuard {
     using SafeERC20 for IERC20;
 
@@ -15,7 +18,10 @@ contract Zap is ReentrancyGuard {
                                   EVENTS
     //////////////////////////////////////////////////////////////*/
 
-    event ZapHappened(address indexed sender, address indexed receiver, uint256 amount);
+    /**
+     * @notice Event emitted when a zap happens
+     */
+    event ZapHappened(address indexed sender, address indexed receiver, uint256 shares);
 
     /*//////////////////////////////////////////////////////////////
                              ERRORS
@@ -30,8 +36,17 @@ contract Zap is ReentrancyGuard {
                             MUTABLE VARIABLES
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @notice Address of war token
+     */
     address public immutable asset;
+    /**
+     * @notice Address of the auto compounding war vault
+     */
     address public immutable vault;
+    /**
+     * @notice Address of the war minter
+     */
     address public immutable minter;
 
     /*//////////////////////////////////////////////////////////////
@@ -54,11 +69,11 @@ contract Zap is ReentrancyGuard {
     //////////////////////////////////////////////////////////////*/
 
     /**
-     * @notice Zaps a given amount of tokens to mint WAR and stake it
+     * @notice Zaps a given amount of tokens to mint WAR and deposit it
      * @param token Address of the token to deposit
      * @param amount Amount to deposit
      * @param receiver Address to stake for
-     * @return uint256 : Amount of WAR staked
+     * @return uint256 : Amount of shares minted
      */
     function zap(address token, uint256 amount, address receiver) external nonReentrant returns (uint256) {
         if (amount == 0) revert ZeroValue();
@@ -84,11 +99,11 @@ contract Zap is ReentrancyGuard {
     }
 
     /**
-     * @notice Zaps given amounts of tokens to mint WAR and stake it
+     * @notice Zaps given amounts of tokens to mint WAR and deposit it
      * @param vlTokens List of token addresses to deposit
      * @param amounts Amounts to deposit for each token
      * @param receiver Address to stake for
-     * @return uint256 : Amount of WAR staked
+     * @return uint256 : Amount of shares minted
      */
     function zapMultiple(address[] calldata vlTokens, uint256[] calldata amounts, address receiver)
         external
