@@ -2,21 +2,50 @@
 
 pragma solidity 0.8.20;
 
+import {Ownable2Step} from "openzeppelin-contracts/access/Ownable2Step.sol";
 import {Errors} from "./Errors.sol";
 
-abstract contract AFees {
+/// @author 0xtekgrinder
+/// @title Abstract Fees contract
+/// @notice Abstract contract to manage fees
+abstract contract AFees is Ownable2Step {
+     /*//////////////////////////////////////////////////////////////
+                                  EVENTS
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     * @notice Event emitted when harvestFee is updated
+     */
+    event HarvestFeeUpdated(uint256 oldHarvestFee, uint256 newHarvestFee);
+    /**
+     * @notice Event emitted when feeRecipient is updated
+     */
+    event FeeRecipientUpdated(address oldFeeRecipient, address newFeeRecipient);
+    /**
+     * @notice Event emitted when feeToken is updated
+     */
+    event FeeTokenUpdated(address oldFeeToken, address newFeeToken);
+
+    /*//////////////////////////////////////////////////////////////
+                                CONSTANTS
+    //////////////////////////////////////////////////////////////*/
+
     /**
      * @notice Max BPS value (100%)
      */
     uint256 public constant MAX_BPS = 10_000;
 
+    /*//////////////////////////////////////////////////////////////
+                            MUTABLE VARIABLES
+    //////////////////////////////////////////////////////////////*/
+
     uint256 public harvestFee;
     address public feeRecipient;
     address public feeToken;
 
-    event HarvestFeeUpdated(uint256 oldHarvestFee, uint256 newHarvestFee);
-    event FeeRecipientUpdated(address oldFeeRecipient, address newFeeRecipient);
-    event FeeTokenUpdated(address oldFeeToken, address newFeeToken);
+    /*//////////////////////////////////////////////////////////////
+                                CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
 
     constructor(uint256 initialHarvestFee, address initialFeeRecipient, address initialFeeToken) {
         if (initialHarvestFee > MAX_BPS) {
@@ -27,7 +56,11 @@ abstract contract AFees {
         feeToken = initialFeeToken;
     }
 
-    function setHarvestFee(uint256 newHarvestFee) external virtual {
+    /*//////////////////////////////////////////////////////////////
+                              FEES LOGIC
+    //////////////////////////////////////////////////////////////*/
+
+    function setHarvestFee(uint256 newHarvestFee) onlyOwner external virtual {
         if (newHarvestFee > MAX_BPS) {
             revert Errors.InvalidFee();
         }
@@ -38,7 +71,7 @@ abstract contract AFees {
         emit HarvestFeeUpdated(oldHarvestFee, newHarvestFee);
     }
 
-    function setFeeRecipient(address newFeeRecipient) external virtual {
+    function setFeeRecipient(address newFeeRecipient) onlyOwner external virtual {
         if (newFeeRecipient == address(0)) revert Errors.ZeroAddress();
 
         address oldFeeRecipient = feeRecipient;
@@ -47,7 +80,7 @@ abstract contract AFees {
         emit FeeRecipientUpdated(oldFeeRecipient, newFeeRecipient);
     }
 
-    function setFeeToken(address newFeeToken) external virtual {
+    function setFeeToken(address newFeeToken) onlyOwner external virtual {
         if (newFeeToken == address(0)) revert Errors.ZeroAddress();
 
         address oldFeeToken = feeToken;
