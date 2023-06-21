@@ -4,7 +4,7 @@ pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import {Vault, Errors} from "../src/Vault.sol";
-import {WAR, USDC} from "../src/utils/constants.sol";
+import {WAR, USDC, AUGUSTUS_SWAPPER} from "./utils/constants.sol";
 import {WarStaker} from "warlord/WarStaker.sol";
 import {WarToken} from "warlord/WarToken.sol";
 import {ERC20} from "solmate/tokens/ERC20.sol";
@@ -15,8 +15,6 @@ contract VaultTest is Test {
     Vault vault;
     // doesn't fork the staker as it causes too much problem
     WarStaker staker;
-
-    address public constant AUGUSTUS_SWAPPER = 0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57;
 
     address public alice = vm.addr(0x1);
     address public bernard = vm.addr(0x2);

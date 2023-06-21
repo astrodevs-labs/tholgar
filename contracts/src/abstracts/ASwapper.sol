@@ -8,8 +8,6 @@ import {Ownable2Step} from "openzeppelin-contracts/access/Ownable2Step.sol";
 import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
 import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
 
-import {MAX_WEIGHT} from "../utils/constants.sol";
-
 /*//////////////////////////////////////////////////////////////
                                  TYPES
 //////////////////////////////////////////////////////////////*/
@@ -29,6 +27,8 @@ struct OutputToken {
 contract ASwapper is Ownable2Step {
     using SafeTransferLib for ERC20;
     using FixedPointMathLib for uint256;
+
+    uint256 public constant MAX_WEIGHT = 100_000;
 
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
