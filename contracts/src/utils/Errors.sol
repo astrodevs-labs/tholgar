@@ -8,7 +8,6 @@ library Errors {
     error EmptyArray();
     error DifferentSizeArrays(uint256 length1, uint256 length2);
 
-
     // Fee errors
     error InvalidFee();
 }
