@@ -135,15 +135,7 @@ contract ASwapper is Ownable2Step {
                             SWAP LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function swap(address[] calldata inputTokens, bytes[] calldata inputCallsData, bytes[] calldata outputCallsData)
-        public
-        onlyGelato
-    {
-        _swapInput(inputTokens, inputCallsData);
-        _swapOutput(outputCallsData);
-    }
-
-    function _swapInput(address[] calldata inputTokens, bytes[] calldata inputCallsData) private {
+    function swapInput(address[] calldata inputTokens, bytes[] calldata inputCallsData) external onlyGelato {
         uint256 length = inputTokens.length;
 
         for (uint256 i; i < length;) {
@@ -157,7 +149,7 @@ contract ASwapper is Ownable2Step {
         }
     }
 
-    function _swapOutput(bytes[] calldata outputCallsData) private {
+    function swapOutput(bytes[] calldata outputCallsData) external onlyGelato {
         uint256 length = outputCallsData.length;
 
         for (uint256 i; i < length;) {
