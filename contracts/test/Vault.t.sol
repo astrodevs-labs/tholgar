@@ -4,7 +4,7 @@ pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import {Vault, Errors} from "../src/Vault.sol";
-import {WAR, USDC, AUGUSTUS_SWAPPER} from "./utils/constants.sol";
+import {WAR, USDC, AUGUSTUS_SWAPPER, MINTER} from "./utils/constants.sol";
 import {WarStaker} from "warlord/WarStaker.sol";
 import {ERC20} from "solmate/tokens/ERC20.sol";
 import {ASwapper} from "../src/abstracts/ASwapper.sol";
@@ -24,7 +24,7 @@ contract VaultTest is Test {
         ASwapper.OutputToken[] memory tokens = new ASwapper.OutputToken[](1);
         tokens[0] = ASwapper.OutputToken(USDC, 1e5, 18);
         staker = new WarStaker(WAR);
-        vault = new Vault(address(staker), 500, owner, USDC, AUGUSTUS_SWAPPER, gelatoSender, WAR);
+        vault = new Vault(address(staker), MINTER, 500, owner, USDC, AUGUSTUS_SWAPPER, gelatoSender, WAR);
         vault.setOutputTokens(tokens);
         vm.stopPrank();
     }

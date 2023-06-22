@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 
 address constant WAR = 0xa8258deE2a677874a48F5320670A869D74f0cbC1;
 address constant STAKER = 0xA86c53AF3aadF20bE5d7a8136ACfdbC4B074758A;
+address constant MINTER = 0x144a689A8261F1863c89954930ecae46Bd950341;
 
 <<<<<<< 0f12f360120b9b309cbb93e0448012dd08dc8dbd:contracts/src/utils/constants.sol
 uint256 constant MAX_WEIGHT = 1e5;

@@ -4,6 +4,7 @@ pragma solidity 0.8.20;
 
 import {ERC20} from "solmate/tokens/ERC20.sol";
 import {IStaker} from "warlord/interfaces/IStaker.sol";
+import {IMinter} from "warlord/interfaces/IMinter.sol";
 import {Ownable2Step} from "openzeppelin-contracts/access/Ownable2Step.sol";
 import {Pausable} from "openzeppelin-contracts/security/Pausable.sol";
 import {ERC4626} from "solmate/mixins/ERC4626.sol";
@@ -40,12 +41,18 @@ contract Vault is ERC4626, Ownable2Step, Pausable, ReentrancyGuard, AFees, ASwap
      */
     address public staker;
 
+    /**
+     *  @notice Address of the WAR minter contract
+     */
+    address public minter;
+
     /*//////////////////////////////////////////////////////////////
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
     constructor(
         address initialStaker,
+        address initialMinter,
         uint256 initialHarvestFee,
         address initialFeeRecipient,
         address initialFeeToken,
@@ -58,11 +65,12 @@ contract Vault is ERC4626, Ownable2Step, Pausable, ReentrancyGuard, AFees, ASwap
         ASwapper(initialSwapRouter)
         AGelato(initialGelato)
     {
-        if (initialStaker == address(0) || definitiveAsset == address(0)) {
+        if (initialStaker == address(0) || definitiveAsset == address(0) || initialMinter == address(0)) {
             revert Errors.ZeroAddress();
         }
 
         staker = initialStaker;
+        minter = initialMinter;
 
         ERC20(definitiveAsset).safeApprove(initialStaker, type(uint256).max);
     }
@@ -197,5 +205,39 @@ contract Vault is ERC4626, Ownable2Step, Pausable, ReentrancyGuard, AFees, ASwap
      */
     function beforeWithdraw(uint256 assets, uint256 /*shares */ ) internal override {
         IStaker(staker).unstake(assets, address(this));
+    }
+
+    /**
+     * @notice Harvest all rewards from staker and turn them into more staked assets
+     * @param inputTokens reward tokens claimed from staker
+     * @param inputCallDatas swapper routes to swap to feeToken
+     * @param outputCallDatas swapper routes to swap to more assets
+     */
+    function harvest(address[] calldata inputTokens, bytes[] calldata inputCallDatas, bytes[] calldata outputCallDatas) external nonReentrant onlyGelato {
+        IStaker(staker).claimAllRewards(address(this));
+        // swap to fee token
+        _swap(inputTokens, inputCallDatas);
+        // transfer havestfee %oo to fee recipient
+        ERC20(feeToken).safeTransfer(feeRecipient, ERC20(feeToken).balanceOf(address(this)) * (harvestFee / MAX_BPS));
+        // swap to outputtokens with correct ratios
+        uint256 length = outputTokens.length;
+        address[] memory tokens = new address[](length);
+        for (uint i; i < length;) {
+            tokens[i] = feeToken;
+            unchecked {
+                ++i;
+            }
+        }
+        _swap(tokens, outputCallDatas);
+        uint256[] memory amounts = new uint256[](length);
+        address[] memory outputToensAddresses = getTokens();
+        for (uint i; i < length;) {
+            amounts[i] = ERC20(outputToensAddresses[i]).balanceOf(address(this));
+            unchecked {
+                ++i;
+            }
+        }
+        IMinter(minter).mintMultiple(tokens, amounts);
+        IStaker(staker).stake(ERC20(address(asset)).balanceOf(address(this)), address(this));
     }
 }

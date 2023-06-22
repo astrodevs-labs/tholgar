@@ -121,7 +121,7 @@ abstract contract ASwapper is Ownable2Step {
                             SWAP LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function swap(address[] calldata tokens, bytes[] calldata callDatas) internal {
+    function _swap(address[] memory tokens, bytes[] calldata callDatas) internal {
         uint256 length = tokens.length;
 
         for (uint256 i; i < length;) {
@@ -146,6 +146,19 @@ abstract contract ASwapper is Ownable2Step {
             }
             revert Errors.SwapError();
         }
+    }
+
+    function getTokens() public view returns(address[] memory) {
+        uint256 length = outputTokens.length;
+        address[] memory tokens = new address[](length);
+
+        for (uint256 i; i < length;) {
+            tokens[i] = outputTokens[i].token;
+            unchecked {
+                ++i;
+            }
+        }
+        return tokens;
     }
 
     /*//////////////////////////////////////////////////////////////
