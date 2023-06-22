@@ -17,13 +17,14 @@ contract VaultTest is Test {
     address public alice = vm.addr(0x1);
     address public bernard = vm.addr(0x2);
     address public owner = vm.addr(0x3);
+    address public gelatoSender = vm.addr(0x4);
 
     function setUp() public {
         vm.startPrank(owner);
         ASwapper.OutputToken[] memory tokens = new ASwapper.OutputToken[](1);
         tokens[0] = ASwapper.OutputToken(USDC, 1e5, 18);
         staker = new WarStaker(WAR);
-        vault = new Vault(address(staker), 500, owner, USDC, AUGUSTUS_SWAPPER, WAR);
+        vault = new Vault(address(staker), 500, owner, USDC, AUGUSTUS_SWAPPER, gelatoSender, WAR);
         vault.setOutputTokens(tokens);
         vm.stopPrank();
     }
@@ -357,4 +358,45 @@ contract VaultTest is Test {
         vm.expectRevert("Ownable: caller is not the owner");
         vault.unpause();
     }
+
+    /*
+    function setUp() public {
+        vm.startPrank(owner);
+        ASwapper.OutputToken[] memory tokens = new ASwapper.OutputToken[](1);
+        tokens[0] = ASwapper.OutputToken(0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57, 1e5, 18);
+        swapper = new ASwapper(0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57);
+        vm.stopPrank();
+    }
+
+    function test_deploy_swapRouter() public {
+        assertEq(swapper.swapRouter(), address(0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57));
+    }
+
+    function test_setSwapRouter_normal() public {
+        vm.prank(owner);
+        swapper.setSwapRouter(vm.addr(0x4));
+        assert(swapper.swapRouter() == vm.addr(0x4));
+    }
+
+    function testCannot_setSwapRouter_zeroAddress() public {
+        vm.expectRevert(Errors.ZeroAddress.selector);
+        vm.prank(owner);
+        swapper.setSwapRouter(vm.addr(0x4));
+    }
+
+    function testCannot_setSwapRouter_notOwner() public {
+
+    }
+
+    function test_setOutputTokens_normal() public {
+
+    }
+
+    function testCannot_setOutputTokens_noTokens() public {
+
+    }
+
+    function testCannot_setOutputTokens_exceedsWeight() public {
+
+    }*/
 }

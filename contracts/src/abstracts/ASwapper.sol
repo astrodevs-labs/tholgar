@@ -9,9 +9,11 @@ import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
 import {Errors} from "../utils/Errors.sol";
 
 /**
+ *  @title ASwapper contract
+ *  @notice
  *  @author 0xMemoryGrinder
  */
-contract ASwapper is Ownable2Step {
+abstract contract ASwapper is Ownable2Step {
     using SafeTransferLib for ERC20;
     using FixedPointMathLib for uint256;
 
@@ -24,13 +26,9 @@ contract ASwapper is Ownable2Step {
      */
     event OutputTokensUpdated(OutputToken[] tokens);
     /**
-     *  @notice Event emitted when an input reward token is swapped to feeToken
+     *  @notice Event emitted when a token is swapped
      */
-    event InputTokenSwapped(address indexed token, uint256 amount);
-    /**
-     *  @notice Event emitted when feeToken is swapped to an output token
-     */
-    event OutputTokenSwapped(address indexed token, uint256 amount);
+    event TokenSwapped(address indexed token, uint256 amount);
 
     /*//////////////////////////////////////////////////////////////
                                 CONSTANTS
@@ -56,10 +54,6 @@ contract ASwapper is Ownable2Step {
 
     OutputToken[] public outputTokens;
 
-    /**
-     *  @notice gelato caller address to allow access only to web3 function
-     */
-    address public gelato;
     /**
      *  @notice Dex/aggregaor router to call to perform swaps
      */
@@ -92,14 +86,6 @@ contract ASwapper is Ownable2Step {
             }
         }
         if (total > MAX_WEIGHT) revert Errors.RatioOverflow();
-    }
-
-    /**
-     *  @notice Modifier to allow only gelato to call functions
-     */
-    modifier onlyGelato() {
-        if (msg.sender != gelato) revert Errors.NotGelato();
-        _;
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -135,27 +121,14 @@ contract ASwapper is Ownable2Step {
                             SWAP LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function swapInput(address[] calldata inputTokens, bytes[] calldata inputCallsData) external onlyGelato {
-        uint256 length = inputTokens.length;
+    function swap(address[] calldata tokens, bytes[] calldata callDatas) internal {
+        uint256 length = tokens.length;
 
         for (uint256 i; i < length;) {
-            address token = inputTokens[i];
-            emit InputTokenSwapped(token, ERC20(token).balanceOf(address(this)));
+            address token = tokens[i];
+            emit TokenSwapped(token, ERC20(token).balanceOf(address(this)));
             _approveTokenIfNeeded(token, address(swapRouter));
-            _performRouterSwap(inputCallsData[i]);
-            unchecked {
-                ++i;
-            }
-        }
-    }
-
-    function swapOutput(bytes[] calldata outputCallsData) external onlyGelato {
-        uint256 length = outputCallsData.length;
-
-        for (uint256 i; i < length;) {
-            _performRouterSwap(outputCallsData[i]);
-            address token = outputTokens[i].token;
-            emit OutputTokenSwapped(token, ERC20(token).balanceOf(address(this)));
+            _performRouterSwap(callDatas[i]);
             unchecked {
                 ++i;
             }
@@ -165,7 +138,14 @@ contract ASwapper is Ownable2Step {
     function _performRouterSwap(bytes calldata callData) private {
         (bool success, bytes memory retData) = swapRouter.call(callData);
 
-        if (!success) revert Errors.SwapError(retData);
+        if (!success) {
+            if (retData.length != 0) {
+                assembly {
+                    revert(add(32, retData), mload(retData))
+                }
+            }
+            revert Errors.SwapError();
+        }
     }
 
     /*//////////////////////////////////////////////////////////////

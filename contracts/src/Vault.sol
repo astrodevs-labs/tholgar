@@ -12,12 +12,13 @@ import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
 import {ReentrancyGuard} from "solmate/utils/ReentrancyGuard.sol";
 import {AFees} from "./abstracts/AFees.sol";
 import {ASwapper} from "./abstracts/ASwapper.sol";
+import {AGelato} from "./abstracts/AGelato.sol";
 import {Errors} from "./utils/Errors.sol";
 
 /// @author 0xtekgrinder
 /// @title Vault contract
 /// @notice Auto compounding vault for the warlord protocol with token to deposit being WAR and asset being stkWAR
-contract Vault is ERC4626, Ownable2Step, Pausable, ReentrancyGuard, AFees, ASwapper {
+contract Vault is ERC4626, Ownable2Step, Pausable, ReentrancyGuard, AFees, ASwapper, AGelato {
     using SafeTransferLib for ERC20;
     using FixedPointMathLib for uint256;
 
@@ -49,11 +50,13 @@ contract Vault is ERC4626, Ownable2Step, Pausable, ReentrancyGuard, AFees, ASwap
         address initialFeeRecipient,
         address initialFeeToken,
         address initialSwapRouter,
+        address initialGelato,
         address definitiveAsset
     )
         ERC4626(ERC20(definitiveAsset), "acWARToken", "acWAR")
         AFees(initialHarvestFee, initialFeeRecipient, initialFeeToken)
         ASwapper(initialSwapRouter)
+        AGelato(initialGelato)
     {
         if (initialStaker == address(0) || definitiveAsset == address(0)) {
             revert Errors.ZeroAddress();

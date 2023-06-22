@@ -14,7 +14,7 @@ library Errors {
     // Swapper errors
     error NoOutputTokens();
     error RatioOverflow();
-    error SwapError(bytes error);
+    error SwapError();
 
     // Gelato errors
     error NotGelato();
