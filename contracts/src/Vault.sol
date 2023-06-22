@@ -213,7 +213,11 @@ contract Vault is ERC4626, Ownable2Step, Pausable, ReentrancyGuard, AFees, ASwap
      * @param inputCallDatas swapper routes to swap to feeToken
      * @param outputCallDatas swapper routes to swap to more assets
      */
-    function harvest(address[] calldata inputTokens, bytes[] calldata inputCallDatas, bytes[] calldata outputCallDatas) external nonReentrant onlyGelato {
+    function harvest(address[] calldata inputTokens, bytes[] calldata inputCallDatas, bytes[] calldata outputCallDatas)
+        external
+        nonReentrant
+        onlyGelato
+    {
         IStaker(staker).claimAllRewards(address(this));
         // swap to fee token
         _swap(inputTokens, inputCallDatas);
@@ -222,7 +226,7 @@ contract Vault is ERC4626, Ownable2Step, Pausable, ReentrancyGuard, AFees, ASwap
         // swap to outputtokens with correct ratios
         uint256 length = outputTokens.length;
         address[] memory tokens = new address[](length);
-        for (uint i; i < length;) {
+        for (uint256 i; i < length;) {
             tokens[i] = feeToken;
             unchecked {
                 ++i;
@@ -231,7 +235,7 @@ contract Vault is ERC4626, Ownable2Step, Pausable, ReentrancyGuard, AFees, ASwap
         _swap(tokens, outputCallDatas);
         uint256[] memory amounts = new uint256[](length);
         address[] memory outputToensAddresses = getTokens();
-        for (uint i; i < length;) {
+        for (uint256 i; i < length;) {
             amounts[i] = ERC20(outputToensAddresses[i]).balanceOf(address(this));
             unchecked {
                 ++i;
