@@ -70,7 +70,9 @@ contract VaultTest is Test {
         vault.setHarvestFee(100);
     }
 
-    function testCannot_setHarvestFee_InvalidFee() public {
+    function testCannotFuzz_setHarvestFee_InvalidFee(uint256 amount) public {
+        amount = bound(amount, 10001, UINT256_MAX);
+
         vm.expectRevert(Errors.InvalidFee.selector);
         vm.prank(owner);
         vault.setHarvestFee(10001);
