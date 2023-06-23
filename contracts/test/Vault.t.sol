@@ -62,7 +62,7 @@ contract VaultTest is Test {
         assertEq(vault.harvestFee(), 100);
     }
 
-    function testCannot_setHarvestFee_NotOwner(address pranker) public {
+    function test_setHarvestFee_NotOwner(address pranker) public {
         vm.assume(pranker != owner);
 
         vm.prank(pranker);
@@ -70,7 +70,7 @@ contract VaultTest is Test {
         vault.setHarvestFee(100);
     }
 
-    function testCannotFuzz_setHarvestFee_InvalidFee(uint256 amount) public {
+    function testFuzz_setHarvestFee_InvalidFee(uint256 amount) public {
         amount = bound(amount, 10001, UINT256_MAX);
 
         vm.expectRevert(Errors.InvalidFee.selector);
@@ -86,7 +86,7 @@ contract VaultTest is Test {
         assertEq(vault.feeRecipient(), pranker);
     }
 
-    function testCannot_setFeeRecipient_NotOwner(address pranker) public {
+    function test_setFeeRecipient_NotOwner(address pranker) public {
         vm.assume(pranker != owner);
 
         vm.prank(pranker);
@@ -94,7 +94,7 @@ contract VaultTest is Test {
         vault.setFeeRecipient(pranker);
     }
 
-    function testCannot_setFeeRecipient_ZeroAddress() public {
+    function test_setFeeRecipient_ZeroAddress() public {
         vm.expectRevert(Errors.ZeroAddress.selector);
         vm.prank(owner);
         vault.setFeeRecipient(address(0));
@@ -106,7 +106,7 @@ contract VaultTest is Test {
         assertEq(address(vault.feeToken()), USDC);
     }
 
-    function testCannot_setFeeToken_NotOwner(address pranker) public {
+    function test_setFeeToken_NotOwner(address pranker) public {
         vm.assume(pranker != owner);
 
         vm.prank(pranker);
@@ -114,7 +114,7 @@ contract VaultTest is Test {
         vault.setFeeToken(USDC);
     }
 
-    function testCannot_setFeeToken_ZeroAddress() public {
+    function test_setFeeToken_ZeroAddress() public {
         vm.expectRevert(Errors.ZeroAddress.selector);
         vm.prank(owner);
         vault.setFeeToken(address(0));
@@ -134,7 +134,7 @@ contract VaultTest is Test {
         assertEq(vault.asset().allowance(address(vault), address(staker)), 0);
     }
 
-    function testCannot_setStaker_ZeroAddress() public {
+    function test_setStaker_ZeroAddress() public {
         vm.expectRevert(Errors.ZeroAddress.selector);
         vm.prank(owner);
         vault.setStaker(address(0));
@@ -173,7 +173,7 @@ contract VaultTest is Test {
         assertEqDecimal(vault.totalAssets(), amount, ERC20(address(vault.asset())).decimals());
     }
 
-    function testCannot_deposit_ZeroShares(address pranker) public {
+    function test_deposit_ZeroShares(address pranker) public {
         vm.assume(pranker != owner);
 
         vm.startPrank(pranker);
@@ -332,19 +332,19 @@ contract VaultTest is Test {
         assertEqDecimal(ERC20(USDC).balanceOf(owner), amount, ERC20(USDC).decimals());
     }
 
-    function testCannot_recoverERC20_ZeroAddress() public {
+    function test_recoverERC20_ZeroAddress() public {
         vm.prank(owner);
         vm.expectRevert(Errors.ZeroAddress.selector);
         vault.recoverERC20(address(0));
     }
 
-    function testCannot_recoverERC20_ZeroValue() public {
+    function test_recoverERC20_ZeroValue() public {
         vm.prank(owner);
         vm.expectRevert(Errors.ZeroValue.selector);
         vault.recoverERC20(USDC);
     }
 
-    function testCannot_recoverERC20_NotOwner(address pranker) public {
+    function test_recoverERC20_NotOwner(address pranker) public {
         vm.assume(pranker != owner);
 
         vm.prank(pranker);
@@ -358,7 +358,7 @@ contract VaultTest is Test {
         assertTrue(vault.paused());
     }
 
-    function testCannot_pause_NotOwner(address pranker) public {
+    function test_pause_NotOwner(address pranker) public {
         vm.assume(pranker != owner);
 
         vm.prank(pranker);
@@ -374,7 +374,7 @@ contract VaultTest is Test {
         assertFalse(vault.paused());
     }
 
-    function testCannot_unpause_NotOwner(address pranker) public {
+    function test_unpause_NotOwner(address pranker) public {
         vm.assume(pranker != owner);
 
         vm.prank(pranker);
@@ -401,13 +401,13 @@ contract VaultTest is Test {
         assert(swapper.swapRouter() == vm.addr(0x4));
     }
 
-    function testCannot_setSwapRouter_zeroAddress() public {
+    function test_setSwapRouter_zeroAddress() public {
         vm.expectRevert(Errors.ZeroAddress.selector);
         vm.prank(owner);
         swapper.setSwapRouter(vm.addr(0x4));
     }
 
-    function testCannot_setSwapRouter_notOwner() public {
+    function test_setSwapRouter_notOwner() public {
 
     }
 
@@ -415,11 +415,11 @@ contract VaultTest is Test {
 
     }
 
-    function testCannot_setOutputTokens_noTokens() public {
+    function test_setOutputTokens_noTokens() public {
 
     }
 
-    function testCannot_setOutputTokens_exceedsWeight() public {
+    function test_setOutputTokens_exceedsWeight() public {
 
     }*/
 }
