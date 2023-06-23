@@ -14,8 +14,8 @@ contract VaultTest is Test {
     // doesn't fork the staker as it causes too much problem
     WarStaker staker;
 
-    address public owner = vm.addr(0x1);
-    address public gelatoSender = vm.addr(0x2);
+    address public owner = makeAddr("owner");
+    address public gelatoSender = makeAddr("gelatoSender");
 
     function setUp() public {
         vm.startPrank(owner);
@@ -218,7 +218,9 @@ contract VaultTest is Test {
         vault.deposit(amount2, pranker2);
         vm.stopPrank();
 
-        assertEqDecimal(vault.asset().balanceOf(address(staker)), amount1 + amount2, ERC20(address(vault.asset())).decimals());
+        assertEqDecimal(
+            vault.asset().balanceOf(address(staker)), amount1 + amount2, ERC20(address(vault.asset())).decimals()
+        );
         assertEqDecimal(vault.asset().balanceOf(address(vault)), 0, ERC20(address(vault.asset())).decimals());
         assertEqDecimal(staker.balanceOf(address(vault)), amount1 + amount2, staker.decimals());
         assertEqDecimal(vault.totalAssets(), amount1 + amount2, ERC20(address(vault.asset())).decimals());
@@ -266,7 +268,9 @@ contract VaultTest is Test {
         vault.mint(amount2, pranker2);
         vm.stopPrank();
 
-        assertEqDecimal(vault.asset().balanceOf(address(staker)), amount1 + amount2, ERC20(address(vault.asset())).decimals());
+        assertEqDecimal(
+            vault.asset().balanceOf(address(staker)), amount1 + amount2, ERC20(address(vault.asset())).decimals()
+        );
         assertEqDecimal(vault.asset().balanceOf(address(vault)), 0, ERC20(address(vault.asset())).decimals());
         assertEqDecimal(staker.balanceOf(address(vault)), amount1 + amount2, staker.decimals());
         assertEqDecimal(vault.totalAssets(), assets1 + assets2, ERC20(address(vault.asset())).decimals());

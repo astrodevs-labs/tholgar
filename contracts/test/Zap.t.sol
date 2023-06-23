@@ -8,8 +8,8 @@ import {Zap} from "../src/Zap.sol";
 contract ZapTest is Test {
     Zap zap;
 
-    address public alice = vm.addr(0x1);
-    address public bernard = vm.addr(0x2);
+    address public alice = makeAddr("alice");
+    address public bernard = makeAddr("bernard");
 
     function setUp() public {}
 }
