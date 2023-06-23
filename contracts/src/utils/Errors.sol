@@ -17,5 +17,5 @@ library Errors {
     error SwapError();
 
     // Gelato errors
-    error NotGelato();
+    error NotOperator();
 }

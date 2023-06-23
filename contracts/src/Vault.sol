@@ -5,7 +5,6 @@ pragma solidity 0.8.20;
 import {ERC20} from "solmate/tokens/ERC20.sol";
 import {IStaker} from "warlord/interfaces/IStaker.sol";
 import {IMinter} from "warlord/interfaces/IMinter.sol";
-import {Ownable2Step} from "openzeppelin-contracts/access/Ownable2Step.sol";
 import {Pausable} from "openzeppelin-contracts/security/Pausable.sol";
 import {ERC4626} from "solmate/mixins/ERC4626.sol";
 import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
@@ -13,13 +12,13 @@ import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
 import {ReentrancyGuard} from "solmate/utils/ReentrancyGuard.sol";
 import {AFees} from "./abstracts/AFees.sol";
 import {ASwapper} from "./abstracts/ASwapper.sol";
-import {AGelato} from "./abstracts/AGelato.sol";
+import {AOperator} from "./abstracts/AOperator.sol";
 import {Errors} from "./utils/Errors.sol";
 
 /// @author 0xtekgrinder
 /// @title Vault contract
 /// @notice Auto compounding vault for the warlord protocol with token to deposit being WAR and asset being stkWAR
-contract Vault is ERC4626, Ownable2Step, Pausable, ReentrancyGuard, AFees, ASwapper, AGelato {
+contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator {
     using SafeTransferLib for ERC20;
     using FixedPointMathLib for uint256;
 
@@ -57,13 +56,13 @@ contract Vault is ERC4626, Ownable2Step, Pausable, ReentrancyGuard, AFees, ASwap
         address initialFeeRecipient,
         address initialFeeToken,
         address initialSwapRouter,
-        address initialGelato,
+        address initialOperator,
         address definitiveAsset
     )
         ERC4626(ERC20(definitiveAsset), "acWARToken", "acWAR")
         AFees(initialHarvestFee, initialFeeRecipient, initialFeeToken)
         ASwapper(initialSwapRouter)
-        AGelato(initialGelato)
+        AOperator(initialOperator)
     {
         if (initialStaker == address(0) || definitiveAsset == address(0) || initialMinter == address(0)) {
             revert Errors.ZeroAddress();
@@ -220,7 +219,7 @@ contract Vault is ERC4626, Ownable2Step, Pausable, ReentrancyGuard, AFees, ASwap
     function harvest(address[] calldata inputTokens, bytes[] calldata inputCallDatas, bytes[] calldata outputCallDatas)
         external
         nonReentrant
-        onlyGelato
+        onlyOperator
     {
         IStaker(staker).claimAllRewards(address(this));
         // swap to fee token
