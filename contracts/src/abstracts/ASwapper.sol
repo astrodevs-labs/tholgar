@@ -32,7 +32,7 @@ abstract contract ASwapper is Ownable2Step {
                                 CONSTANTS
     //////////////////////////////////////////////////////////////*/
 
-    uint256 public constant MAX_WEIGHT = 100_000;
+    uint256 public constant MAX_BPS = 10_000;
 
     /*//////////////////////////////////////////////////////////////
                             MUTABLE VARIABLES
@@ -43,7 +43,7 @@ abstract contract ASwapper is Ownable2Step {
      */
     struct OutputToken {
         address token;
-        uint256 ratio; // weight (on MAX_WEIGHT total)
+        uint256 ratio; // weight (on MAX_BPS total)
         uint256 decimals;
     }
     /**
@@ -62,7 +62,7 @@ abstract contract ASwapper is Ownable2Step {
     //////////////////////////////////////////////////////////////*/
 
     /**
-     * @notice Modifier used to check if output tokens array does not have total weight that exceeds MAX_WEIGHT or if the array is empty
+     * @notice Modifier used to check if output tokens array does not have total weight that exceeds MAX_BPS or if the array is empty
      */
     modifier verifyRatios(OutputToken[] memory newOutputTokens) {
         _checkRatios(newOutputTokens);
@@ -70,7 +70,7 @@ abstract contract ASwapper is Ownable2Step {
     }
 
     /**
-     *  @notice Modifier implementation to check if output tokens array does not have total weight that exceeds MAX_WEIGHT or if the array is empty
+     *  @notice Modifier implementation to check if output tokens array does not have total weight that exceeds MAX_BPS or if the array is empty
      */
     function _checkRatios(OutputToken[] memory newOutputTokens) internal pure {
         uint256 total;
@@ -83,7 +83,7 @@ abstract contract ASwapper is Ownable2Step {
                 ++i;
             }
         }
-        if (total > MAX_WEIGHT) revert Errors.RatioOverflow();
+        if (total > MAX_BPS) revert Errors.RatioOverflow();
     }
 
     /*//////////////////////////////////////////////////////////////
