@@ -4,11 +4,8 @@ bytecode_hash = "none"
 optimizer_runs = 1000000
 verbosity = 2
 
-[profile.default.fuzz]
-runs = 100
-
 [profile.intense.fuzz]
-runs = 1000
+runs = 10_000
 
 [rpc_endpoints]
 ethereum_mainet = '${MAINET_RPC_URL}'
