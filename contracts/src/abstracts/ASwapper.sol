@@ -102,6 +102,23 @@ abstract contract ASwapper is Ownable2Step {
                             ADMIN LOGIC
     //////////////////////////////////////////////////////////////*/
 
+     function getTokens() public view returns (address[] memory) {
+        uint256 length = outputTokens.length;
+        address[] memory tokens = new address[](length);
+
+        for (uint256 i; i < length;) {
+            tokens[i] = outputTokens[i].token;
+            unchecked {
+                ++i;
+            }
+        }
+        return tokens;
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                            ADMIN LOGIC
+    //////////////////////////////////////////////////////////////*/
+
     /**
      *  @notice Must calll this function in order to let the contract work correctly
      */
@@ -146,19 +163,6 @@ abstract contract ASwapper is Ownable2Step {
             }
             revert Errors.SwapError();
         }
-    }
-
-    function getTokens() public view returns (address[] memory) {
-        uint256 length = outputTokens.length;
-        address[] memory tokens = new address[](length);
-
-        for (uint256 i; i < length;) {
-            tokens[i] = outputTokens[i].token;
-            unchecked {
-                ++i;
-            }
-        }
-        return tokens;
     }
 
     /*//////////////////////////////////////////////////////////////
