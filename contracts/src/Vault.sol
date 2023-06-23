@@ -207,6 +207,10 @@ contract Vault is ERC4626, Ownable2Step, Pausable, ReentrancyGuard, AFees, ASwap
         IStaker(staker).unstake(assets, address(this));
     }
 
+    /*//////////////////////////////////////////////////////////////
+                            HARVEST LOGIC
+    //////////////////////////////////////////////////////////////*/
+
     /**
      * @notice Harvest all rewards from staker and turn them into more staked assets
      * @param inputTokens reward tokens claimed from staker
