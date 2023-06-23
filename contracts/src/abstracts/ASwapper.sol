@@ -5,7 +5,6 @@ pragma solidity 0.8.20;
 import {ERC20} from "solmate/tokens/ERC20.sol";
 import {Ownable2Step} from "openzeppelin-contracts/access/Ownable2Step.sol";
 import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
-import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
 import {Errors} from "../utils/Errors.sol";
 
 /**
@@ -15,7 +14,6 @@ import {Errors} from "../utils/Errors.sol";
  */
 abstract contract ASwapper is Ownable2Step {
     using SafeTransferLib for ERC20;
-    using FixedPointMathLib for uint256;
 
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
