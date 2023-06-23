@@ -43,8 +43,8 @@ abstract contract ASwapper is Ownable2Step {
      */
     struct OutputToken {
         address token;
+        uint8 decimals;
         uint256 ratio; // weight (on MAX_BPS total)
-        uint256 decimals;
     }
     /**
      *  @notice list of tokens to swap to when receiving harvest rewards
