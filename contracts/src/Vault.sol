@@ -39,7 +39,6 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
      * @notice Address of the stkWAR token
      */
     address public staker;
-
     /**
      *  @notice Address of the WAR minter contract
      */
@@ -83,7 +82,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
      * @param newStaker the new staker contract
      * @custom:requires owner
      */
-    function setStaker(address newStaker) external nonReentrant onlyOwner {
+    function setStaker(address newStaker) external onlyOwner {
         if (newStaker == address(0)) revert Errors.ZeroAddress();
         address oldStaker = staker;
 
