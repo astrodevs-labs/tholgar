@@ -187,10 +187,8 @@ contract VaultTest is Test {
     }
 
     function testFuzz_deposit_multiple(uint256 amount1, uint256 amount2) public {
-        vm.assume(amount1 != 0);
-        vm.assume(amount2 != 0);
-        vm.assume(amount1 < 3000 ether);
-        vm.assume(amount2 < 3000 ether);
+        amount1 = bound(amount1, 1, 3000 ether);
+        amount2 = bound(amount2, 1, 3000 ether);
 
         deal(address(vault.asset()), alice, amount1);
         deal(address(vault.asset()), bernard, amount2);
@@ -232,10 +230,8 @@ contract VaultTest is Test {
     }
 
     function testFuzz_mint_multiple(uint256 amount1, uint256 amount2) public {
-        vm.assume(amount1 != 0);
-        vm.assume(amount2 != 0);
-        vm.assume(amount1 < 3000 ether);
-        vm.assume(amount2 < 3000 ether);
+        amount1 = bound(amount1, 1, 3000 ether);
+        amount2 = bound(amount2, 1, 3000 ether);
 
         uint256 assets1 = vault.convertToAssets(amount1);
         uint256 assets2 = vault.convertToAssets(amount2);
@@ -269,7 +265,7 @@ contract VaultTest is Test {
 
     function testFuzz_redeem_normal(uint256 amount, uint256 amount2) public {
         vm.assume(amount2 != 0);
-        vm.assume(amount > amount2);
+        amount = bound(amount, amount2, UINT256_MAX);
 
         deal(address(staker), address(vault), amount);
         deal(address(vault.asset()), address(staker), amount);
@@ -287,7 +283,7 @@ contract VaultTest is Test {
 
     function testFuzz_withdraw_normal(uint256 amount, uint256 amount2) public {
         vm.assume(amount2 != 0);
-        vm.assume(amount > amount2);
+        amount = bound(amount, amount2, UINT256_MAX);
 
         deal(address(staker), address(vault), amount);
         deal(address(vault.asset()), address(staker), amount);
