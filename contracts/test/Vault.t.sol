@@ -3,21 +3,23 @@
 pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
-import {Vault, Errors} from "../src/Vault.sol";
-import {WAR, USDC, AUGUSTUS_SWAPPER, MINTER} from "./utils/constants.sol";
+import {Vault} from "../src/Vault.sol";
 import {WarStaker} from "warlord/WarStaker.sol";
 import {ERC20} from "solmate/tokens/ERC20.sol";
 import {ASwapper} from "../src/abstracts/ASwapper.sol";
+import {Errors} from "../src/utils/Errors.sol";
+import {AutoCompounderTest} from "./utils/AutoCompounderTest.sol";
 
-contract VaultTest is Test {
+contract VaultTest is AutoCompounderTest {
     Vault vault;
     // doesn't fork the staker as it causes too much problem
     WarStaker staker;
 
-    address public owner = makeAddr("owner");
     address public gelatoSender = makeAddr("gelatoSender");
 
-    function setUp() public {
+    function setUp() public override {
+        super.setUp();
+
         vm.startPrank(owner);
         ASwapper.OutputToken[] memory tokens = new ASwapper.OutputToken[](1);
         tokens[0] = ASwapper.OutputToken(USDC, 18, 10_000);
@@ -62,7 +64,7 @@ contract VaultTest is Test {
         assertEq(vault.harvestFee(), 100);
     }
 
-    function test_setHarvestFee_NotOwner(address pranker) public {
+    function testFuzz_setHarvestFee_NotOwner(address pranker) public {
         vm.assume(pranker != owner);
 
         vm.prank(pranker);
@@ -78,15 +80,16 @@ contract VaultTest is Test {
         vault.setHarvestFee(10001);
     }
 
-    function test_setFeeRecipient_normal(address pranker) public {
+    function testFuzz_setFeeRecipient_normal(address pranker) public {
         vm.assume(pranker != owner);
+        vm.assume(pranker != address(0));
 
         vm.prank(owner);
         vault.setFeeRecipient(pranker);
         assertEq(vault.feeRecipient(), pranker);
     }
 
-    function test_setFeeRecipient_NotOwner(address pranker) public {
+    function testFuzz_setFeeRecipient_NotOwner(address pranker) public {
         vm.assume(pranker != owner);
 
         vm.prank(pranker);
@@ -142,6 +145,7 @@ contract VaultTest is Test {
 
     function testFuzz_setStaker_NotOwner(address pranker) public {
         vm.assume(pranker != owner);
+        vm.assume(pranker != address(0));
 
         WarStaker newStaker = new WarStaker(address(vault.asset()));
 
@@ -173,7 +177,7 @@ contract VaultTest is Test {
         assertEqDecimal(vault.totalAssets(), amount, ERC20(address(vault.asset())).decimals());
     }
 
-    function test_deposit_ZeroShares(address pranker) public {
+    function testFuzz_deposit_ZeroShares(address pranker) public {
         vm.assume(pranker != owner);
 
         vm.startPrank(pranker);
@@ -278,7 +282,7 @@ contract VaultTest is Test {
         assertEqDecimal(vault.balanceOf(pranker2), amount2, vault.decimals());
     }
 
-    function test_redeem_ZeroAssets(address pranker) public {
+    function testFuzz_redeem_ZeroAssets(address pranker) public {
         vm.assume(pranker != owner);
 
         vm.startPrank(pranker);
@@ -348,8 +352,9 @@ contract VaultTest is Test {
         vault.recoverERC20(USDC);
     }
 
-    function test_recoverERC20_NotOwner(address pranker) public {
+    function testFuzz_recoverERC20_NotOwner(address pranker) public {
         vm.assume(pranker != owner);
+        vm.assume(pranker != address(0));
 
         vm.prank(pranker);
         vm.expectRevert("Ownable: caller is not the owner");
@@ -362,7 +367,7 @@ contract VaultTest is Test {
         assertTrue(vault.paused());
     }
 
-    function test_pause_NotOwner(address pranker) public {
+    function testFuzz_pause_NotOwner(address pranker) public {
         vm.assume(pranker != owner);
 
         vm.prank(pranker);
@@ -378,7 +383,7 @@ contract VaultTest is Test {
         assertFalse(vault.paused());
     }
 
-    function test_unpause_NotOwner(address pranker) public {
+    function testFuzz_unpause_NotOwner(address pranker) public {
         vm.assume(pranker != owner);
 
         vm.prank(pranker);

@@ -1,16 +1,13 @@
 SHELL := /bin/bash
 
 test:
-	source .env; \
-	forge test --fork-url $${FORK_URL}
+	forge test
 
 coverage:
-	source .env; \
-	forge coverage --fork-url $${FORK_URL}
+	forge coverage
 
 gas-report:
-	source .env; \
-	forge test --fork-url $${FORK_URL} --gas-report
+	forge test --gas-report
 
 compile:
 	forge compile
