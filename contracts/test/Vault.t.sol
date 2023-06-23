@@ -14,10 +14,8 @@ contract VaultTest is Test {
     // doesn't fork the staker as it causes too much problem
     WarStaker staker;
 
-    address public alice = vm.addr(0x1);
-    address public bernard = vm.addr(0x2);
-    address public owner = vm.addr(0x3);
-    address public gelatoSender = vm.addr(0x4);
+    address public owner = vm.addr(0x1);
+    address public gelatoSender = vm.addr(0x2);
 
     function setUp() public {
         vm.startPrank(owner);
@@ -64,9 +62,11 @@ contract VaultTest is Test {
         assertEq(vault.harvestFee(), 100);
     }
 
-    function testCannot_setHarvestFee_NotOwner() public {
+    function testCannot_setHarvestFee_NotOwner(address pranker) public {
+        vm.assume(pranker != owner);
+
+        vm.prank(pranker);
         vm.expectRevert("Ownable: caller is not the owner");
-        vm.prank(alice);
         vault.setHarvestFee(100);
     }
 
@@ -78,16 +78,20 @@ contract VaultTest is Test {
         vault.setHarvestFee(10001);
     }
 
-    function test_setFeeRecipient_normal() public {
+    function test_setFeeRecipient_normal(address pranker) public {
+        vm.assume(pranker != owner);
+
         vm.prank(owner);
-        vault.setFeeRecipient(alice);
-        assertEq(vault.feeRecipient(), alice);
+        vault.setFeeRecipient(pranker);
+        assertEq(vault.feeRecipient(), pranker);
     }
 
-    function testCannot_setFeeRecipient_NotOwner() public {
+    function testCannot_setFeeRecipient_NotOwner(address pranker) public {
+        vm.assume(pranker != owner);
+
+        vm.prank(pranker);
         vm.expectRevert("Ownable: caller is not the owner");
-        vm.prank(alice);
-        vault.setFeeRecipient(alice);
+        vault.setFeeRecipient(pranker);
     }
 
     function testCannot_setFeeRecipient_ZeroAddress() public {
@@ -102,9 +106,11 @@ contract VaultTest is Test {
         assertEq(address(vault.feeToken()), USDC);
     }
 
-    function testCannot_setFeeToken_NotOwner() public {
+    function testCannot_setFeeToken_NotOwner(address pranker) public {
+        vm.assume(pranker != owner);
+
+        vm.prank(pranker);
         vm.expectRevert("Ownable: caller is not the owner");
-        vm.prank(alice);
         vault.setFeeToken(USDC);
     }
 
@@ -134,11 +140,13 @@ contract VaultTest is Test {
         vault.setStaker(address(0));
     }
 
-    function test_setStaker_NotOwner() public {
+    function testFuzz_setStaker_NotOwner(address pranker) public {
+        vm.assume(pranker != owner);
+
         WarStaker newStaker = new WarStaker(address(vault.asset()));
 
         vm.expectRevert("Ownable: caller is not the owner");
-        vm.prank(alice);
+        vm.prank(pranker);
         vault.setStaker(address(newStaker));
     }
 
@@ -165,141 +173,152 @@ contract VaultTest is Test {
         assertEqDecimal(vault.totalAssets(), amount, ERC20(address(vault.asset())).decimals());
     }
 
-    function testCannot_deposit_ZeroShares() public {
-        vm.startPrank(alice);
+    function testCannot_deposit_ZeroShares(address pranker) public {
+        vm.assume(pranker != owner);
+
+        vm.startPrank(pranker);
         vm.expectRevert("ZERO_SHARES");
-        vault.deposit(0, alice);
+        vault.deposit(0, pranker);
         vm.stopPrank();
     }
 
-    function testFuzz_deposit_normal(uint256 amount) public {
+    function testFuzz_deposit_normal(uint256 amount, address pranker) public {
         vm.assume(amount != 0);
-        deal(address(vault.asset()), alice, amount);
+        vm.assume(pranker != owner);
+        deal(address(vault.asset()), pranker, amount);
 
-        vm.startPrank(alice);
+        vm.startPrank(pranker);
         vault.asset().approve(address(vault), amount);
-        vault.deposit(amount, alice);
+        vault.deposit(amount, pranker);
         vm.stopPrank();
 
         assertEqDecimal(vault.asset().balanceOf(address(staker)), amount, ERC20(address(vault.asset())).decimals());
         assertEqDecimal(vault.asset().balanceOf(address(vault)), 0, ERC20(address(vault.asset())).decimals());
         assertEqDecimal(staker.balanceOf(address(vault)), amount, staker.decimals());
         assertEqDecimal(vault.totalAssets(), amount, ERC20(address(vault.asset())).decimals());
-        assertEqDecimal(vault.balanceOf(alice), amount, vault.decimals());
+        assertEqDecimal(vault.balanceOf(pranker), amount, vault.decimals());
     }
 
-    function testFuzz_deposit_multiple(uint256 amount1, uint256 amount2) public {
+    function testFuzz_deposit_multiple(uint256 amount1, uint256 amount2, address pranker1, address pranker2) public {
         amount1 = bound(amount1, 1, 3000 ether);
         amount2 = bound(amount2, 1, 3000 ether);
+        vm.assume(pranker1 != owner);
+        vm.assume(pranker2 != owner);
 
-        deal(address(vault.asset()), alice, amount1);
-        deal(address(vault.asset()), bernard, amount2);
+        deal(address(vault.asset()), pranker1, amount1);
+        deal(address(vault.asset()), pranker2, amount2);
 
-        vm.startPrank(alice);
+        vm.startPrank(pranker1);
         vault.asset().approve(address(vault), amount1);
-        vault.deposit(amount1, alice);
+        vault.deposit(amount1, pranker1);
         vm.stopPrank();
 
-        vm.startPrank(bernard);
+        vm.startPrank(pranker2);
         vault.asset().approve(address(vault), amount2);
-        vault.deposit(amount2, bernard);
+        vault.deposit(amount2, pranker2);
         vm.stopPrank();
 
         assertEqDecimal(vault.asset().balanceOf(address(staker)), amount1 + amount2, ERC20(address(vault.asset())).decimals());
         assertEqDecimal(vault.asset().balanceOf(address(vault)), 0, ERC20(address(vault.asset())).decimals());
         assertEqDecimal(staker.balanceOf(address(vault)), amount1 + amount2, staker.decimals());
         assertEqDecimal(vault.totalAssets(), amount1 + amount2, ERC20(address(vault.asset())).decimals());
-        assertEqDecimal(vault.balanceOf(alice), amount1, vault.decimals());
-        assertEqDecimal(vault.balanceOf(bernard), amount2, vault.decimals());
+        assertEqDecimal(vault.balanceOf(pranker1), amount1, vault.decimals());
+        assertEqDecimal(vault.balanceOf(pranker2), amount2, vault.decimals());
     }
 
-    function testFuzz_mint_normal(uint256 amount) public {
+    function testFuzz_mint_normal(uint256 amount, address pranker) public {
         vm.assume(amount != 0);
+        vm.assume(pranker != owner);
 
         uint256 assets = vault.convertToAssets(amount);
-        deal(address(vault.asset()), alice, assets);
+        deal(address(vault.asset()), pranker, assets);
 
-        vm.startPrank(alice);
+        vm.startPrank(pranker);
         vault.asset().approve(address(vault), assets);
-        vault.mint(amount, alice);
+        vault.mint(amount, pranker);
         vm.stopPrank();
 
         assertEqDecimal(vault.asset().balanceOf(address(staker)), amount, ERC20(address(vault.asset())).decimals());
         assertEqDecimal(vault.asset().balanceOf(address(vault)), 0, ERC20(address(vault.asset())).decimals());
         assertEqDecimal(staker.balanceOf(address(vault)), amount, staker.decimals());
         assertEqDecimal(vault.totalAssets(), assets, ERC20(address(vault.asset())).decimals());
-        assertEqDecimal(vault.balanceOf(alice), amount, vault.decimals());
+        assertEqDecimal(vault.balanceOf(pranker), amount, vault.decimals());
     }
 
-    function testFuzz_mint_multiple(uint256 amount1, uint256 amount2) public {
+    function testFuzz_mint_multiple(uint256 amount1, uint256 amount2, address pranker1, address pranker2) public {
         amount1 = bound(amount1, 1, 3000 ether);
         amount2 = bound(amount2, 1, 3000 ether);
+        vm.assume(pranker1 != owner);
+        vm.assume(pranker2 != owner);
 
         uint256 assets1 = vault.convertToAssets(amount1);
         uint256 assets2 = vault.convertToAssets(amount2);
-        deal(address(vault.asset()), alice, assets1);
-        deal(address(vault.asset()), bernard, assets2);
+        deal(address(vault.asset()), pranker1, assets1);
+        deal(address(vault.asset()), pranker2, assets2);
 
-        vm.startPrank(alice);
+        vm.startPrank(pranker1);
         vault.asset().approve(address(vault), assets1);
-        vault.mint(amount1, alice);
+        vault.mint(amount1, pranker1);
         vm.stopPrank();
 
-        vm.startPrank(bernard);
+        vm.startPrank(pranker2);
         vault.asset().approve(address(vault), assets2);
-        vault.mint(amount2, bernard);
+        vault.mint(amount2, pranker2);
         vm.stopPrank();
 
         assertEqDecimal(vault.asset().balanceOf(address(staker)), amount1 + amount2, ERC20(address(vault.asset())).decimals());
         assertEqDecimal(vault.asset().balanceOf(address(vault)), 0, ERC20(address(vault.asset())).decimals());
         assertEqDecimal(staker.balanceOf(address(vault)), amount1 + amount2, staker.decimals());
         assertEqDecimal(vault.totalAssets(), assets1 + assets2, ERC20(address(vault.asset())).decimals());
-        assertEqDecimal(vault.balanceOf(alice), amount1, vault.decimals());
-        assertEqDecimal(vault.balanceOf(bernard), amount2, vault.decimals());
+        assertEqDecimal(vault.balanceOf(pranker1), amount1, vault.decimals());
+        assertEqDecimal(vault.balanceOf(pranker2), amount2, vault.decimals());
     }
 
-    function test_redeem_ZeroAssets() public {
-        vm.startPrank(alice);
+    function test_redeem_ZeroAssets(address pranker) public {
+        vm.assume(pranker != owner);
+
+        vm.startPrank(pranker);
         vm.expectRevert("ZERO_ASSETS");
-        vault.redeem(0, alice, alice);
+        vault.redeem(0, pranker, pranker);
         vm.stopPrank();
     }
 
-    function testFuzz_redeem_normal(uint256 amount, uint256 amount2) public {
+    function testFuzz_redeem_normal(uint256 amount, uint256 amount2, address pranker) public {
         vm.assume(amount2 != 0);
+        vm.assume(pranker != owner);
         amount = bound(amount, amount2, UINT256_MAX);
 
         deal(address(staker), address(vault), amount);
         deal(address(vault.asset()), address(staker), amount);
-        deal(address(vault), alice, amount2);
+        deal(address(vault), pranker, amount2);
 
-        vm.startPrank(alice);
-        uint256 assets = vault.redeem(amount2, alice, alice);
+        vm.startPrank(pranker);
+        uint256 assets = vault.redeem(amount2, pranker, pranker);
         vm.stopPrank();
 
-        assertEqDecimal(vault.asset().balanceOf(alice), assets, ERC20(address(vault.asset())).decimals());
+        assertEqDecimal(vault.asset().balanceOf(pranker), assets, ERC20(address(vault.asset())).decimals());
         assertEqDecimal(staker.balanceOf(address(vault)), amount - assets, staker.decimals());
-        assertEqDecimal(vault.balanceOf(alice), 0, vault.decimals());
+        assertEqDecimal(vault.balanceOf(pranker), 0, vault.decimals());
         assertEqDecimal(vault.totalAssets(), amount - assets, ERC20(address(vault.asset())).decimals());
     }
 
-    function testFuzz_withdraw_normal(uint256 amount, uint256 amount2) public {
+    function testFuzz_withdraw_normal(uint256 amount, uint256 amount2, address pranker) public {
         vm.assume(amount2 != 0);
         amount = bound(amount, amount2, UINT256_MAX);
 
         deal(address(staker), address(vault), amount);
         deal(address(vault.asset()), address(staker), amount);
-        deal(address(vault), alice, amount2);
+        deal(address(vault), pranker, amount2);
 
         uint256 assets = vault.convertToAssets(amount2);
 
-        vm.startPrank(alice);
-        vault.withdraw(assets, alice, alice);
+        vm.startPrank(pranker);
+        vault.withdraw(assets, pranker, pranker);
         vm.stopPrank();
 
-        assertEqDecimal(vault.asset().balanceOf(alice), assets, ERC20(address(vault.asset())).decimals());
+        assertEqDecimal(vault.asset().balanceOf(pranker), assets, ERC20(address(vault.asset())).decimals());
         assertEqDecimal(staker.balanceOf(address(vault)), amount - assets, staker.decimals());
-        assertEqDecimal(vault.balanceOf(alice), 0, vault.decimals());
+        assertEqDecimal(vault.balanceOf(pranker), 0, vault.decimals());
         assertEqDecimal(vault.totalAssets(), amount - assets, ERC20(address(vault.asset())).decimals());
     }
 
@@ -325,8 +344,10 @@ contract VaultTest is Test {
         vault.recoverERC20(USDC);
     }
 
-    function testCannot_recoverERC20_NotOwner() public {
-        vm.prank(alice);
+    function testCannot_recoverERC20_NotOwner(address pranker) public {
+        vm.assume(pranker != owner);
+
+        vm.prank(pranker);
         vm.expectRevert("Ownable: caller is not the owner");
         vault.recoverERC20(USDC);
     }
@@ -337,8 +358,10 @@ contract VaultTest is Test {
         assertTrue(vault.paused());
     }
 
-    function testCannot_pause_NotOwner() public {
-        vm.prank(alice);
+    function testCannot_pause_NotOwner(address pranker) public {
+        vm.assume(pranker != owner);
+
+        vm.prank(pranker);
         vm.expectRevert("Ownable: caller is not the owner");
         vault.pause();
     }
@@ -351,8 +374,10 @@ contract VaultTest is Test {
         assertFalse(vault.paused());
     }
 
-    function testCannot_unpause_NotOwner() public {
-        vm.prank(alice);
+    function testCannot_unpause_NotOwner(address pranker) public {
+        vm.assume(pranker != owner);
+
+        vm.prank(pranker);
         vm.expectRevert("Ownable: caller is not the owner");
         vault.unpause();
     }
