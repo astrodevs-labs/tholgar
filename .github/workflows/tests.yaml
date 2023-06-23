@@ -1,6 +1,9 @@
 name: Tests
 
-on: [push]
+on:
+  push:
+    paths:
+      - contracts/**/*
 
 jobs:
   tests:
