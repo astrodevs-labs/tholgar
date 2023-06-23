@@ -30,7 +30,7 @@ contract VaultTest is Test {
     }
 
     function test_deploy_harvestFee() public {
-        assertEq(vault.harvestFee(), 500);
+        assertEqDecimal(vault.harvestFee(), 500, 2);
     }
 
     function test_deploy_feeRecipient() public {
@@ -42,7 +42,7 @@ contract VaultTest is Test {
     }
 
     function test_deploy_paused() public {
-        assertEq(vault.paused(), false);
+        assertFalse(vault.paused());
     }
 
     function test_deploy_owner() public {
@@ -119,9 +119,9 @@ contract VaultTest is Test {
         vault.setStaker(address(newStaker));
 
         assertEq(vault.staker(), address(newStaker));
-        assertEq(vault.asset().balanceOf(address(vault)), 0);
-        assertEq(newStaker.balanceOf(address(vault)), 0);
-        assertEq(staker.balanceOf(address(vault)), 0);
+        assertEqDecimal(vault.asset().balanceOf(address(vault)), 0, ERC20(address(vault.asset())).decimals());
+        assertEqDecimal(newStaker.balanceOf(address(vault)), 0, newStaker.decimals());
+        assertEqDecimal(staker.balanceOf(address(vault)), 0, staker.decimals());
         assertEq(vault.asset().allowance(address(vault), address(newStaker)), UINT256_MAX);
         assertEq(vault.asset().allowance(address(vault), address(staker)), 0);
     }
@@ -150,9 +150,9 @@ contract VaultTest is Test {
         vault.setStaker(address(newStaker));
 
         assertEq(vault.staker(), address(newStaker));
-        assertEq(vault.asset().balanceOf(address(vault)), 0);
-        assertEq(newStaker.balanceOf(address(vault)), amount);
-        assertEq(staker.balanceOf(address(vault)), 0);
+        assertEqDecimal(vault.asset().balanceOf(address(vault)), 0, ERC20(address(vault.asset())).decimals());
+        assertEqDecimal(newStaker.balanceOf(address(vault)), amount, newStaker.decimals());
+        assertEqDecimal(staker.balanceOf(address(vault)), 0, staker.decimals());
         assertEq(vault.asset().allowance(address(vault), address(newStaker)), UINT256_MAX);
         assertEq(vault.asset().allowance(address(vault), address(staker)), 0);
     }
@@ -160,7 +160,7 @@ contract VaultTest is Test {
     function testFuzz_totalAssets_normal(uint256 amount) public {
         deal(address(staker), address(vault), amount);
 
-        assertEq(vault.totalAssets(), amount);
+        assertEqDecimal(vault.totalAssets(), amount, ERC20(address(vault.asset())).decimals());
     }
 
     function testCannot_deposit_ZeroShares() public {
@@ -179,11 +179,11 @@ contract VaultTest is Test {
         vault.deposit(amount, alice);
         vm.stopPrank();
 
-        assertEq(vault.asset().balanceOf(address(staker)), amount);
-        assertEq(vault.asset().balanceOf(address(vault)), 0);
-        assertEq(staker.balanceOf(address(vault)), amount);
-        assertEq(vault.totalAssets(), amount);
-        assertEq(vault.balanceOf(alice), amount);
+        assertEqDecimal(vault.asset().balanceOf(address(staker)), amount, ERC20(address(vault.asset())).decimals());
+        assertEqDecimal(vault.asset().balanceOf(address(vault)), 0, ERC20(address(vault.asset())).decimals());
+        assertEqDecimal(staker.balanceOf(address(vault)), amount, staker.decimals());
+        assertEqDecimal(vault.totalAssets(), amount, ERC20(address(vault.asset())).decimals());
+        assertEqDecimal(vault.balanceOf(alice), amount, vault.decimals());
     }
 
     function testFuzz_deposit_multiple(uint256 amount1, uint256 amount2) public {
@@ -205,12 +205,12 @@ contract VaultTest is Test {
         vault.deposit(amount2, bernard);
         vm.stopPrank();
 
-        assertEq(vault.asset().balanceOf(address(staker)), amount1 + amount2);
-        assertEq(vault.asset().balanceOf(address(vault)), 0);
-        assertEq(staker.balanceOf(address(vault)), amount1 + amount2);
-        assertEq(vault.totalAssets(), amount1 + amount2);
-        assertEq(vault.balanceOf(alice), amount1);
-        assertEq(vault.balanceOf(bernard), amount2);
+        assertEqDecimal(vault.asset().balanceOf(address(staker)), amount1 + amount2, ERC20(address(vault.asset())).decimals());
+        assertEqDecimal(vault.asset().balanceOf(address(vault)), 0, ERC20(address(vault.asset())).decimals());
+        assertEqDecimal(staker.balanceOf(address(vault)), amount1 + amount2, staker.decimals());
+        assertEqDecimal(vault.totalAssets(), amount1 + amount2, ERC20(address(vault.asset())).decimals());
+        assertEqDecimal(vault.balanceOf(alice), amount1, vault.decimals());
+        assertEqDecimal(vault.balanceOf(bernard), amount2, vault.decimals());
     }
 
     function testFuzz_mint_normal(uint256 amount) public {
@@ -224,11 +224,11 @@ contract VaultTest is Test {
         vault.mint(amount, alice);
         vm.stopPrank();
 
-        assertEq(vault.asset().balanceOf(address(staker)), amount);
-        assertEq(vault.asset().balanceOf(address(vault)), 0);
-        assertEq(staker.balanceOf(address(vault)), amount);
-        assertEq(vault.totalAssets(), assets);
-        assertEq(vault.balanceOf(alice), amount);
+        assertEqDecimal(vault.asset().balanceOf(address(staker)), amount, ERC20(address(vault.asset())).decimals());
+        assertEqDecimal(vault.asset().balanceOf(address(vault)), 0, ERC20(address(vault.asset())).decimals());
+        assertEqDecimal(staker.balanceOf(address(vault)), amount, staker.decimals());
+        assertEqDecimal(vault.totalAssets(), assets, ERC20(address(vault.asset())).decimals());
+        assertEqDecimal(vault.balanceOf(alice), amount, vault.decimals());
     }
 
     function testFuzz_mint_multiple(uint256 amount1, uint256 amount2) public {
@@ -252,12 +252,12 @@ contract VaultTest is Test {
         vault.mint(amount2, bernard);
         vm.stopPrank();
 
-        assertEq(vault.asset().balanceOf(address(staker)), amount1 + amount2);
-        assertEq(vault.asset().balanceOf(address(vault)), 0);
-        assertEq(staker.balanceOf(address(vault)), amount1 + amount2);
-        assertEq(vault.totalAssets(), assets1 + assets2);
-        assertEq(vault.balanceOf(alice), amount1);
-        assertEq(vault.balanceOf(bernard), amount2);
+        assertEqDecimal(vault.asset().balanceOf(address(staker)), amount1 + amount2, ERC20(address(vault.asset())).decimals());
+        assertEqDecimal(vault.asset().balanceOf(address(vault)), 0, ERC20(address(vault.asset())).decimals());
+        assertEqDecimal(staker.balanceOf(address(vault)), amount1 + amount2, staker.decimals());
+        assertEqDecimal(vault.totalAssets(), assets1 + assets2, ERC20(address(vault.asset())).decimals());
+        assertEqDecimal(vault.balanceOf(alice), amount1, vault.decimals());
+        assertEqDecimal(vault.balanceOf(bernard), amount2, vault.decimals());
     }
 
     function test_redeem_ZeroAssets() public {
@@ -279,10 +279,10 @@ contract VaultTest is Test {
         uint256 assets = vault.redeem(amount2, alice, alice);
         vm.stopPrank();
 
-        assertEq(vault.asset().balanceOf(alice), assets);
-        assertEq(staker.balanceOf(address(vault)), amount - assets);
-        assertEq(vault.balanceOf(alice), 0);
-        assertEq(vault.totalAssets(), amount - assets);
+        assertEqDecimal(vault.asset().balanceOf(alice), assets, ERC20(address(vault.asset())).decimals());
+        assertEqDecimal(staker.balanceOf(address(vault)), amount - assets, staker.decimals());
+        assertEqDecimal(vault.balanceOf(alice), 0, vault.decimals());
+        assertEqDecimal(vault.totalAssets(), amount - assets, ERC20(address(vault.asset())).decimals());
     }
 
     function testFuzz_withdraw_normal(uint256 amount, uint256 amount2) public {
@@ -299,10 +299,10 @@ contract VaultTest is Test {
         vault.withdraw(assets, alice, alice);
         vm.stopPrank();
 
-        assertEq(vault.asset().balanceOf(alice), assets);
-        assertEq(staker.balanceOf(address(vault)), amount - assets);
-        assertEq(vault.balanceOf(alice), 0);
-        assertEq(vault.totalAssets(), amount - assets);
+        assertEqDecimal(vault.asset().balanceOf(alice), assets, ERC20(address(vault.asset())).decimals());
+        assertEqDecimal(staker.balanceOf(address(vault)), amount - assets, staker.decimals());
+        assertEqDecimal(vault.balanceOf(alice), 0, vault.decimals());
+        assertEqDecimal(vault.totalAssets(), amount - assets, ERC20(address(vault.asset())).decimals());
     }
 
     function testFuzz_recoverERC20_normal(uint256 amount) public {
@@ -312,7 +312,7 @@ contract VaultTest is Test {
 
         vm.prank(owner);
         vault.recoverERC20(USDC);
-        assertEq(ERC20(USDC).balanceOf(owner), amount);
+        assertEqDecimal(ERC20(USDC).balanceOf(owner), amount, ERC20(USDC).decimals());
     }
 
     function testCannot_recoverERC20_ZeroAddress() public {
@@ -336,7 +336,7 @@ contract VaultTest is Test {
     function test_pause_normal() public {
         vm.prank(owner);
         vault.pause();
-        assertEq(vault.paused(), true);
+        assertTrue(vault.paused());
     }
 
     function testCannot_pause_NotOwner() public {
@@ -350,7 +350,7 @@ contract VaultTest is Test {
         vault.pause();
         vault.unpause();
         vm.stopPrank();
-        assertEq(vault.paused(), false);
+        assertFalse(vault.paused());
     }
 
     function testCannot_unpause_NotOwner() public {
