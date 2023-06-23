@@ -22,7 +22,7 @@ contract VaultTest is Test {
     function setUp() public {
         vm.startPrank(owner);
         ASwapper.OutputToken[] memory tokens = new ASwapper.OutputToken[](1);
-        tokens[0] = ASwapper.OutputToken(USDC, 1e5, 18);
+        tokens[0] = ASwapper.OutputToken(USDC, 18, 10_000);
         staker = new WarStaker(WAR);
         vault = new Vault(address(staker), MINTER, 500, owner, USDC, AUGUSTUS_SWAPPER, gelatoSender, WAR);
         vault.setOutputTokens(tokens);

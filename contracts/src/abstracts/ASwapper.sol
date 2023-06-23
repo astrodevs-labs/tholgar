@@ -32,7 +32,7 @@ abstract contract ASwapper is Ownable2Step {
                                 CONSTANTS
     //////////////////////////////////////////////////////////////*/
 
-    uint256 public constant MAX_BPS = 10_000;
+    uint256 public constant MAX_WEIGHT = 10_000;
 
     /*//////////////////////////////////////////////////////////////
                             MUTABLE VARIABLES
@@ -44,7 +44,7 @@ abstract contract ASwapper is Ownable2Step {
     struct OutputToken {
         address token;
         uint8 decimals;
-        uint256 ratio; // weight (on MAX_BPS total)
+        uint256 ratio; // weight (on MAX_WEIGHT total)
     }
     /**
      *  @notice list of tokens to swap to when receiving harvest rewards
@@ -91,7 +91,7 @@ abstract contract ASwapper is Ownable2Step {
     /**
      *  @notice Must calll this function in order to let the contract work correctly
      */
-    function setOutputTokens(OutputToken[] calldata newOutputTokens) external onlyOwner verifyRatios(newOutputTokens) {
+    function setOutputTokens(OutputToken[] calldata newOutputTokens) external onlyOwner {
         uint256 total;
         uint256 length = newOutputTokens.length;
 
@@ -102,7 +102,7 @@ abstract contract ASwapper is Ownable2Step {
                 ++i;
             }
         }
-        if (total > MAX_BPS) revert Errors.RatioOverflow();
+        if (total > MAX_WEIGHT) revert Errors.RatioOverflow();
 
         _copy(outputTokens, newOutputTokens);
 
