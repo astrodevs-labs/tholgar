@@ -58,35 +58,6 @@ abstract contract ASwapper is Ownable2Step {
     address public swapRouter;
 
     /*//////////////////////////////////////////////////////////////
-                               MODIFIERS
-    //////////////////////////////////////////////////////////////*/
-
-    /**
-     * @notice Modifier used to check if output tokens array does not have total weight that exceeds MAX_BPS or if the array is empty
-     */
-    modifier verifyRatios(OutputToken[] memory newOutputTokens) {
-        _checkRatios(newOutputTokens);
-        _;
-    }
-
-    /**
-     *  @notice Modifier implementation to check if output tokens array does not have total weight that exceeds MAX_BPS or if the array is empty
-     */
-    function _checkRatios(OutputToken[] memory newOutputTokens) internal pure {
-        uint256 total;
-        uint256 length = newOutputTokens.length;
-
-        if (length == 0) revert Errors.NoOutputTokens();
-        for (uint256 i; i < length;) {
-            total += newOutputTokens[i].ratio;
-            unchecked {
-                ++i;
-            }
-        }
-        if (total > MAX_BPS) revert Errors.RatioOverflow();
-    }
-
-    /*//////////////////////////////////////////////////////////////
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
@@ -100,7 +71,7 @@ abstract contract ASwapper is Ownable2Step {
                                 GETTERS
     //////////////////////////////////////////////////////////////*/
 
-     function getTokens() public view returns (address[] memory) {
+    function getTokens() public view returns (address[] memory) {
         uint256 length = outputTokens.length;
         address[] memory tokens = new address[](length);
 
@@ -121,6 +92,18 @@ abstract contract ASwapper is Ownable2Step {
      *  @notice Must calll this function in order to let the contract work correctly
      */
     function setOutputTokens(OutputToken[] calldata newOutputTokens) external onlyOwner verifyRatios(newOutputTokens) {
+        uint256 total;
+        uint256 length = newOutputTokens.length;
+
+        if (length == 0) revert Errors.NoOutputTokens();
+        for (uint256 i; i < length;) {
+            total += newOutputTokens[i].ratio;
+            unchecked {
+                ++i;
+            }
+        }
+        if (total > MAX_BPS) revert Errors.RatioOverflow();
+
         _copy(outputTokens, newOutputTokens);
 
         emit OutputTokensUpdated(newOutputTokens);
