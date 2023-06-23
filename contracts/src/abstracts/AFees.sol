@@ -57,9 +57,11 @@ abstract contract AFees is Ownable2Step {
     //////////////////////////////////////////////////////////////*/
 
     constructor(uint256 initialHarvestFee, address initialFeeRecipient, address initialFeeToken) {
+        if (initialFeeRecipient == address(0) || initialFeeToken == address(0)) revert Errors.ZeroAddress();
         if (initialHarvestFee > MAX_BPS) {
             revert Errors.InvalidFee();
         }
+
         harvestFee = initialHarvestFee;
         feeRecipient = initialFeeRecipient;
         feeToken = initialFeeToken;
