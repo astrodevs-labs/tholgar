@@ -83,11 +83,11 @@ contract Zap is ReentrancyGuard {
         uint256 mintedAmount = IERC20(asset).balanceOf(address(this)) - prevBalance;
 
         // Stake the WAR tokens for the receiver
-        uint256 depositeddAmount = ERC4626(vault).deposit(mintedAmount, receiver);
+        uint256 depositedAmount = ERC4626(vault).deposit(mintedAmount, receiver);
 
-        emit ZapHappened(msg.sender, receiver, depositeddAmount);
+        emit ZapHappened(msg.sender, receiver, depositedAmount);
 
-        return depositeddAmount;
+        return depositedAmount;
     }
 
     /**
