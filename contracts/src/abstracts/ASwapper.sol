@@ -32,6 +32,9 @@ abstract contract ASwapper is Ownable2Step {
                                 CONSTANTS
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @notice Max WEIGHT value (100%)
+     */
     uint256 public constant MAX_WEIGHT = 10_000;
 
     /*//////////////////////////////////////////////////////////////
@@ -42,16 +45,14 @@ abstract contract ASwapper is Ownable2Step {
      *  @notice Struct that represent a element in the list of output token and the respective ratio to perform the swap
      */
     struct OutputToken {
-        address token;
-        uint8 decimals;
+        address token; // address of the token
+        uint8 decimals; // decimals of the token
         uint256 ratio; // weight (on MAX_WEIGHT total)
     }
     /**
      *  @notice list of tokens to swap to when receiving harvest rewards
      */
-
     OutputToken[] public outputTokens;
-    uint256[] myArray;
 
     /**
      *  @notice Dex/aggregaor router to call to perform swaps
@@ -72,6 +73,10 @@ abstract contract ASwapper is Ownable2Step {
                                 GETTERS
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @notice Return the list of output tokens addresses
+     * @return tokens array of addresses
+     */
     function getOutputTokensAddresses() public view returns (address[] memory) {
         uint256 length = outputTokens.length;
         address[] memory tokens = new address[](length);
@@ -85,6 +90,11 @@ abstract contract ASwapper is Ownable2Step {
         return tokens;
     }
 
+    /**
+     * @notice Return a output token ratio based on the token address
+     * @param token address of the token to get the ratio
+     * @return ratio of the token
+     */
     function getOutputTokenRatio(address token) public view returns (uint256) {
         uint256 length = outputTokens.length;
 
@@ -102,7 +112,11 @@ abstract contract ASwapper is Ownable2Step {
     //////////////////////////////////////////////////////////////*/
 
     /**
-     *  @notice Must calll this function in order to let the contract work correctly
+     * @notice Set the list of output tokens and the respective ratios
+     * Must call this function in order to let the contract work correctly
+     * The sum of all ratios must be equal to MAX_WEIGHT
+     * @param newOutputTokens array of OutputToken struct
+     * @custom:requires owner
      */
     function setOutputTokens(OutputToken[] calldata newOutputTokens) external onlyOwner {
         uint256 total;
@@ -122,6 +136,11 @@ abstract contract ASwapper is Ownable2Step {
         emit OutputTokensUpdated(newOutputTokens);
     }
 
+    /**
+     * @notice Set the dex/aggregator router to call to perform swaps
+     * @param newSwapRouter address of the router
+     * @custom:requires owner
+     */
     function setSwapRouter(address newSwapRouter) external onlyOwner {
         if (newSwapRouter == address(0)) revert Errors.ZeroAddress();
 
@@ -132,6 +151,11 @@ abstract contract ASwapper is Ownable2Step {
                             SWAP LOGIC
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @notice Swap tokens using the router/aggregator
+     * @param tokens array of tokens to swap
+     * @param callDatas array of bytes to call the router/aggregator
+     */
     function _swap(address[] memory tokens, bytes[] calldata callDatas) internal {
         uint256 length = tokens.length;
 
@@ -146,6 +170,10 @@ abstract contract ASwapper is Ownable2Step {
         }
     }
 
+    /**
+     * @notice Perform the swap using the router/aggregator
+     * @param callData bytes to call the router/aggregator
+     */
     function _performRouterSwap(bytes calldata callData) internal {
         (bool success, bytes memory retData) = swapRouter.call(callData);
 
@@ -163,12 +191,23 @@ abstract contract ASwapper is Ownable2Step {
                                 UTILS
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @notice Approve the router/aggregator to spend the token if needed
+     * @param _token address of the token to approve
+     * @param _spender address of the router/aggregator
+     */
     function _approveTokenIfNeeded(address _token, address _spender) internal {
         if (ERC20(_token).allowance(address(this), _spender) == 0) {
             ERC20(_token).safeApprove(_spender, type(uint256).max);
         }
     }
 
+    /**
+     * @notice Copy a OutputToken array to a OutputToken storage array
+     * clear the storage array before copying
+     * @param dest OutputToken storage array
+     * @param src OutputToken calldata array
+     */
     function _copy(OutputToken[] storage dest, OutputToken[] calldata src) internal {
         // clear dest storage pointer
         uint256 length = dest.length;
