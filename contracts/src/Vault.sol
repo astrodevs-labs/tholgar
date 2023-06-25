@@ -218,7 +218,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
     function harvest(address[] calldata inputTokens, bytes[] calldata inputCallDatas, bytes[] calldata outputCallDatas)
         external
         nonReentrant
-        onlyOperator
+        onlyOperatorOrOwner
     {
         IStaker(staker).claimAllRewards(address(this));
         // swap to fee token

@@ -41,6 +41,11 @@ abstract contract AOperator is Ownable2Step {
         _;
     }
 
+    modifier onlyOperatorOrOwner() {
+        if (msg.sender != operator && msg.sender != owner()) revert Errors.NotOperatorOrOwner();
+        _;
+    }
+
     /*//////////////////////////////////////////////////////////////
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/

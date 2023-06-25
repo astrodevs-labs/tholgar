@@ -18,4 +18,5 @@ library Errors {
 
     // Gelato errors
     error NotOperator();
+    error NotOperatorOrOwner();
 }
