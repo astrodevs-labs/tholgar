@@ -30,6 +30,14 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
      * @notice Event emitted when a staker is updated
      */
     event StakerUpdated(address oldStaker, address newStaker);
+    /**
+     * @notice Event emitted when rewards have been harvested
+     */
+    event Harvested(IStaker.UserClaimedRewards[] rewards);
+    /**
+     * @notice Event emitted when rewards are compounded into more stkWAR
+     */
+    event Compounded(uint256 amount);
 
     /*//////////////////////////////////////////////////////////////
                           MUTABLE VARIABLES
@@ -215,7 +223,8 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
      * @custom:requires operator or owner
      */
     function harvest() external onlyOperatorOrOwner {
-        IStaker(staker).claimAllRewards(address(this));
+        IStaker.UserClaimedRewards[] memory rewards = IStaker(staker).claimAllRewards(address(this));
+        emit Harvested(rewards);
     }
 
     /**
@@ -225,7 +234,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
      * @param outputCallDatas swapper routes to swap to more assets
      * @custom:requires operator or owner
      */
-    function swap(address[] calldata inputTokens, bytes[] calldata inputCallDatas, bytes[] calldata outputCallDatas)
+    function compound(address[] calldata inputTokens, bytes[] calldata inputCallDatas, bytes[] calldata outputCallDatas)
         external
         nonReentrant
         onlyOperatorOrOwner
@@ -253,6 +262,8 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
             }
         }
         IMinter(minter).mintMultiple(outputTokensAddresses, amounts);
-        IStaker(staker).stake(ERC20(address(asset)).balanceOf(address(this)), address(this));
+        uint256 stakedAmount = IStaker(staker).stake(ERC20(address(asset)).balanceOf(address(this)), address(this));
+
+        emit Compounded(stakedAmount);
     }
 }
