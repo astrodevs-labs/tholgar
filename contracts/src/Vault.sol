@@ -236,14 +236,14 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
         }
         _swap(tokens, outputCallDatas);
         uint256[] memory amounts = new uint256[](length);
-        address[] memory outputToensAddresses = getTokens();
+        address[] memory outputTokensAddresses = getOutputTokensAddresses();
         for (uint256 i; i < length;) {
-            amounts[i] = ERC20(outputToensAddresses[i]).balanceOf(address(this));
+            amounts[i] = ERC20(outputTokensAddresses[i]).balanceOf(address(this));
             unchecked {
                 ++i;
             }
         }
-        IMinter(minter).mintMultiple(tokens, amounts);
+        IMinter(minter).mintMultiple(outputTokensAddresses, amounts);
         IStaker(staker).stake(ERC20(address(asset)).balanceOf(address(this)), address(this));
     }
 }
