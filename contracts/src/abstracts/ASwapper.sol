@@ -85,6 +85,18 @@ abstract contract ASwapper is Ownable2Step {
         return tokens;
     }
 
+    function getOutputTokenRatio(address token) public view returns (uint256) {
+        uint256 length = outputTokens.length;
+
+        for (uint256 i; i < length;) {
+            if (outputTokens[i].token == token) return outputTokens[i].ratio;
+            unchecked {
+                ++i;
+            }
+        }
+        return 0;
+    }
+
     /*//////////////////////////////////////////////////////////////
                             ADMIN LOGIC
     //////////////////////////////////////////////////////////////*/
