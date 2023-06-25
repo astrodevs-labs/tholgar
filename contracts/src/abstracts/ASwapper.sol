@@ -51,6 +51,7 @@ abstract contract ASwapper is Ownable2Step {
      */
 
     OutputToken[] public outputTokens;
+    uint256[] myArray;
 
     /**
      *  @notice Dex/aggregaor router to call to perform swaps
@@ -157,8 +158,16 @@ abstract contract ASwapper is Ownable2Step {
     }
 
     function _copy(OutputToken[] storage dest, OutputToken[] calldata src) private {
-        uint256 length = src.length;
+        // clear dest storage pointer
+        uint256 length = dest.length;
+        for (uint256 i; i < length;) {
+            delete dest[i];
+            unchecked {
+                ++i;
+            }
+        }
 
+        length = src.length;
         for (uint256 i; i < length;) {
             dest.push(src[i]);
             unchecked {
