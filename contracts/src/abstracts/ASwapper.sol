@@ -9,7 +9,7 @@ import {Errors} from "../utils/Errors.sol";
 
 /**
  *  @title ASwapper contract
- *  @notice
+ *  @notice Provide swapper functions to swap tokens using a router/aggregator
  *  @author 0xMemoryGrinder
  */
 abstract contract ASwapper is Ownable2Step {
@@ -146,7 +146,7 @@ abstract contract ASwapper is Ownable2Step {
         }
     }
 
-    function _performRouterSwap(bytes calldata callData) private {
+    function _performRouterSwap(bytes calldata callData) internal {
         (bool success, bytes memory retData) = swapRouter.call(callData);
 
         if (!success) {
@@ -163,13 +163,13 @@ abstract contract ASwapper is Ownable2Step {
                                 UTILS
     //////////////////////////////////////////////////////////////*/
 
-    function _approveTokenIfNeeded(address _token, address _spender) private {
+    function _approveTokenIfNeeded(address _token, address _spender) internal {
         if (ERC20(_token).allowance(address(this), _spender) == 0) {
             ERC20(_token).safeApprove(_spender, type(uint256).max);
         }
     }
 
-    function _copy(OutputToken[] storage dest, OutputToken[] calldata src) private {
+    function _copy(OutputToken[] storage dest, OutputToken[] calldata src) internal {
         // clear dest storage pointer
         uint256 length = dest.length;
         for (uint256 i; i < length;) {
