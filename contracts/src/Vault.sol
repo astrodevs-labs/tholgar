@@ -112,6 +112,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
      * @dev Recover ERC2O tokens in the contract
      * @param token Address of the ERC2O token
      * @return bool: success
+     * @custom:requires owner
      */
     function recoverERC20(address token) external onlyOwner returns (bool) {
         if (token == address(0)) revert Errors.ZeroAddress();
@@ -210,17 +211,25 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
     //////////////////////////////////////////////////////////////*/
 
     /**
-     * @notice Harvest all rewards from staker and turn them into more staked assets
+     * @notice Harvest all rewards from staker
+     * @custom:requires operator or owner
+     */
+    function harvest() external onlyOperatorOrOwner {
+        IStaker(staker).claimAllRewards(address(this));
+    }
+
+    /**
+     * @notice Turn  all rewards into more staked assets
      * @param inputTokens reward tokens claimed from staker
      * @param inputCallDatas swapper routes to swap to feeToken
      * @param outputCallDatas swapper routes to swap to more assets
+     * @custom:requires operator or owner
      */
-    function harvest(address[] calldata inputTokens, bytes[] calldata inputCallDatas, bytes[] calldata outputCallDatas)
+    function swap(address[] calldata inputTokens, bytes[] calldata inputCallDatas, bytes[] calldata outputCallDatas)
         external
         nonReentrant
         onlyOperatorOrOwner
     {
-        IStaker(staker).claimAllRewards(address(this));
         // swap to fee token
         _swap(inputTokens, inputCallDatas);
         // transfer havestfee %oo to fee recipient
