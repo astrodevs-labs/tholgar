@@ -4,7 +4,7 @@ pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import {Vault} from "../src/Vault.sol";
-import {WarStaker} from "warlord/WarStaker.sol";
+import {WarStaker} from "warlord/Staker.sol";
 import {ERC20} from "solmate/tokens/ERC20.sol";
 import {ASwapper} from "../src/abstracts/ASwapper.sol";
 import {Errors} from "../src/utils/Errors.sol";
