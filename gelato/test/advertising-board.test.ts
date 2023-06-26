@@ -21,8 +21,6 @@ describe("Advertising Board Web3 Function test", () => {
     const { secrets } = Web3FunctionLoader.load(w3fName, w3fRootDir);
     const gasPrice = (await goerliFork.provider.getGasPrice()).toString();
 
-
-
     context = {
       secrets,
       storage: {},
@@ -44,9 +42,7 @@ describe("Advertising Board Web3 Function test", () => {
     // mock storage state of "lastPost"
     context.storage = { lastPost: blockTime.toString() };
 
-  
     const res = await runWeb3Function(w3fPath, context, [goerliFork.provider]);
-
 
     expect(res.result.canExec).toEqual(false);
   });

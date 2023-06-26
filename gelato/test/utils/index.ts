@@ -7,7 +7,6 @@ import { Web3FunctionRunner } from "@gelatonetwork/web3-functions-sdk/runtime";
 import { Web3FunctionBuilder } from "@gelatonetwork/web3-functions-sdk/builder";
 import { ethers } from "ethers";
 
-
 export const MAX_RPC_LIMIT = 100;
 export const MAX_DOWNLOAD_LIMIT = 10 * 1024 * 1024;
 export const MAX_UPLOAD_LIMIT = 5 * 1024 * 1024;
@@ -28,17 +27,17 @@ export const runWeb3Function = async (
   const runner = new Web3FunctionRunner(false);
   const runtime: "docker" | "thread" = "thread";
   const memory = buildRes.schema.memory;
-  const rpcLimit = MAX_RPC_LIMIT
+  const rpcLimit = MAX_RPC_LIMIT;
   const timeout = buildRes.schema.timeout * 1000;
   const version = buildRes.schema.web3FunctionVersion;
 
-  const options:Web3FunctionRunnerOptions = {
+  const options: Web3FunctionRunnerOptions = {
     runtime,
     showLogs: true,
     memory,
-    downloadLimit:MAX_DOWNLOAD_LIMIT,
-    uploadLimit:MAX_UPLOAD_LIMIT,
-    requestLimit:MAX_REQUEST_LIMIT,
+    downloadLimit: MAX_DOWNLOAD_LIMIT,
+    uploadLimit: MAX_UPLOAD_LIMIT,
+    requestLimit: MAX_REQUEST_LIMIT,
     rpcLimit,
     timeout,
   };

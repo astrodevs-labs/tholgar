@@ -2,106 +2,124 @@ import {
   Web3Function,
   Web3FunctionContext,
 } from "@gelatonetwork/web3-functions-sdk";
-import { BigNumber, BigNumberish, Contract } from "ethers";
+import { BigNumber, Contract } from "ethers";
 import { Log } from "@ethersproject/providers";
 import ky from "ky";
 
 const MAX_RANGE = 100; // limit range of events to comply with rpc providers
 const MAX_REQUESTS = 100; // limit number of requests on every execution to avoid hitting timeout
-const VAULT_ABI = [{
-  "inputs": [],
-  "name": "feeToken",
-  "outputs": [
-    {
-      "internalType": "address",
-      "name": "",
-      "type": "address"
-    }
-  ],
-  "stateMutability": "view",
-  "type": "function"
-},{
-  "inputs": [
-    {
-      "internalType": "address[]",
-      "name": "inputTokens",
-      "type": "address[]"
-    },
-    {
-      "internalType": "bytes[]",
-      "name": "inputCallDatas",
-      "type": "bytes[]"
-    },
-    {
-      "internalType": "bytes[]",
-      "name": "outputCallDatas",
-      "type": "bytes[]"
-    }
-  ],
-  "name": "compound",
-  "outputs": [],
-  "stateMutability": "nonpayable",
-  "type": "function"
-},
-{
-  "anonymous": false,
-  "inputs": [
-    {
-      "components": [
-        {
-          "internalType": "address",
-          "name": "reward",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "indexed": false,
-      "internalType": "struct IStaker.UserClaimedRewards[]",
-      "name": "rewards",
-      "type": "tuple[]"
-    }
-  ],
-  "name": "Harvested",
-  "type": "event"
-}];
-const ERC20_ABI = ["function decimals() view returns (uint8)", "function balanceOf(address) view returns (uint256)"];
+const VAULT_ABI = [
+  {
+    inputs: [],
+    name: "feeToken",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address[]",
+        name: "inputTokens",
+        type: "address[]",
+      },
+      {
+        internalType: "bytes[]",
+        name: "inputCallDatas",
+        type: "bytes[]",
+      },
+      {
+        internalType: "bytes[]",
+        name: "outputCallDatas",
+        type: "bytes[]",
+      },
+    ],
+    name: "compound",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "address",
+            name: "reward",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "amount",
+            type: "uint256",
+          },
+        ],
+        indexed: false,
+        internalType: "struct IStaker.UserClaimedRewards[]",
+        name: "rewards",
+        type: "tuple[]",
+      },
+    ],
+    name: "Harvested",
+    type: "event",
+  },
+];
+const ERC20_ABI = [
+  "function decimals() view returns (uint8)",
+  "function balanceOf(address) view returns (uint256)",
+];
 
-async function getParaswapData(srcToken: string, srcDecimals: string, destToken: string, destDecimals: string, amount: BigNumber, userAddress: string, simulate = true): Promise<[string, string]> {
+async function getParaswapData(
+  srcToken: string,
+  srcDecimals: string,
+  destToken: string,
+  destDecimals: string,
+  amount: BigNumber,
+  userAddress: string,
+  simulate = true
+): Promise<[string, string]> {
   const priceRoute = await ky
     .get(
-      `https://apiv5.paraswap.io/prices?from=${srcToken}&to=${destToken}&amount=${amount.toString()}&side=SELL&network=${provider.network.chainId}&srcDecimals=${srcDecimals}&destDecimals=${destDecimals}`,
+      `https://apiv5.paraswap.io/prices?from=${srcToken}&to=${destToken}&amount=${amount.toString()}&side=SELL&network=${
+        provider.network.chainId
+      }&srcDecimals=${srcDecimals}&destDecimals=${destDecimals}`
     )
     .json();
-  if (!priceRoute['priceRoute']) {
+  if (!priceRoute["priceRoute"]) {
     throw new Error("No price route found");
   }
 
   const priceData = await ky
-      .post(
-        `https://apiv5.paraswap.io/transactions/${provider.network.chainId}?ignoreChecks=${simulate}`,
-        { timeout: 5_000, retry: 0, json:
-          {
-              "srcToken": priceRoute['priceRoute'].srcToken,
-              "destToken": priceRoute['priceRoute'].destToken,
-              "srcAmount": priceRoute['priceRoute'].srcAmount,
-              "destAmount": priceRoute['priceRoute'].destAmount,
-              "priceRoute": priceRoute['priceRoute'],
-              "userAddress": userAddress,
-              "partner": "paraswap.io",
-              "srcDecimals": priceRoute['priceRoute'].srcDecimals,
-              "destDecimals": priceRoute['priceRoute'].destDecimals,
-            }
+    .post(
+      `https://apiv5.paraswap.io/transactions/${provider.network.chainId}?ignoreChecks=${simulate}`,
+      {
+        timeout: 5_000,
+        retry: 0,
+        json: {
+          srcToken: priceRoute["priceRoute"].srcToken,
+          destToken: priceRoute["priceRoute"].destToken,
+          srcAmount: priceRoute["priceRoute"].srcAmount,
+          destAmount: priceRoute["priceRoute"].destAmount,
+          priceRoute: priceRoute["priceRoute"],
+          userAddress: userAddress,
+          partner: "paraswap.io",
+          srcDecimals: priceRoute["priceRoute"].srcDecimals,
+          destDecimals: priceRoute["priceRoute"].destDecimals,
+        },
       }
-      )
-      .json();
-      if (!priceData['data']) {
-        throw new Error("No data returned from Paraswap");
-      }
-      return [priceData['data'], priceRoute['priceRoute'].destAmount];
+    )
+    .json();
+  if (!priceData["data"]) {
+    throw new Error("No data returned from Paraswap");
+  }
+  return [priceData["data"], priceRoute["priceRoute"].destAmount];
 }
 
 Web3Function.onRun(async (context: Web3FunctionContext) => {
@@ -155,7 +173,7 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
     return { canExec: false, message: "No new rewards" };
   }
 
-  let tokens: string[] = [];
+  const tokens: string[] = [];
 
   for (const log of logs) {
     const parsedLog = vault.interface.parseLog(log);
@@ -166,42 +184,60 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
   }
 
   // Get swap data for rewards token to fee token
-  let inputData = [];
-  let totalOut = BigNumber.from(0);
+  const inputData = [];
+  const totalOut = BigNumber.from(0);
   try {
     const feeToken = await vault.feeToken();
     const feeContract = new Contract(feeToken, ERC20_ABI, provider);
     for (const token of tokens) {
-        const tokenContract = new Contract(token, ERC20_ABI, provider);
-        const balance = await tokenContract.getBalanceOf(token);
-        const srcDecimals = await tokenContract.decimals();
-        const destDecimals = await feeContract.decimals();
-        const data = await getParaswapData(token, srcDecimals, feeToken, destDecimals, balance, vaultAddress);
-        inputData.push(data[0]);
-        totalOut.add(data[1]);
+      const tokenContract = new Contract(token, ERC20_ABI, provider);
+      const balance = await tokenContract.getBalanceOf(token);
+      const srcDecimals = await tokenContract.decimals();
+      const destDecimals = await feeContract.decimals();
+      const data = await getParaswapData(
+        token,
+        srcDecimals,
+        feeToken,
+        destDecimals,
+        balance,
+        vaultAddress
+      );
+      inputData.push(data[0]);
+      totalOut.add(data[1]);
     }
   } catch (err) {
     return { canExec: false, message: `Cannot get input data: ${err.message}` };
   }
 
   // Get swap data for fee token to mintable token
-  let outputData = [];
+  const outputData = [];
   try {
     const feeToken = await vault.feeToken();
     const feeContract = new Contract(feeToken, ERC20_ABI, provider);
     const outputTokens = await vault.getOutputTokenAddresses();
     const MAX_WEIGHT = await vault.MAX_WEIGHT();
     for (const token of outputTokens) {
-        const ratio = await vault.getRatio(token);
-        const tokenContract = new Contract(token, ERC20_ABI, provider);
-        const srcDecimals = await feeContract.decimals();
-        const destDecimals = await tokenContract.decimals();
-        const amount = totalOut.mul(ratio.div(MAX_WEIGHT));
-        const data = await getParaswapData(feeToken, srcDecimals, token, destDecimals, amount, vaultAddress, false);
-        outputData.push(data[0]);
+      const ratio = await vault.getRatio(token);
+      const tokenContract = new Contract(token, ERC20_ABI, provider);
+      const srcDecimals = await feeContract.decimals();
+      const destDecimals = await tokenContract.decimals();
+      const amount = totalOut.mul(ratio.div(MAX_WEIGHT));
+      const data = await getParaswapData(
+        feeToken,
+        srcDecimals,
+        token,
+        destDecimals,
+        amount,
+        vaultAddress,
+        false
+      );
+      outputData.push(data[0]);
     }
   } catch (err) {
-    return { canExec: false, message: `Cannot get output data: ${err.message}` };
+    return {
+      canExec: false,
+      message: `Cannot get output data: ${err.message}`,
+    };
   }
 
   // Compound the rewards
@@ -210,7 +246,11 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
     callData: [
       {
         to: vaultAddress,
-        data: vault.interface.encodeFunctionData("compound", [tokens, inputData, outputData]),
+        data: vault.interface.encodeFunctionData("compound", [
+          tokens,
+          inputData,
+          outputData,
+        ]),
       },
     ],
   };
