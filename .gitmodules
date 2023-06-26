@@ -10,3 +10,6 @@
 [submodule "contracts/lib/solidity-generators"]
 	path = contracts/lib/solidity-generators
 	url = https://github.com/mds1/solidity-generators
+[submodule "contracts/lib/Warlord"]
+	path = contracts/lib/Warlord
+	url = https://github.com/0xtekgrinder/Warlord
