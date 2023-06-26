@@ -11,6 +11,51 @@ const MAX_REQUESTS = 100; // limit number of requests on every execution to avoi
 const VAULT_ABI = [
   {
     inputs: [],
+    name: "getOutputTokenAddresses",
+    outputs: [
+      {
+        internalType: "address[]",
+        name: "",
+        type: "address[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "MAX_WEIGHT",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
+    ],
+    name: "getOutputTokenRatio",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "feeToken",
     outputs: [
       {
@@ -217,7 +262,7 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
     const outputTokens = await vault.getOutputTokenAddresses();
     const MAX_WEIGHT = await vault.MAX_WEIGHT();
     for (const token of outputTokens) {
-      const ratio = await vault.getRatio(token);
+      const ratio = await vault.getOutputTokenRatio(token);
       const tokenContract = new Contract(token, ERC20_ABI, provider);
       const srcDecimals = await feeContract.decimals();
       const destDecimals = await tokenContract.decimals();
