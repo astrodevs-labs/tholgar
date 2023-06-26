@@ -31,6 +31,10 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
      */
     event StakerUpdated(address oldStaker, address newStaker);
     /**
+     * @notice Event emitted when a minter is updated
+     */
+    event MinterUpdated(address oldMinter, address newMinter);
+    /**
      * @notice Event emitted when rewards have been harvested
      */
     event Harvested(IStaker.UserClaimedRewards[] rewards);
@@ -113,6 +117,18 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
         if (warBalance != 0) {
             IStaker(newStaker).stake(warBalance, address(this));
         }
+    }
+
+    /**
+     * @notice update the minter contract to a new one
+     * @param newMinter the new minter contract
+     * @custom:requires owner
+     */
+    function setMinter(address newMinter) external onlyOwner {
+        if (newMinter == address(0)) revert Errors.ZeroAddress();
+
+        minter = newMinter;
+        emit MinterUpdated(minter, newMinter);
     }
 
     /**
