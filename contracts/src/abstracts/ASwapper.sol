@@ -77,7 +77,7 @@ abstract contract ASwapper is Ownable2Step {
      * @notice Return the list of output tokens addresses
      * @return tokens array of addresses
      */
-    function getOutputTokensAddresses() public view returns (address[] memory) {
+    function getOutputTokenAddresses() public view returns (address[] memory) {
         uint256 length = outputTokens.length;
         address[] memory tokens = new address[](length);
 
