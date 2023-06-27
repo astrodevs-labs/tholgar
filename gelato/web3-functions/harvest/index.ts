@@ -123,7 +123,11 @@ async function checkRevert(provider: any, secrets: any): Promise<number> {
     throw new Error("No task id found");
   }
 
-  const taskStatus: any = ky.get(`https://api.gelato.digital/tasks/web3functions/networks/${provider.network.chainId}/tasks/${taskId}/status`).json();
+  const taskStatus: any = ky
+    .get(
+      `https://api.gelato.digital/tasks/web3functions/networks/${provider.network.chainId}/tasks/${taskId}/status`
+    )
+    .json();
   if (!taskStatus["task"]["lastExecTransactionHash"]) {
     return 42;
   }
@@ -166,7 +170,9 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
 
   const timeToExecute = (userArgs.timeToExecute as number) ?? 604800000;
   const maxGasPriceStr = secrets.get("MAX_GAS_PRICE");
-  const maxGasPrice = maxGasPriceStr ? BigNumber.from(maxGasPriceStr) : BigNumber.from("100000000000");
+  const maxGasPrice = maxGasPriceStr
+    ? BigNumber.from(maxGasPriceStr)
+    : BigNumber.from("100000000000");
 
   try {
     const feeData = await provider.getFeeData();

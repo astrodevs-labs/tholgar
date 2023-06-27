@@ -158,7 +158,11 @@ async function checkRevert(provider: any, secrets: any): Promise<number> {
     throw new Error("No task id found");
   }
 
-  const taskStatus: any = ky.get(`https://api.gelato.digital/tasks/web3functions/networks/${provider.network.chainId}/tasks/${taskId}/status`).json();
+  const taskStatus: any = ky
+    .get(
+      `https://api.gelato.digital/tasks/web3functions/networks/${provider.network.chainId}/tasks/${taskId}/status`
+    )
+    .json();
   if (!taskStatus["task"]["lastExecTransactionHash"]) {
     return 42;
   }
@@ -232,7 +236,7 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
   // Update storage for next run
   await storage.set("lastBlock", currentBlock.toString());
 
-  const execute = await storage.get("execute") ?? "false";
+  const execute = (await storage.get("execute")) ?? "false";
   if (execute === "false" && logs.length === 0) {
     return { canExec: false, message: "No new rewards" };
   } else {
@@ -240,7 +244,9 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
   }
 
   const maxGasPriceStr = secrets.get("MAX_GAS_PRICE");
-  const maxGasPrice = maxGasPriceStr ? BigNumber.from(maxGasPriceStr) : BigNumber.from("100000000000");
+  const maxGasPrice = maxGasPriceStr
+    ? BigNumber.from(maxGasPriceStr)
+    : BigNumber.from("100000000000");
 
   try {
     const feeData = await provider.getFeeData();
