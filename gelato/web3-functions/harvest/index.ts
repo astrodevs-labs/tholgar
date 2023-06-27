@@ -2,7 +2,8 @@ import {
   Web3Function,
   Web3FunctionContext,
 } from "@gelatonetwork/web3-functions-sdk";
-import { Contract } from "ethers";
+import { BigNumber, Contract } from "ethers";
+import ky from "ky";
 
 const STAKER_ABI = [
   {
@@ -37,7 +38,84 @@ const STAKER_ABI = [
     type: "function",
   },
 ];
-const VAULT_ABI = ["function harvest()"];
+const VAULT_ABI = [
+  {
+    inputs: [
+      {
+        internalType: "address[]",
+        name: "inputTokens",
+        type: "address[]",
+      },
+      {
+        internalType: "bytes[]",
+        name: "inputCallDatas",
+        type: "bytes[]",
+      },
+    ],
+    name: "harvest",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "feeToken",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+];
+const ERC20_ABI = [
+  "function decimals() view returns (uint8)",
+  "function balanceOf(address) view returns (uint256)",
+];
+
+async function getParaswapData(
+  srcToken: string,
+  srcDecimals: string,
+  destToken: string,
+  destDecimals: string,
+  amount: BigNumber,
+  userAddress: string,
+  chainId: number
+): Promise<[string, string]> {
+  const priceRoute: any = await ky
+    .get(
+      `https://apiv5.paraswap.io/prices?from=${srcToken}&to=${destToken}&amount=${amount.toString()}&side=SELL&network=${chainId}&srcDecimals=${srcDecimals}&destDecimals=${destDecimals}`
+    )
+    .json();
+  if (!priceRoute["priceRoute"]) {
+    throw new Error("No price route found");
+  }
+
+  const priceData: any = await ky
+    .post(`https://apiv5.paraswap.io/transactions/${chainId}`, {
+      timeout: 5_000,
+      retry: 0,
+      json: {
+        srcToken: priceRoute["priceRoute"].srcToken,
+        destToken: priceRoute["priceRoute"].destToken,
+        srcAmount: priceRoute["priceRoute"].srcAmount,
+        destAmount: priceRoute["priceRoute"].destAmount,
+        priceRoute: priceRoute["priceRoute"],
+        userAddress: userAddress,
+        partner: "paraswap.io",
+        srcDecimals: priceRoute["priceRoute"].srcDecimals,
+        destDecimals: priceRoute["priceRoute"].destDecimals,
+      },
+    })
+    .json();
+  if (!priceData["data"]) {
+    throw new Error("No data returned from Paraswap");
+  }
+  return [priceData["data"], priceRoute["priceRoute"].destAmount];
+}
 
 Web3Function.onRun(async (context: Web3FunctionContext) => {
   const { userArgs, storage, multiChainProvider } = context;
@@ -74,10 +152,9 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
     };
   }
 
+  let claimableRewards: any;
   try {
-    const claimableRewards = await staker.getUserTotalClaimableRewards(
-      vaultAddress
-    );
+    claimableRewards = await staker.getUserTotalClaimableRewards(vaultAddress);
     console.log(`Claimable rewards: ${claimableRewards}`);
 
     // Check if there are rewards to harvest
@@ -86,6 +163,38 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
     }
   } catch (err) {
     return { canExec: false, message: `Rpc call failed: ${err.message}` };
+  }
+
+  const tokens: string[] = [];
+
+  for (const reward of claimableRewards) {
+    if (tokens.indexOf(reward[0]) === -1) tokens.push(reward[0]);
+  }
+
+  const inputData: string[] = [];
+  const totalOut = BigNumber.from(0);
+  try {
+    const feeToken = await vault.feeToken();
+    const feeContract = new Contract(feeToken, ERC20_ABI, provider);
+    for (const token of tokens) {
+      const tokenContract = new Contract(token, ERC20_ABI, provider);
+      const balance = await tokenContract.getBalanceOf(token);
+      const srcDecimals = await tokenContract.decimals();
+      const destDecimals = await feeContract.decimals();
+      const data = await getParaswapData(
+        token,
+        srcDecimals,
+        feeToken,
+        destDecimals,
+        balance,
+        vaultAddress,
+        provider.network.chainId
+      );
+      inputData.push(data[0]);
+      totalOut.add(data[1]);
+    }
+  } catch (err) {
+    return { canExec: false, message: `Cannot get input data: ${err.message}` };
   }
 
   // Update storage for next run
@@ -97,7 +206,10 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
     callData: [
       {
         to: vaultAddress,
-        data: vault.interface.encodeFunctionData("harvest", []),
+        data: vault.interface.encodeFunctionData("harvest", [
+          tokens,
+          inputData,
+        ]),
       },
     ],
   };
