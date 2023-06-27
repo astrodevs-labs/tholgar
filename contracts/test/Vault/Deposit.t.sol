@@ -17,19 +17,23 @@ contract Deposit is VaultTest {
         vm.stopPrank();
     }
 
-    function test_deposit_normal() public {
-        deal(address(vault.asset()), alice, 10);
+    function test_deposit_normal(uint256 amount, address pranker) public {
+        amount = bound(amount, 1, 3000 ether);
+        vm.assume(pranker != owner);
+        vm.assume(pranker != address(0));
 
-        vm.startPrank(alice);
-        vault.asset().approve(address(vault), 10);
-        vault.deposit(10, alice);
+        deal(address(vault.asset()), pranker, amount);
+
+        vm.startPrank(pranker);
+        vault.asset().approve(address(vault), amount);
+        vault.deposit(amount, pranker);
         vm.stopPrank();
 
-        assertEqDecimal(vault.asset().balanceOf(address(staker)), 10, ERC20(address(vault.asset())).decimals());
+        assertEqDecimal(vault.asset().balanceOf(address(staker)), amount, ERC20(address(vault.asset())).decimals());
         assertEqDecimal(vault.asset().balanceOf(address(vault)), 0, ERC20(address(vault.asset())).decimals());
-        assertEqDecimal(staker.balanceOf(address(vault)), 10, staker.decimals());
-        assertEqDecimal(vault.totalAssets(), 10, ERC20(address(vault.asset())).decimals());
-        assertEqDecimal(vault.balanceOf(alice), 10, vault.decimals());
+        assertEqDecimal(staker.balanceOf(address(vault)), amount, staker.decimals());
+        assertEqDecimal(vault.totalAssets(), amount, ERC20(address(vault.asset())).decimals());
+        assertEqDecimal(vault.balanceOf(pranker), amount, vault.decimals());
     }
 
     function testFuzz_deposit_multiple(uint256 amount1, uint256 amount2, address pranker1, address pranker2) public {
@@ -37,6 +41,9 @@ contract Deposit is VaultTest {
         amount2 = bound(amount2, 1, 3000 ether);
         vm.assume(pranker1 != owner);
         vm.assume(pranker2 != owner);
+        vm.assume(pranker1 != pranker2);
+        vm.assume(pranker1 != address(0));
+        vm.assume(pranker2 != address(0));
 
         deal(address(vault.asset()), pranker1, amount1);
         deal(address(vault.asset()), pranker2, amount2);

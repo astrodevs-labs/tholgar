@@ -32,7 +32,7 @@ contract RecoverERC20 is VaultTest {
         vault.recoverERC20(address(usdc));
     }
 
-    function testFuzz_recoverERC20_NotOwner() public {
+    function test_recoverERC20_NotOwner() public {
         vm.prank(bob);
         vm.expectRevert("Ownable: caller is not the owner");
         vault.recoverERC20(address(usdc));

@@ -11,8 +11,9 @@ contract Mint is VaultTest {
     }
 
     function testFuzz_mint_normal(uint256 amount, address pranker) public {
-        vm.assume(amount != 0);
+        amount = bound(amount, 1, 3000 ether);
         vm.assume(pranker != owner);
+        vm.assume(pranker != address(0));
 
         uint256 assets = vault.convertToAssets(amount);
         deal(address(vault.asset()), pranker, assets);
@@ -34,6 +35,9 @@ contract Mint is VaultTest {
         amount2 = bound(amount2, 1, 3000 ether);
         vm.assume(pranker1 != owner);
         vm.assume(pranker2 != owner);
+        vm.assume(pranker1 != pranker2);
+        vm.assume(pranker1 != address(0));
+        vm.assume(pranker2 != address(0));
 
         uint256 assets1 = vault.convertToAssets(amount1);
         uint256 assets2 = vault.convertToAssets(amount2);

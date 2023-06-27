@@ -15,7 +15,7 @@ contract SetFeeRecipient is VaultTest {
         assertEq(vault.feeRecipient(), alice);
     }
 
-    function testFuzz_setFeeRecipient_NotOwner() public {
+    function test_setFeeRecipient_NotOwner() public {
         vm.prank(bob);
         vm.expectRevert("Ownable: caller is not the owner");
         vault.setFeeRecipient(bob);
