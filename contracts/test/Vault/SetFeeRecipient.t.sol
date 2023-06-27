@@ -9,7 +9,7 @@ contract SetFeeRecipient is VaultTest {
         VaultTest.setUp();
     }
 
-    function test_setFeeRecipient_normal() public {
+    function test_setFeeRecipient_Normal() public {
         vm.prank(owner);
         vault.setFeeRecipient(alice);
         assertEq(vault.feeRecipient(), alice, "FeeRecipient should be alice");

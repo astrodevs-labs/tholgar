@@ -10,7 +10,7 @@ contract Pause is VaultTest {
         VaultTest.setUp();
     }
 
-    function test_pause_normal() public {
+    function test_pause_Normal() public {
         vm.prank(owner);
         vault.pause();
         assertTrue(vault.paused(), "Vault should be paused");

@@ -10,7 +10,7 @@ contract Withdraw is VaultTest {
         VaultTest.setUp();
     }
 
-    function testFuzz_withdraw_normal(uint256 amount, uint256 amount2, address pranker) public {
+    function testFuzz_withdraw_Normal(uint256 amount, uint256 amount2, address pranker) public {
         vm.assume(amount2 != 0);
         amount = bound(amount, amount2, UINT256_MAX);
         vm.assume(pranker != address(0));
@@ -26,9 +26,9 @@ contract Withdraw is VaultTest {
         vault.withdraw(assets, pranker, pranker);
         vm.stopPrank();
 
-        assertEqDecimal(vault.asset().balanceOf(pranker), assets, ERC20(address(vault.asset())).decimals(), "Pranker should have received assets");
-        assertEqDecimal(staker.balanceOf(address(vault)), amount - assets, staker.decimals(), "Staker should have received staking tokens");
-        assertEqDecimal(vault.balanceOf(pranker), 0, vault.decimals(), "Pranker should have no shares");
-        assertEqDecimal(vault.totalAssets(), amount - assets, ERC20(address(vault.asset())).decimals(), "Total assets should have decreased");
+        assertEqDecimal(vault.asset().balanceOf(pranker), assets, 18, "Pranker should have received assets");
+        assertEqDecimal(staker.balanceOf(address(vault)), amount - assets, 18, "Staker should have received staking tokens");
+        assertEqDecimal(vault.balanceOf(pranker), 0, 18, "Pranker should have no shares");
+        assertEqDecimal(vault.totalAssets(), amount - assets, 18, "Total assets should have decreased");
     }
 }

@@ -15,7 +15,7 @@ contract Constructor is MainnetTest {
         fork();
     }
 
-    function test_VaultContructor_goodDeployment() public {
+    function test_VaultContructor_GoodDeployment() public {
         vm.startPrank(owner);
         ASwapper.OutputToken[] memory tokens = new ASwapper.OutputToken[](1);
         tokens[0] = ASwapper.OutputToken(address(usdc), 18, 10_000);

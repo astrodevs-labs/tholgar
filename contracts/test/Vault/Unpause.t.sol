@@ -10,7 +10,7 @@ contract Unpause is VaultTest {
         VaultTest.setUp();
     }
 
-    function test_unpause_normal() public {
+    function test_unpause_Normal() public {
         vm.startPrank(owner);
         vault.pause();
         vault.unpause();

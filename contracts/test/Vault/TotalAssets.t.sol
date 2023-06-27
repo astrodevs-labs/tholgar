@@ -10,9 +10,9 @@ contract TotalAssets is VaultTest {
         VaultTest.setUp();
     }
 
-    function testFuzz_totalAssets_normal(uint256 amount) public {
+    function testFuzz_totalAssets_Normal(uint256 amount) public {
         deal(address(staker), address(vault), amount);
 
-        assertEqDecimal(vault.totalAssets(), amount, ERC20(address(vault.asset())).decimals(), "Total assets should be equal to the amount of staker tokens");
+        assertEqDecimal(vault.totalAssets(), amount, 18, "Total assets should be equal to the amount of staker tokens");
     }
 }

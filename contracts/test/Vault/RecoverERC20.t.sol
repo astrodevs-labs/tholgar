@@ -10,14 +10,14 @@ contract RecoverERC20 is VaultTest {
         VaultTest.setUp();
     }
 
-    function testFuzz_recoverERC20_normal(uint256 amount) public {
+    function testFuzz_recoverERC20_Normal(uint256 amount) public {
         vm.assume(amount != 0);
 
         deal(address(usdc), address(vault), amount);
 
         vm.prank(owner);
         vault.recoverERC20(address(usdc));
-        assertEqDecimal(usdc.balanceOf(owner), amount, ERC20(address(usdc)).decimals(), "Owner should have all USDC");
+        assertEqDecimal(usdc.balanceOf(owner), amount, 18, "Owner should have all USDC");
     }
 
     function test_recoverERC20_ZeroAddress() public {
