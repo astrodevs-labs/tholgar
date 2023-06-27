@@ -7,7 +7,7 @@ import { Log } from "@ethersproject/providers";
 import ky from "ky";
 
 const MAX_RANGE = 100; // limit range of events to comply with rpc providers
-const MAX_REQUESTS = 100; // limit number of requests on every execution to avoid hitting timeout
+const MAX_REQUESTS = 80; // limit number of requests on every execution to avoid hitting timeout
 const VAULT_ABI = [
   {
     inputs: [],
@@ -152,10 +152,42 @@ async function getParaswapData(
   return [priceData["data"], priceRoute["priceRoute"].destAmount];
 }
 
+async function checkRevert(provider: any, secrets: any): Promise<number> {
+  const taskId = await secrets.get("TASK_ID");
+  if (!taskId) {
+    throw new Error("No task id found");
+  }
+
+  const taskStatus: any = ky.get(`https://api.gelato.digital/tasks/web3functions/networks/${provider.network.chainId}/tasks/${taskId}/status`).json();
+  if (!taskStatus["task"]["lastExecTransactionHash"]) {
+    return 42;
+  }
+
+  const txHash = taskStatus["task"]["lastExecTransactionHash"];
+  const txReceipt: any = await provider.getTransactionReceipt(txHash);
+  return txReceipt["status"];
+}
+
 Web3Function.onRun(async (context: Web3FunctionContext) => {
-  const { userArgs, storage, multiChainProvider } = context;
+  const { userArgs, storage, multiChainProvider, secrets } = context;
 
   const provider = multiChainProvider.default();
+
+  try {
+    const status = await checkRevert(provider, secrets);
+    if (status === 1) {
+      // Change the pending to last timestamp
+      const pendingLastBlockStr = await storage.get("pendingLastBlock");
+      if (pendingLastBlockStr) {
+        await storage.set("lastBlock", pendingLastBlockStr);
+        await storage.delete("pendingLastBlock");
+      }
+    } else if (status === 0) {
+      await storage.delete("pendingLastBlock");
+    }
+  } catch (error) {
+    return { canExec: false, message: error.message };
+  }
 
   // Create vault contract
   const vaultAddress =
@@ -168,6 +200,7 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
   const lastBlockStr = await storage.get("lastBlock");
   if (!lastBlockStr) {
     await storage.set("lastBlock", currentBlock.toString());
+    await storage.set("execute", "false");
     return { canExec: false, message: "First execution" };
   }
   let lastBlock = parseInt(lastBlockStr);
@@ -199,8 +232,11 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
   // Update storage for next run
   await storage.set("lastBlock", currentBlock.toString());
 
-  if (logs.length === 0) {
+  const execute = await storage.get("execute") ?? "false";
+  if (execute === "false" && logs.length === 0) {
     return { canExec: false, message: "No new rewards" };
+  } else {
+    await storage.set("execute", "true");
   }
 
   // Get swap data for fee token to mintable token

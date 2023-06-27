@@ -117,10 +117,52 @@ async function getParaswapData(
   return [priceData["data"], priceRoute["priceRoute"].destAmount];
 }
 
+async function checkRevert(provider: any, secrets: any): Promise<number> {
+  const taskId = await secrets.get("TASK_ID");
+  if (!taskId) {
+    throw new Error("No task id found");
+  }
+
+  const taskStatus: any = ky.get(`https://api.gelato.digital/tasks/web3functions/networks/${provider.network.chainId}/tasks/${taskId}/status`).json();
+  if (!taskStatus["task"]["lastExecTransactionHash"]) {
+    return 42;
+  }
+
+  const txHash = taskStatus["task"]["lastExecTransactionHash"];
+  const txReceipt: any = await provider.getTransactionReceipt(txHash);
+  return txReceipt["status"];
+}
+
 Web3Function.onRun(async (context: Web3FunctionContext) => {
-  const { userArgs, storage, multiChainProvider } = context;
+  const { userArgs, storage, multiChainProvider, secrets } = context;
 
   const provider = multiChainProvider.default();
+
+  try {
+    const status = await checkRevert(provider, secrets);
+    if (status === 1) {
+      // Change the pending to last timestamp
+      const pendingLastTimestampStr = await storage.get("pendingLastTimestamp");
+      if (pendingLastTimestampStr) {
+        await storage.set("lastTimestamp", pendingLastTimestampStr);
+        await storage.delete("pendingLastTimestamp");
+      }
+    } else if (status === 0) {
+      await storage.delete("pendingLastTimestamp");
+    }
+  } catch (error) {
+    return { canExec: false, message: error.message };
+  }
+
+  // Retrieve last timestamp of execution
+  const currentTimestamp = new Date().getTime();
+  const lastTimestampStr = await storage.get("lastTimestamp");
+  if (!lastTimestampStr) {
+    await storage.set("lastTimestamp", currentTimestamp.toString());
+    return { canExec: false, message: "First execution" };
+  }
+  const lastTimestamp = parseInt(lastTimestampStr);
+  console.log(`Last timestamp: ${lastTimestamp}`);
 
   const timeToExecute = (userArgs.timeToExecute as number) ?? 604800000;
 
@@ -131,16 +173,6 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
     (userArgs.staker as string) ?? "0xA86c53AF3aadF20bE5d7a8136ACfdbC4B074758A";
   const vault = new Contract(vaultAddress, VAULT_ABI, provider);
   const staker = new Contract(stakerAddress, STAKER_ABI, provider);
-  const currentTimestamp = new Date().getTime();
-
-  // Retrieve last timestamp of execution
-  const lastTimestampStr = await storage.get("lastTimestamp");
-  if (!lastTimestampStr) {
-    await storage.set("lastTimestamp", currentTimestamp.toString());
-    return { canExec: false, message: "First execution" };
-  }
-  const lastTimestamp = parseInt(lastTimestampStr);
-  console.log(`Last timestamp: ${lastTimestamp}`);
 
   // Check if enough time has passed since last execution
   const timeSinceLastExecution = currentTimestamp - lastTimestamp;
@@ -198,7 +230,7 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
   }
 
   // Update storage for next run
-  await storage.set("lastTimestamp", currentTimestamp.toString());
+  await storage.set("pendingLastTimestamp", currentTimestamp.toString());
 
   // Harvest the rewards
   return {
