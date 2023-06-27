@@ -239,6 +239,26 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
     await storage.set("execute", "true");
   }
 
+  const maxGasPriceStr = secrets.get("MAX_GAS_PRICE");
+  const maxGasPrice = maxGasPriceStr ? BigNumber.from(maxGasPriceStr) : BigNumber.from("100000000000");
+
+  try {
+    const feeData = await provider.getFeeData();
+    console.log(`Gas price: ${feeData.gasPrice.toString()}`);
+
+    if (feeData.gasPrice.gt(maxGasPrice)) {
+      return {
+        canExec: false,
+        message: "Gas price is too high",
+      };
+    }
+  } catch (error) {
+    return {
+      canExec: false,
+      message: "Could not retrieve gas price",
+    };
+  }
+
   // Get swap data for fee token to mintable token
   const outputData: string[] = [];
   try {
