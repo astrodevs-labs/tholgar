@@ -18,7 +18,7 @@ abstract contract AOperator is Ownable2Step {
     /**
      * @notice Event emitted when a output tokens and/or ratios are updated
      */
-    event OperatorUpdated(address operator);
+    event OperatorUpdated(address oldOperator, address newOperator);
 
     /*//////////////////////////////////////////////////////////////
                             MUTABLE VARIABLES
@@ -54,7 +54,6 @@ abstract contract AOperator is Ownable2Step {
         if (initialOperator == address(0)) revert Errors.ZeroAddress();
 
         operator = initialOperator;
-        emit OperatorUpdated(operator);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -64,7 +63,9 @@ abstract contract AOperator is Ownable2Step {
     function setOperator(address newOperator) external onlyOwner {
         if (newOperator == address(0)) revert Errors.ZeroAddress();
 
+        address oldOperator = operator;
         operator = newOperator;
-        emit OperatorUpdated(newOperator);
+
+        emit OperatorUpdated(oldOperator, newOperator);
     }
 }
