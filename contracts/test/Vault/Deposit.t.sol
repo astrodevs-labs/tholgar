@@ -17,9 +17,7 @@ contract Deposit is VaultTest {
         vm.stopPrank();
     }
 
-/*
-    TODO @0xtekgrinder
-    function testFuzz_deposit_normal() public {
+    function test_deposit_normal() public {
         deal(address(vault.asset()), alice, 10);
 
         vm.startPrank(alice);
@@ -62,5 +60,4 @@ contract Deposit is VaultTest {
         assertEqDecimal(vault.balanceOf(pranker1), amount1, vault.decimals());
         assertEqDecimal(vault.balanceOf(pranker2), amount2, vault.decimals());
     }
-*/
 }

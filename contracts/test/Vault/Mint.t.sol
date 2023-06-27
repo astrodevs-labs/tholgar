@@ -10,8 +10,6 @@ contract Mint is VaultTest {
         VaultTest.setUp();
     }
 
-/*
-    TODO: @0xtegrinder
     function testFuzz_mint_normal(uint256 amount, address pranker) public {
         vm.assume(amount != 0);
         vm.assume(pranker != owner);
@@ -61,5 +59,4 @@ contract Mint is VaultTest {
         assertEqDecimal(vault.balanceOf(pranker1), amount1, vault.decimals());
         assertEqDecimal(vault.balanceOf(pranker2), amount2, vault.decimals());
     }
-*/
 }

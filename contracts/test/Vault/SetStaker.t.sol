@@ -38,9 +38,6 @@ contract SetStaker is VaultTest {
         vault.setStaker(address(newStaker));
     }
 
-    /*
-    TODO: @0xtekgrinder
-
     function testFuzz_setStaker_normal(uint256 amount) public {
         WarStaker newStaker = new WarStaker(address(vault.asset()));
 
@@ -57,5 +54,4 @@ contract SetStaker is VaultTest {
         assertEq(vault.asset().allowance(address(vault), address(newStaker)), UINT256_MAX);
         assertEq(vault.asset().allowance(address(vault), address(staker)), 0);
     }
-    */
 }

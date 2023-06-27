@@ -10,8 +10,6 @@ contract Withdraw is VaultTest {
         VaultTest.setUp();
     }
 
-/*
-    TODO: @0xtekgrinder
     function testFuzz_withdraw_normal(uint256 amount, uint256 amount2, address pranker) public {
         vm.assume(amount2 != 0);
         amount = bound(amount, amount2, UINT256_MAX);
@@ -31,5 +29,4 @@ contract Withdraw is VaultTest {
         assertEqDecimal(vault.balanceOf(pranker), 0, vault.decimals());
         assertEqDecimal(vault.totalAssets(), amount - assets, ERC20(address(vault.asset())).decimals());
     }
-*/
 }

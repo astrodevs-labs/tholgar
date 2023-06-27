@@ -8,6 +8,7 @@ import {Vault} from "../../src/Vault.sol";
 
 contract VaultTest is MainnetTest {
     Vault vault;
+    WarStaker staker;
 
     function setUp() public virtual override {
         MainnetTest.setUp();
@@ -16,7 +17,8 @@ contract VaultTest is MainnetTest {
         vm.startPrank(owner);
         ASwapper.OutputToken[] memory tokens = new ASwapper.OutputToken[](1);
         tokens[0] = ASwapper.OutputToken(address(usdc), 18, 10_000);
-        vault = new Vault(address(staker), minter, 500, owner, address(usdc), augustusSwapper, operator, address(war));
+        staker = new WarStaker(address(war));
+        vault = new Vault(address(staker), address(minter), 500, owner, address(usdc), augustusSwapper, operator, address(war));
         vault.setOutputTokens(tokens);
         vm.stopPrank();
     }

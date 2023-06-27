@@ -17,8 +17,6 @@ contract Redeem is VaultTest {
         vm.stopPrank();
     }
 
-/*
-    TODO: @0xtekgrinder
     function testFuzz_redeem_normal(uint256 amount, uint256 amount2) public {
         vm.assume(amount2 != 0);
         amount = bound(amount, amount2, UINT256_MAX);
@@ -36,5 +34,4 @@ contract Redeem is VaultTest {
         assertEqDecimal(vault.balanceOf(alice), 0, vault.decimals());
         assertEqDecimal(vault.totalAssets(), amount - assets, ERC20(address(vault.asset())).decimals());
     }
-*/
 }
