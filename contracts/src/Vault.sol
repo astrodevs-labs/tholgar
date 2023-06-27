@@ -236,29 +236,30 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
 
     /**
      * @notice Harvest all rewards from staker
-     * @custom:requires operator or owner
-     */
-    function harvest() external onlyOperatorOrOwner {
-        IStaker.UserClaimedRewards[] memory rewards = IStaker(staker).claimAllRewards(address(this));
-        emit Harvested(rewards);
-    }
-
-    /**
-     * @notice Turn  all rewards into more staked assets
      * @param inputTokens reward tokens claimed from staker
      * @param inputCallDatas swapper routes to swap to feeToken
-     * @param outputCallDatas swapper routes to swap to more assets
      * @custom:requires operator or owner
      */
-    function compound(address[] calldata inputTokens, bytes[] calldata inputCallDatas, bytes[] calldata outputCallDatas)
-        external
-        nonReentrant
-        onlyOperatorOrOwner
-    {
+    function harvest(address[] calldata inputTokens, bytes[] calldata inputCallDatas) external nonReentrant onlyOperatorOrOwner {
+        IStaker.UserClaimedRewards[] memory rewards = IStaker(staker).claimAllRewards(address(this));
+        emit Harvested(rewards);
+
         // swap to fee token
         _swap(inputTokens, inputCallDatas);
         // transfer havestfee %oo to fee recipient
         ERC20(feeToken).safeTransfer(feeRecipient, ERC20(feeToken).balanceOf(address(this)) * (harvestFee / MAX_BPS));
+    }
+
+    /**
+     * @notice Turn  all rewards into more staked assets
+     * @param outputCallDatas swapper routes to swap to more assets
+     * @custom:requires operator or owner
+     */
+    function compound(bytes[] calldata outputCallDatas)
+        external
+        nonReentrant
+        onlyOperatorOrOwner
+    {
         // swap to outputtokens with correct ratios
         uint256 length = outputTokens.length;
         address[] memory tokens = new address[](length);
@@ -270,7 +271,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
         }
         _swap(tokens, outputCallDatas);
         uint256[] memory amounts = new uint256[](length);
-        address[] memory outputTokensAddresses = getOutputTokensAddresses();
+        address[] memory outputTokensAddresses = getOutputTokenAddresses();
         for (uint256 i; i < length;) {
             amounts[i] = ERC20(outputTokensAddresses[i]).balanceOf(address(this));
             unchecked {
