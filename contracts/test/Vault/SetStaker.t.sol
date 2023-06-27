@@ -16,12 +16,12 @@ contract SetStaker is VaultTest {
         vm.prank(owner);
         vault.setStaker(address(newStaker));
 
-        assertEq(vault.staker(), address(newStaker));
-        assertEqDecimal(vault.asset().balanceOf(address(vault)), 0, ERC20(address(vault.asset())).decimals());
-        assertEqDecimal(newStaker.balanceOf(address(vault)), 0, newStaker.decimals());
-        assertEqDecimal(staker.balanceOf(address(vault)), 0, staker.decimals());
-        assertEq(vault.asset().allowance(address(vault), address(newStaker)), UINT256_MAX);
-        assertEq(vault.asset().allowance(address(vault), address(staker)), 0);
+        assertEq(vault.staker(), address(newStaker), "Staker should be newStaker");
+        assertEqDecimal(vault.asset().balanceOf(address(vault)), 0, ERC20(address(vault.asset())).decimals(), "Vault should have 0 assets");
+        assertEqDecimal(newStaker.balanceOf(address(vault)), 0, newStaker.decimals(), "newStaker should have 0 assets");
+        assertEqDecimal(staker.balanceOf(address(vault)), 0, staker.decimals(), "staker should have 0 assets");
+        assertEq(vault.asset().allowance(address(vault), address(newStaker)), UINT256_MAX, "newStaker should have unlimited allowance");
+        assertEq(vault.asset().allowance(address(vault), address(staker)), 0, "staker should have 0 allowance");
     }
 
     function test_setStaker_ZeroAddress() public {
@@ -47,11 +47,11 @@ contract SetStaker is VaultTest {
         vm.prank(owner);
         vault.setStaker(address(newStaker));
 
-        assertEq(vault.staker(), address(newStaker));
-        assertEqDecimal(vault.asset().balanceOf(address(vault)), 0, ERC20(address(vault.asset())).decimals());
-        assertEqDecimal(newStaker.balanceOf(address(vault)), amount, newStaker.decimals());
-        assertEqDecimal(staker.balanceOf(address(vault)), 0, staker.decimals());
-        assertEq(vault.asset().allowance(address(vault), address(newStaker)), UINT256_MAX);
-        assertEq(vault.asset().allowance(address(vault), address(staker)), 0);
+        assertEq(vault.staker(), address(newStaker), "Staker should be newStaker");
+        assertEqDecimal(vault.asset().balanceOf(address(vault)), 0, ERC20(address(vault.asset())).decimals(), "Vault should have 0 assets");
+        assertEqDecimal(newStaker.balanceOf(address(vault)), amount, newStaker.decimals(), "newStaker should have all assets");
+        assertEqDecimal(staker.balanceOf(address(vault)), 0, staker.decimals(), "staker should have 0 assets");
+        assertEq(vault.asset().allowance(address(vault), address(newStaker)), UINT256_MAX, "newStaker should have unlimited allowance");
+        assertEq(vault.asset().allowance(address(vault), address(staker)), 0, "staker should have 0 allowance");
     }
 }

@@ -29,11 +29,11 @@ contract Deposit is VaultTest {
         vault.deposit(amount, pranker);
         vm.stopPrank();
 
-        assertEqDecimal(vault.asset().balanceOf(address(staker)), amount, ERC20(address(vault.asset())).decimals());
-        assertEqDecimal(vault.asset().balanceOf(address(vault)), 0, ERC20(address(vault.asset())).decimals());
-        assertEqDecimal(staker.balanceOf(address(vault)), amount, staker.decimals());
-        assertEqDecimal(vault.totalAssets(), amount, ERC20(address(vault.asset())).decimals());
-        assertEqDecimal(vault.balanceOf(pranker), amount, vault.decimals());
+        assertEqDecimal(vault.asset().balanceOf(address(staker)), amount, ERC20(address(vault.asset())).decimals(), "Staker should have received the assets");
+        assertEqDecimal(vault.asset().balanceOf(address(vault)), 0, ERC20(address(vault.asset())).decimals(), "Vault should have 0 assets");
+        assertEqDecimal(staker.balanceOf(address(vault)), amount, staker.decimals(), "Vault should have received the shares");
+        assertEqDecimal(vault.totalAssets(), amount, ERC20(address(vault.asset())).decimals(), "Vault should have 0 assets");
+        assertEqDecimal(vault.balanceOf(pranker), amount, vault.decimals(), "Pranker should have received the shares");
     }
 
     function testFuzz_deposit_multiple(uint256 amount1, uint256 amount2, address pranker1, address pranker2) public {
@@ -59,12 +59,13 @@ contract Deposit is VaultTest {
         vm.stopPrank();
 
         assertEqDecimal(
-            vault.asset().balanceOf(address(staker)), amount1 + amount2, ERC20(address(vault.asset())).decimals()
+            vault.asset().balanceOf(address(staker)), amount1 + amount2, ERC20(address(vault.asset())).decimals(),
+            "Staker should have received the assets"
         );
-        assertEqDecimal(vault.asset().balanceOf(address(vault)), 0, ERC20(address(vault.asset())).decimals());
-        assertEqDecimal(staker.balanceOf(address(vault)), amount1 + amount2, staker.decimals());
-        assertEqDecimal(vault.totalAssets(), amount1 + amount2, ERC20(address(vault.asset())).decimals());
-        assertEqDecimal(vault.balanceOf(pranker1), amount1, vault.decimals());
-        assertEqDecimal(vault.balanceOf(pranker2), amount2, vault.decimals());
+        assertEqDecimal(vault.asset().balanceOf(address(vault)), 0, ERC20(address(vault.asset())).decimals(), "Vault should have 0 assets");
+        assertEqDecimal(staker.balanceOf(address(vault)), amount1 + amount2, staker.decimals(), "Vault should have received the shares");
+        assertEqDecimal(vault.totalAssets(), amount1 + amount2, ERC20(address(vault.asset())).decimals(), "Vault should have 0 assets");
+        assertEqDecimal(vault.balanceOf(pranker1), amount1, vault.decimals(), "Pranker1 should have received the shares");
+        assertEqDecimal(vault.balanceOf(pranker2), amount2, vault.decimals(), "Pranker2 should have received the shares");
     }
 }

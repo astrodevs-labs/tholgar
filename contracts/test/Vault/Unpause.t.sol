@@ -15,7 +15,7 @@ contract Unpause is VaultTest {
         vault.pause();
         vault.unpause();
         vm.stopPrank();
-        assertFalse(vault.paused());
+        assertFalse(vault.paused(), "Vault should be unpaused");
     }
 
     function test_unpause_NotOwner() public {

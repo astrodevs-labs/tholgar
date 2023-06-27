@@ -7,7 +7,7 @@ import {WarStaker} from "warlord/Staker.sol";
 import {Vault} from "../../src/Vault.sol";
 import {Errors} from "../../src/utils/Errors.sol";
 
-contract VaultConstructorTest is MainnetTest {
+contract Constructor is MainnetTest {
     Vault vault;
 
     function setUp() public virtual override {
@@ -24,13 +24,13 @@ contract VaultConstructorTest is MainnetTest {
         vault.setOutputTokens(tokens);
         vm.stopPrank();
 
-        assertEqDecimal(vault.harvestFee(), 500, 2);
-        assertEq(vault.feeRecipient(), owner);
-        assertEq(address(vault.feeToken()), address(usdc));
-        assertFalse(vault.paused());
-        assertEq(address(vault.asset()), address(war));
-        assertEq(vault.staker(), address(staker));
-        assertEq(vault.asset().allowance(address(vault), address(staker)), UINT256_MAX);
+        assertEqDecimal(vault.harvestFee(), 500, 2, "Harvest fee is not 5%");
+        assertEq(vault.feeRecipient(), owner, "Fee recipient is not owner");
+        assertEq(address(vault.feeToken()), address(usdc), "Fee token is not USDC");
+        assertFalse(vault.paused(), "Vault is paused");
+        assertEq(address(vault.asset()), address(war), "Asset is not WAR");
+        assertEq(vault.staker(), address(staker), "Staker is not staker");
+        assertEq(vault.asset().allowance(address(vault), address(staker)), UINT256_MAX, "Staker allowance is not max");
     }
 
     /*

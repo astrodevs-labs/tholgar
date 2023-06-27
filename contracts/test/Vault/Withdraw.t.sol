@@ -26,9 +26,9 @@ contract Withdraw is VaultTest {
         vault.withdraw(assets, pranker, pranker);
         vm.stopPrank();
 
-        assertEqDecimal(vault.asset().balanceOf(pranker), assets, ERC20(address(vault.asset())).decimals());
-        assertEqDecimal(staker.balanceOf(address(vault)), amount - assets, staker.decimals());
-        assertEqDecimal(vault.balanceOf(pranker), 0, vault.decimals());
-        assertEqDecimal(vault.totalAssets(), amount - assets, ERC20(address(vault.asset())).decimals());
+        assertEqDecimal(vault.asset().balanceOf(pranker), assets, ERC20(address(vault.asset())).decimals(), "Pranker should have received assets");
+        assertEqDecimal(staker.balanceOf(address(vault)), amount - assets, staker.decimals(), "Staker should have received staking tokens");
+        assertEqDecimal(vault.balanceOf(pranker), 0, vault.decimals(), "Pranker should have no shares");
+        assertEqDecimal(vault.totalAssets(), amount - assets, ERC20(address(vault.asset())).decimals(), "Total assets should have decreased");
     }
 }

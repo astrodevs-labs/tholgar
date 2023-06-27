@@ -12,7 +12,7 @@ contract SetFeeToken is VaultTest {
     function test_setFeeToken_normal() public {
         vm.prank(owner);
         vault.setFeeToken(address(usdc));
-        assertEq(address(vault.feeToken()), address(usdc));
+        assertEq(address(vault.feeToken()), address(usdc), "FeeToken should be usdc");
     }
 
     function test_setFeeToken_NotOwner() public {

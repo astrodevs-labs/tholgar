@@ -12,7 +12,7 @@ contract SetHarvestFee is VaultTest {
     function test_setHarvestFee_normal() public {
         vm.prank(owner);
         vault.setHarvestFee(100);
-        assertEq(vault.harvestFee(), 100);
+        assertEq(vault.harvestFee(), 100, "HarvestFee should be 100");
     }
 
     function test_setHarvestFee_NotOwner() public {

@@ -17,7 +17,7 @@ contract RecoverERC20 is VaultTest {
 
         vm.prank(owner);
         vault.recoverERC20(address(usdc));
-        assertEqDecimal(usdc.balanceOf(owner), amount, ERC20(address(usdc)).decimals());
+        assertEqDecimal(usdc.balanceOf(owner), amount, ERC20(address(usdc)).decimals(), "Owner should have all USDC");
     }
 
     function test_recoverERC20_ZeroAddress() public {
