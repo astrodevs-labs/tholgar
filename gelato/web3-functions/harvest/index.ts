@@ -72,8 +72,7 @@ const VAULT_ABI = [
   },
 ];
 const ERC20_ABI = [
-  "function decimals() view returns (uint8)",
-  "function balanceOf(address) view returns (uint256)",
+  "function decimals() view returns (uint8)"
 ];
 
 async function getParaswapData(
@@ -84,57 +83,66 @@ async function getParaswapData(
   amount: BigNumber,
   userAddress: string,
   chainId: number
-): Promise<[string, string]> {
-  const priceRoute: any = await ky
-    .get(
-      `https://apiv5.paraswap.io/prices?from=${srcToken}&to=${destToken}&amount=${amount.toString()}&side=SELL&network=${chainId}&srcDecimals=${srcDecimals}&destDecimals=${destDecimals}`
-    )
-    .json();
-  if (!priceRoute["priceRoute"]) {
-    throw new Error("No price route found");
-  }
+): Promise<string> {
+  try {
+    const priceRoute: any = await ky
+      .get(
+        `https://apiv5.paraswap.io/prices?srcToken=${srcToken}&destToken=${destToken}&amount=${amount.toString()}&side=SELL&network=${chainId}&srcDecimals=${srcDecimals}&destDecimals=${destDecimals}&userAddress=${userAddress}`
+      )
+      .json();
+    if (!priceRoute["priceRoute"]) {
+      throw new Error("No price route found");
+    }
 
-  const priceData: any = await ky
-    .post(`https://apiv5.paraswap.io/transactions/${chainId}`, {
-      timeout: 5_000,
-      retry: 0,
-      json: {
-        srcToken: priceRoute["priceRoute"].srcToken,
-        destToken: priceRoute["priceRoute"].destToken,
-        srcAmount: priceRoute["priceRoute"].srcAmount,
-        destAmount: priceRoute["priceRoute"].destAmount,
-        priceRoute: priceRoute["priceRoute"],
-        userAddress: userAddress,
-        partner: "paraswap.io",
-        srcDecimals: priceRoute["priceRoute"].srcDecimals,
-        destDecimals: priceRoute["priceRoute"].destDecimals,
-      },
-    })
-    .json();
-  if (!priceData["data"]) {
-    throw new Error("No data returned from Paraswap");
+    const priceData: any = await ky
+      .post(
+        `https://apiv5.paraswap.io/transactions/${chainId}?ignoreChecks=true&ignoreGasEstimate=true`,
+        {
+          json: {
+            srcToken: priceRoute["priceRoute"].srcToken,
+            destToken: priceRoute["priceRoute"].destToken,
+            srcAmount: priceRoute["priceRoute"].srcAmount,
+            destAmount: priceRoute["priceRoute"].destAmount,
+            priceRoute: priceRoute["priceRoute"],
+            userAddress: userAddress,
+            partner: "paraswap.io",
+            srcDecimals: priceRoute["priceRoute"].srcDecimals,
+            destDecimals: priceRoute["priceRoute"].destDecimals,
+          },
+        }
+      )
+      .json();
+    if (!priceData["data"]) {
+      throw new Error("No data returned from Paraswap");
+    }
+    return priceData["data"];
+  } catch (error) {
+    throw new Error(error.message);
   }
-  return [priceData["data"], priceRoute["priceRoute"].destAmount];
 }
 
 async function checkRevert(provider: any, secrets: any): Promise<number> {
-  const taskId = await secrets.get("TASK_ID");
-  if (!taskId) {
-    throw new Error("No task id found");
-  }
+  try {
+    const taskId = await secrets.get("TASK_ID");
+    if (!taskId) {
+      throw new Error("No task id found");
+    }
 
-  const taskStatus: any = ky
-    .get(
-      `https://api.gelato.digital/tasks/web3functions/networks/${provider.network.chainId}/tasks/${taskId}/status`
-    )
-    .json();
-  if (!taskStatus["task"]["lastExecTransactionHash"]) {
-    return 42;
-  }
+    const taskStatus: any = await ky
+      .get(
+        `https://api.gelato.digital/tasks/web3functions/networks/${provider.network.chainId}/tasks/${taskId}/status`
+      )
+      .json();
+    if (!taskStatus["task"]["lastExecTransactionHash"]) {
+      return 42;
+    }
 
-  const txHash = taskStatus["task"]["lastExecTransactionHash"];
-  const txReceipt: any = await provider.getTransactionReceipt(txHash);
-  return txReceipt["status"];
+    const txHash = taskStatus["task"]["lastExecTransactionHash"];
+    const txReceipt: any = await provider.getTransactionReceipt(txHash);
+    return txReceipt["status"];
+  } catch (error) {
+    throw new Error(error.message);
+  }
 }
 
 Web3Function.onRun(async (context: Web3FunctionContext) => {
@@ -168,17 +176,24 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
   const lastTimestamp = parseInt(lastTimestampStr);
   console.log(`Last timestamp: ${lastTimestamp}`);
 
-  const timeToExecute = (userArgs.timeToExecute as number) ?? 604800000;
-  const maxGasPriceStr = secrets.get("MAX_GAS_PRICE");
+  const timeToExecute = parseInt(
+    (await secrets.get("TIME_TO_EXECUTE")) ?? "604800000"
+  );
+  const maxGasPriceStr = await secrets.get("MAX_GAS_PRICE");
   const maxGasPrice = maxGasPriceStr
-    ? BigNumber.from(maxGasPriceStr)
-    : BigNumber.from("100000000000");
+    ? parseInt(maxGasPriceStr)
+    : 100;
 
   try {
-    const feeData = await provider.getFeeData();
-    console.log(`Gas price: ${feeData.gasPrice.toString()}`);
+    const etherscanApiKey = await secrets.get("ETHERSCAN_API_KEY");
+    const feeData: any = await ky
+      .get(
+        `https://api.polygonscan.com/api?module=gastracker&action=gasoracle&apikey=${etherscanApiKey}`
+      )
+      .json();
+    console.log(`Gas price: ${feeData.result.SafeGasPrice}`);
 
-    if (feeData.gasPrice.gt(maxGasPrice)) {
+    if (parseFloat(feeData.result.SafeGasPrice) > maxGasPrice) {
       return {
         canExec: false,
         message: "Gas price is too high",
@@ -187,13 +202,13 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
   } catch (error) {
     return {
       canExec: false,
-      message: "Could not retrieve gas price",
+      message: `Could not retrieve gas price; ${error.message}`,
     };
   }
 
   // Create staker & vault contract
   const vaultAddress =
-    (userArgs.vault as string) ?? "0x71B9B0F6C999CBbB0FeF9c92B80D54e4973214da";
+    (userArgs.vault as string) ?? "0x28d00c740b511787659b341c1f476e33847d56b9";
   const stakerAddress =
     (userArgs.staker as string) ?? "0xA86c53AF3aadF20bE5d7a8136ACfdbC4B074758A";
   const vault = new Contract(vaultAddress, VAULT_ABI, provider);
@@ -209,7 +224,7 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
     };
   }
 
-  let claimableRewards: any;
+  let claimableRewards: any = [];
   try {
     claimableRewards = await staker.getUserTotalClaimableRewards(vaultAddress);
     console.log(`Claimable rewards: ${claimableRewards}`);
@@ -222,33 +237,32 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
     return { canExec: false, message: `Rpc call failed: ${err.message}` };
   }
 
-  const tokens: string[] = [];
+  const tokens: any = [];
 
   for (const reward of claimableRewards) {
-    if (tokens.indexOf(reward[0]) === -1) tokens.push(reward[0]);
+    if (tokens.indexOf(reward) === -1) tokens.push(reward);
   }
 
   const inputData: string[] = [];
-  const totalOut = BigNumber.from(0);
   try {
     const feeToken = await vault.feeToken();
     const feeContract = new Contract(feeToken, ERC20_ABI, provider);
     for (const token of tokens) {
-      const tokenContract = new Contract(token, ERC20_ABI, provider);
-      const balance = await tokenContract.getBalanceOf(token);
-      const srcDecimals = await tokenContract.decimals();
-      const destDecimals = await feeContract.decimals();
+      const tokenContract = new Contract(token[0], ERC20_ABI, provider);
+      const [srcDecimals, destDecimals] = await Promise.all([
+        tokenContract.decimals(),
+        feeContract.decimals(),
+      ]);
       const data = await getParaswapData(
-        token,
+        token[0],
         srcDecimals,
         feeToken,
         destDecimals,
-        balance,
+        token[1],
         vaultAddress,
         provider.network.chainId
       );
-      inputData.push(data[0]);
-      totalOut.add(data[1]);
+      inputData.push(data);
     }
   } catch (err) {
     return { canExec: false, message: `Cannot get input data: ${err.message}` };
@@ -257,6 +271,11 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
   // Update storage for next run
   await storage.set("pendingLastTimestamp", currentTimestamp.toString());
 
+  console.log(tokens);
+  for (const token of inputData) {
+    console.log(token);
+  }
+
   // Harvest the rewards
   return {
     canExec: true,
@@ -264,7 +283,7 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
       {
         to: vaultAddress,
         data: vault.interface.encodeFunctionData("harvest", [
-          tokens,
+          tokens.map((token: any) => token[0]),
           inputData,
         ]),
       },

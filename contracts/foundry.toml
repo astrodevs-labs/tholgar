@@ -1,7 +1,7 @@
 [profile.default]
 solc = "0.8.20"
 bytecode_hash = "none"
-optimizer_runs = 1000000
+optimizer_runs = 256
 verbosity = 2
 
 [profile.intense.fuzz]
@@ -9,3 +9,6 @@ runs = 10_000
 
 [rpc_endpoints]
 ethereum_mainet = '${MAINET_RPC_URL}'
+
+[etherscan]
+polygon = { key = "${ETHERSCAN_API_KEY}" }
