@@ -5,8 +5,6 @@ import "./BaseTest.sol";
 import {IERC20} from "openzeppelin-contracts/token/ERC20/ERC20.sol";
 import {WarStaker} from "warlord/Staker.sol";
 import {IMinter} from "warlord/interfaces/IMinter.sol";
-import {CvxLockerV2} from "./interfaces/vlCvx.sol";
-import {AuraLocker} from "./interfaces/vlAura.sol";
 import {IRatios} from "warlord/interfaces/IRatios.sol";
 import {Errors} from "../src/utils/Errors.sol";
 
@@ -19,10 +17,10 @@ contract MainnetTest is BaseTest {
   address constant augustusSwapper = 0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57;
 
   IERC20 constant aura = IERC20(0xC0c293ce456fF0ED870ADd98a0828Dd4d2903DBF);
-  AuraLocker constant vlAura = AuraLocker(0x3Fa73f1E5d8A792C80F426fc8F84FBF7Ce9bBCAC);
+  IERC20 constant vlAura = IERC20(0x3Fa73f1E5d8A792C80F426fc8F84FBF7Ce9bBCAC);
 
   IERC20 constant cvx = IERC20(0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B);
-  CvxLockerV2 constant vlCvx = CvxLockerV2(0x72a19342e8F1838460eBFCCEf09F6585e32db86E);
+  IERC20 constant vlCvx = IERC20(0x72a19342e8F1838460eBFCCEf09F6585e32db86E);
 
   function setUp() public virtual {
     vm.label(address(war), "war");
