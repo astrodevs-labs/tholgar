@@ -7,8 +7,11 @@ import {WarStaker} from "warlord/Staker.sol";
 import {IMinter} from "warlord/interfaces/IMinter.sol";
 import {CvxLockerV2} from "./interfaces/vlCvx.sol";
 import {AuraLocker} from "./interfaces/vlAura.sol";
+import {IRatios} from "warlord/interfaces/IRatios.sol";
+import {Errors} from "../src/utils/Errors.sol";
 
 contract MainnetTest is BaseTest {
+  IRatios constant ratios = IRatios(0xE40004395384455326c7a27A85204801C7f85F94);
   IERC20 constant war = IERC20(0xa8258deE2a677874a48F5320670A869D74f0cbC1);
   IMinter constant minter = IMinter(0x144a689A8261F1863c89954930ecae46Bd950341);
 
@@ -35,6 +38,6 @@ contract MainnetTest is BaseTest {
   }
 
   function randomVlToken(uint256 seed) public pure returns (address token) {
-    token = randomBinaryAddress(address(vlCvx), address(vlAura), seed);
+    token = randomBinaryAddress(address(cvx), address(aura), seed);
   }
 }

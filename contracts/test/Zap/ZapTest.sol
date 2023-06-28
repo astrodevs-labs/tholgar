@@ -3,7 +3,6 @@ pragma solidity 0.8.20;
 
 import "../Vault/VaultTest.sol";
 import {Zap} from "../../src/Zap.sol";
-import {WarStaker} from "warlord/Staker.sol";
 import {Vault} from "../../src/Vault.sol";
 
 contract ZapTest is VaultTest {
@@ -22,5 +21,8 @@ contract ZapTest is VaultTest {
     zap = new Zap(address(war), address(vault), address(minter));
 
     vm.stopPrank();
+
+    deal(address(aura), address(alice), 10_000e18);
+    deal(address(cvx), address(alice), 10_000e18);
   }
 }
