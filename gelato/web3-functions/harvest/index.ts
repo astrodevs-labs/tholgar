@@ -102,7 +102,7 @@ async function getParaswapData(
             srcToken: priceRoute["priceRoute"].srcToken,
             destToken: priceRoute["priceRoute"].destToken,
             srcAmount: priceRoute["priceRoute"].srcAmount,
-            destAmount: priceRoute["priceRoute"].destAmount,
+            destAmount: BigNumber.from(priceRoute["priceRoute"].srcAmount).sub(BigNumber.from(priceRoute["priceRoute"].srcAmount).div(100).mul(2)),
             priceRoute: priceRoute["priceRoute"],
             userAddress: userAddress,
             partner: "paraswap.io",
@@ -146,7 +146,7 @@ async function checkRevert(provider: any, secrets: any): Promise<number> {
 }
 
 Web3Function.onRun(async (context: Web3FunctionContext) => {
-  const { userArgs, storage, multiChainProvider, secrets } = context;
+  const { userArgs, storage, multiChainProvider, secrets, gelatoArgs } = context;
 
   const provider = multiChainProvider.default();
 
@@ -179,32 +179,20 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
   const timeToExecute = parseInt(
     (await secrets.get("TIME_TO_EXECUTE")) ?? "604800000"
   );
+
+  console.log(`Gas price: ${gelatoArgs.gasPrice.toString()}`);
   const maxGasPriceStr = await secrets.get("MAX_GAS_PRICE");
   const maxGasPrice = maxGasPriceStr
-    ? parseInt(maxGasPriceStr)
-    : 100;
+    ? maxGasPriceStr
+    : "100";
 
-  try {
-    const etherscanApiKey = await secrets.get("ETHERSCAN_API_KEY");
-    const feeData: any = await ky
-      .get(
-        `https://api.polygonscan.com/api?module=gastracker&action=gasoracle&apikey=${etherscanApiKey}`
-      )
-      .json();
-    console.log(`Gas price: ${feeData.result.SafeGasPrice}`);
-
-    if (parseFloat(feeData.result.SafeGasPrice) > maxGasPrice) {
+    if (gelatoArgs.gasPrice.gt(maxGasPrice)) {
       return {
         canExec: false,
         message: "Gas price is too high",
       };
     }
-  } catch (error) {
-    return {
-      canExec: false,
-      message: `Could not retrieve gas price; ${error.message}`,
-    };
-  }
+
 
   // Create staker & vault contract
   const vaultAddress =
@@ -247,17 +235,15 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
   try {
     const feeToken = await vault.feeToken();
     const feeContract = new Contract(feeToken, ERC20_ABI, provider);
+    const feeDecimals = await feeContract.decimals();
     for (const token of tokens) {
       const tokenContract = new Contract(token[0], ERC20_ABI, provider);
-      const [srcDecimals, destDecimals] = await Promise.all([
-        tokenContract.decimals(),
-        feeContract.decimals(),
-      ]);
+      const srcDecimals = await tokenContract.decimals();
       const data = await getParaswapData(
         token[0],
         srcDecimals,
         feeToken,
-        destDecimals,
+        feeDecimals,
         token[1],
         vaultAddress,
         provider.network.chainId
@@ -270,11 +256,6 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
 
   // Update storage for next run
   await storage.set("pendingLastTimestamp", currentTimestamp.toString());
-
-  console.log(tokens);
-  for (const token of inputData) {
-    console.log(token);
-  }
 
   // Harvest the rewards
   return {
