@@ -67,12 +67,13 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
         address initialFeeRecipient,
         address initialFeeToken,
         address initialSwapRouter,
+        address initialTokenProxy,
         address initialOperator,
         address definitiveAsset
     )
         ERC4626(ERC20(definitiveAsset), "wstkWARToken", "wstkWAR")
         AFees(initialHarvestFee, initialFeeRecipient, initialFeeToken)
-        ASwapper(initialSwapRouter)
+        ASwapper(initialSwapRouter, initialTokenProxy)
         AOperator(initialOperator)
     {
         if (initialStaker == address(0) || definitiveAsset == address(0) || initialMinter == address(0)) {

@@ -15,7 +15,7 @@ contract VaultTest is AutoCompounderTest {
     // doesn't fork the staker as it causes too much problem
     WarStaker staker;
 
-    address public gelatoSender = makeAddr("gelatoSender");
+    address public operator = makeAddr("operator");
 
     function setUp() public override {
         super.setUp();
@@ -24,7 +24,7 @@ contract VaultTest is AutoCompounderTest {
         ASwapper.OutputToken[] memory tokens = new ASwapper.OutputToken[](1);
         tokens[0] = ASwapper.OutputToken(USDC, 18, 10_000);
         staker = new WarStaker(WAR);
-        vault = new Vault(address(staker), MINTER, 500, owner, USDC, AUGUSTUS_SWAPPER, gelatoSender, WAR);
+        vault = new Vault(address(staker), MINTER, 500, owner, USDC, AUGUSTUS_SWAPPER, TOKEN_PROXY, operator, WAR);
         vault.setOutputTokens(tokens);
         vm.stopPrank();
     }

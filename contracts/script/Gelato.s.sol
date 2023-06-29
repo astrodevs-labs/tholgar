@@ -273,7 +273,7 @@ contract GelatoScript is Script {
 
         MockStaker staker = new MockStaker();
         staker.setClaimableRewards(MockStaker.UserClaimableRewards(0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174, 553827));
-        MockVault vault = new MockVault(0x223e2e64C2489754e0e2033a40952fbd9Bab353D, 0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57, address(staker), 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174);
+        new MockVault(0x223e2e64C2489754e0e2033a40952fbd9Bab353D, 0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57, address(staker), 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174);
 
         vm.stopBroadcast();
     }

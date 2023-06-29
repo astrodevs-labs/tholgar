@@ -14,6 +14,7 @@ abstract contract AutoCompounderTest is Test {
 
     address constant USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
     address constant AUGUSTUS_SWAPPER = 0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57;
+    address constant TOKEN_PROXY = 0x216B4B4Ba9F3e719726886d34a177484278Bfcae;
 
     function setUp() public virtual {
         fork();
