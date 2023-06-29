@@ -102,7 +102,7 @@ async function getParaswapData(
             srcToken: priceRoute["priceRoute"].srcToken,
             destToken: priceRoute["priceRoute"].destToken,
             srcAmount: priceRoute["priceRoute"].srcAmount,
-            destAmount: BigNumber.from(priceRoute["priceRoute"].srcAmount).sub(BigNumber.from(priceRoute["priceRoute"].srcAmount).div(100).mul(2)),
+            destAmount: (BigNumber.from(priceRoute["priceRoute"].destAmount).sub(BigNumber.from(priceRoute["priceRoute"].destAmount).div(100).mul(2))).toString(),
             priceRoute: priceRoute["priceRoute"],
             userAddress: userAddress,
             partner: "paraswap.io",
@@ -256,6 +256,12 @@ Web3Function.onRun(async (context: Web3FunctionContext) => {
 
   // Update storage for next run
   await storage.set("pendingLastTimestamp", currentTimestamp.toString());
+
+  console.log(tokens.map((token: any) => token[0]));
+
+  for (const data of inputData) {
+    console.log(data);
+  }
 
   // Harvest the rewards
   return {
