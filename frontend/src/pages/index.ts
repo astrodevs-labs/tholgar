@@ -1,3 +1,4 @@
-import {Home} from "./home"
+import {Home} from "./Home"
+import {Test} from "./Test"
 
-export { Home }
+export { Home, Test }
