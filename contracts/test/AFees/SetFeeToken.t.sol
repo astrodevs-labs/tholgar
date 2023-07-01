@@ -19,7 +19,7 @@ contract SetFeeToken is AFeesTest {
     }
 
     function test_setFeeToken_NotOwner() public {
-        vm.prank(bob);
+        vm.prank(alice);
         vm.expectRevert("Ownable: caller is not the owner");
         fees.setFeeToken(address(fakeMock));
     }

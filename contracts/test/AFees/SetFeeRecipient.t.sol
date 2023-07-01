@@ -5,16 +5,20 @@ import "./AFeesTest.sol";
 import {Errors} from "../../src/utils/Errors.sol";
 
 contract SetFeeRecipient is AFeesTest {
-    function test_setFeeRecipient_Normal() public {
+    function test_setFeeRecipient_Normal(address recipient) public {
+        vm.assume(recipient != address(0));
+
         vm.prank(owner);
-        fees.setFeeRecipient(alice);
-        assertEq(fees.feeRecipient(), alice, "FeeRecipient should be alice");
+        fees.setFeeRecipient(recipient);
+        assertEq(fees.feeRecipient(), recipient, "FeeRecipient should be recipient");
     }
 
-    function test_setFeeRecipient_NotOwner() public {
-        vm.prank(bob);
+    function test_setFeeRecipient_NotOwner(address recipient) public {
+        vm.assume(recipient != address(0));
+
+        vm.prank(alice);
         vm.expectRevert("Ownable: caller is not the owner");
-        fees.setFeeRecipient(bob);
+        fees.setFeeRecipient(recipient);
     }
 
     function test_setFeeRecipient_ZeroAddress() public {

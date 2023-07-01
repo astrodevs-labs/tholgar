@@ -21,7 +21,7 @@ contract Constructor is AFeesTest {
     }
 
     function test_constructor_InvalidFee(uint256 amount) public {
-        amount = bound(amount, fees.MAX_BPS(), UINT256_MAX);
+        amount = bound(amount, fees.MAX_BPS() + 1, UINT256_MAX);
 
         vm.expectRevert(Errors.InvalidFee.selector);
         new AFeesMock(amount, owner, address(feeToken));
