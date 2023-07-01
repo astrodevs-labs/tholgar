@@ -6,23 +6,23 @@ import {Zap} from "../../src/Zap.sol";
 import {Vault} from "../../src/Vault.sol";
 
 contract ZapTest is VaultTest {
-  uint256 constant cvxMaxSupply = 100_000_000e18;
-  uint256 constant auraMaxSupply = 100_000_000e18;
+    uint256 constant cvxMaxSupply = 100_000_000e18;
+    uint256 constant auraMaxSupply = 100_000_000e18;
 
-  Zap zap;
+    Zap zap;
 
-  event ZapHappened(address indexed sender, address indexed receiver, uint256 stakedAmount);
+    event ZapHappened(address indexed sender, address indexed receiver, uint256 stakedAmount);
 
-  function setUp() public virtual override {
-    VaultTest.setUp();
+    function setUp() public virtual override {
+        VaultTest.setUp();
 
-    vm.startPrank(owner);
+        vm.startPrank(owner);
 
-    zap = new Zap(address(war), address(vault), address(minter));
+        zap = new Zap(address(war), address(vault), address(minter));
 
-    vm.stopPrank();
+        vm.stopPrank();
 
-    deal(address(aura), address(alice), 10_000e18);
-    deal(address(cvx), address(alice), 10_000e18);
-  }
+        deal(address(aura), address(alice), 10_000e18);
+        deal(address(cvx), address(alice), 10_000e18);
+    }
 }

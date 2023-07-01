@@ -32,7 +32,9 @@ contract Redeem is VaultTest {
         vm.stopPrank();
 
         assertEqDecimal(vault.asset().balanceOf(pranker), assets, 18, "Pranker should have received assets");
-        assertEqDecimal(staker.balanceOf(address(vault)), amount - assets, 18, "Staker should have received staking tokens");
+        assertEqDecimal(
+            staker.balanceOf(address(vault)), amount - assets, 18, "Staker should have received staking tokens"
+        );
         assertEqDecimal(vault.balanceOf(pranker), 0, 18, "Pranker should have no shares");
         assertEqDecimal(vault.totalAssets(), amount - assets, 18, "Total assets should have decreased");
     }

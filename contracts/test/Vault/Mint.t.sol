@@ -55,11 +55,12 @@ contract Mint is VaultTest {
         vm.stopPrank();
 
         assertEqDecimal(
-            vault.asset().balanceOf(address(staker)), amount1 + amount2, 18,
-            "Staker should have received the assets"
+            vault.asset().balanceOf(address(staker)), amount1 + amount2, 18, "Staker should have received the assets"
         );
         assertEqDecimal(vault.asset().balanceOf(address(vault)), 0, 18, "Vault should have no assets");
-        assertEqDecimal(staker.balanceOf(address(vault)), amount1 + amount2, 18, "Vault should have received the staker tokens");
+        assertEqDecimal(
+            staker.balanceOf(address(vault)), amount1 + amount2, 18, "Vault should have received the staker tokens"
+        );
         assertEqDecimal(vault.totalAssets(), assets1 + assets2, 18, "Vault should have received the assets");
         assertEqDecimal(vault.balanceOf(pranker1), amount1, 18, "Pranker1 should have received the vault tokens");
         assertEqDecimal(vault.balanceOf(pranker2), amount2, 18, "Pranker2 should have received the vault tokens");
