@@ -7,20 +7,21 @@ const checkGasPrice = async (maxGasPrice: number): Promise<number> => {
   }
   const etherscanApiKey = process.env.ETHERSCAN_API_KEY;
 
-  let gasPrice: any;
+  let gasPrice: number;
   try {
-    gasPrice = ky
+    const result: any = await ky
       .get(
         `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${etherscanApiKey}`
       )
       .json();
+    gasPrice = parseFloat(result.result.SafeGasPrice);
   } catch (err) {
     throw new Error(`Cannot get gas price: ${err.message}`);
   }
-  if (parseFloat(gasPrice.result.SafeGasPrice) > maxGasPrice) {
-    throw new Error("Gas price too high");
+  if (gasPrice > maxGasPrice) {
+    throw new Error(`Gas price is too high: ${gasPrice}`);
   }
-  return parseFloat(gasPrice.result.SafeGasPrice);
+  return gasPrice;
 };
 
 export default checkGasPrice;
