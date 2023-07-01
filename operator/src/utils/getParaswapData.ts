@@ -12,37 +12,35 @@ export default async function getParaswapData(
   slippage: number
 ): Promise<string> {
   try {
-    const priceRoute: any = await axios
-      .get(
-        `https://apiv5.paraswap.io/prices?srcToken=${srcToken}&destToken=${destToken}&amount=${amount.toString()}&side=SELL&network=${chainId}&srcDecimals=${srcDecimals}&destDecimals=${destDecimals}&userAddress=${userAddress}`
-      )
+    const priceRoute: any = await axios.get(
+      `https://apiv5.paraswap.io/prices?srcToken=${srcToken}&destToken=${destToken}&amount=${amount.toString()}&side=SELL&network=${chainId}&srcDecimals=${srcDecimals}&destDecimals=${destDecimals}&userAddress=${userAddress}`
+    );
     if (!priceRoute["priceRoute"]) {
       throw new Error("No price route found");
     }
 
-    const priceData: any = await axios
-      .post(
-        `https://apiv5.paraswap.io/transactions/${chainId}?ignoreChecks=true&ignoreGasEstimate=true`,
-        {
-          json: {
-            srcToken: priceRoute["priceRoute"].srcToken,
-            destToken: priceRoute["priceRoute"].destToken,
-            srcAmount: priceRoute["priceRoute"].srcAmount,
-            destAmount: BigNumber.from(priceRoute["priceRoute"].destAmount)
-              .sub(
-                BigNumber.from(priceRoute["priceRoute"].destAmount)
-                  .div(100)
-                  .mul(slippage)
-              )
-              .toString(),
-            priceRoute: priceRoute["priceRoute"],
-            userAddress: userAddress,
-            partner: "paraswap.io",
-            srcDecimals: priceRoute["priceRoute"].srcDecimals,
-            destDecimals: priceRoute["priceRoute"].destDecimals,
-          },
-        }
-      )
+    const priceData: any = await axios.post(
+      `https://apiv5.paraswap.io/transactions/${chainId}?ignoreChecks=true&ignoreGasEstimate=true`,
+      {
+        json: {
+          srcToken: priceRoute["priceRoute"].srcToken,
+          destToken: priceRoute["priceRoute"].destToken,
+          srcAmount: priceRoute["priceRoute"].srcAmount,
+          destAmount: BigNumber.from(priceRoute["priceRoute"].destAmount)
+            .sub(
+              BigNumber.from(priceRoute["priceRoute"].destAmount)
+                .div(100)
+                .mul(slippage)
+            )
+            .toString(),
+          priceRoute: priceRoute["priceRoute"],
+          userAddress: userAddress,
+          partner: "paraswap.io",
+          srcDecimals: priceRoute["priceRoute"].srcDecimals,
+          destDecimals: priceRoute["priceRoute"].destDecimals,
+        },
+      }
+    );
     if (!priceData["data"]) {
       throw new Error("No data returned from Paraswap");
     }
