@@ -2,6 +2,25 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      }
+    ],
+    "name": "tokensToHarvest",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "harvestOrNot",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address[]",
         "name": "inputTokens",
         "type": "address[]"

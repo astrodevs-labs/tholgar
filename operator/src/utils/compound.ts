@@ -5,7 +5,11 @@ import ERC20_ABI from "../abi/ERC20.json";
 import VAULT_ABI from "../abi/Vault.json";
 import checkGasPrice from "./checkGasPrice";
 
-const compound = async (vaultAddress: string, maxGasPrice: number, slippage: number) => {
+const compound = async (
+  vaultAddress: string,
+  maxGasPrice: number,
+  slippage: number
+) => {
   const provider = wallet.provider;
 
   await checkGasPrice(maxGasPrice);
@@ -34,7 +38,9 @@ const compound = async (vaultAddress: string, maxGasPrice: number, slippage: num
         destDecimals,
         amount,
         vaultAddress,
-        (await provider.getNetwork()).chainId,
+        (
+          await provider.getNetwork()
+        ).chainId,
         slippage
       );
       outputData.push(data[0]);

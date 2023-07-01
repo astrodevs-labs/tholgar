@@ -6,7 +6,12 @@ import VAULT_ABI from "../abi/Vault.json";
 import STAKER_ABI from "../abi/Staker.json";
 import checkGasPrice from "./checkGasPrice";
 
-const harvest = async (vaultAddress: string, stakerAddress: string, maxGasPrice: number, slippage: number) => {
+const harvest = async (
+  vaultAddress: string,
+  stakerAddress: string,
+  maxGasPrice: number,
+  slippage: number
+) => {
   const provider = wallet.provider;
 
   await checkGasPrice(maxGasPrice);
@@ -24,19 +29,24 @@ const harvest = async (vaultAddress: string, stakerAddress: string, maxGasPrice:
     throw new Error(`Rpc call failed: ${err.message}`);
   }
 
-  // Check if there are rewards to harvest
-  if (claimableRewards.length === 0) {
-    throw new Error("No rewards to harvest");
-  }
-
   const tokens: any = [];
   for (const reward of claimableRewards) {
-    if (tokens.indexOf(reward) === -1) tokens.push(reward);
+    if (
+      tokens.indexOf(reward) === -1 &&
+      !(await vault.tokensToHarvest(tokens[0]))
+    )
+      tokens.push(reward);
+  }
+
+  // Check if there are rewards to harvest
+  if (tokens.length === 0) {
+    throw new Error("No rewards to harvest");
   }
 
   // Get input data
   const inputData: string[] = [];
   try {
+    const chainId = (await provider.getNetwork()).chainId;
     const feeToken = await vault.feeToken();
     const feeContract = new Contract(feeToken, ERC20_ABI, provider);
     const feeDecimals = await feeContract.decimals();
@@ -50,8 +60,8 @@ const harvest = async (vaultAddress: string, stakerAddress: string, maxGasPrice:
         feeDecimals,
         token[1],
         vaultAddress,
-        (await provider.getNetwork()).chainId,
-        slippage,
+        chainId,
+        slippage
       );
       inputData.push(data);
     }
@@ -60,7 +70,10 @@ const harvest = async (vaultAddress: string, stakerAddress: string, maxGasPrice:
   }
 
   // Harvest the rewards
-  await vault.harvest(tokens.map((token: any) => token[0]), inputData);
+  await vault.harvest(
+    tokens.map((token: any) => token[0]),
+    inputData
+  );
 };
 
 export default harvest;
