@@ -21,6 +21,8 @@ contract MainnetTest is BaseTest {
     IERC20 constant cvx = IERC20(0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B);
     IERC20 constant vlCvx = IERC20(0x72a19342e8F1838460eBFCCEf09F6585e32db86E);
 
+    address operator = makeAddr("operator");
+
     function setUp() public virtual {
         vm.label(address(war), "war");
 

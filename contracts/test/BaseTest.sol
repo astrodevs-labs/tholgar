@@ -10,7 +10,6 @@ contract BaseTest is Test {
     address bob = makeAddr("bob");
     address admin = makeAddr("admin");
     address owner = makeAddr("owner");
-    address operator = makeAddr("operator");
     address zero = address(0);
 }
 
