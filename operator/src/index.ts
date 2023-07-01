@@ -21,43 +21,44 @@ import cron from "node-cron";
   const vaultAddress = process.env.VAULT_ADDRESS;
   const stakerAddress = process.env.STAKER_ADDRESS;
 
-  let retryCompound = false;
-  let retryHarvest = false;
-
   cron.schedule("0 4 * * 0", async () => {
     try {
       await harvest(vaultAddress, stakerAddress, maxGasPrice, slippage);
     } catch (err) {
       console.log(`Harvest failed: ${err.message}`);
-      retryHarvest = true;
+      retryHarvestTask.start();
     }
 
     try {
       await compound(vaultAddress, maxGasPrice, slippage);
     } catch (err) {
       console.log(`Compound failed: ${err.message}`);
-      retryCompound = true;
+      retryCompoundTask.start();
     }
   });
 
-  cron.schedule("0 5 * * * *", async () => {
-    if (retryHarvest) {
+  const retryHarvestTask = cron.schedule(
+    "0 5 * * * *",
+    async () => {
       try {
         await harvest(vaultAddress, stakerAddress, maxGasPrice, slippage);
-        retryHarvest = false;
+        retryHarvestTask.stop();
       } catch (err) {
         console.log(`Harvest failed: ${err.message}`);
       }
-    }
-  });
-  cron.schedule("0 5 * * * *", async () => {
-    if (retryCompound) {
+    },
+    { scheduled: false }
+  );
+  const retryCompoundTask = cron.schedule(
+    "0 5 * * * *",
+    async () => {
       try {
         await compound(vaultAddress, maxGasPrice, slippage);
-        retryCompound = false;
+        retryCompoundTask.stop();
       } catch (err) {
         console.log(`Compound failed: ${err.message}`);
       }
-    }
-  });
+    },
+    { scheduled: false }
+  );
 })();
