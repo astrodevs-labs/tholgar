@@ -1,6 +1,7 @@
 import compound from "./utils/compound";
 import harvest from "./utils/harvest";
 import cron from "node-cron";
+import 'dotenv/config'
 
 (async () => {
   if (!process.env.SLIPPAGE) {
@@ -24,14 +25,14 @@ import cron from "node-cron";
   cron.schedule("0 4 * * 0", async () => {
     try {
       await harvest(vaultAddress, stakerAddress, maxGasPrice, slippage);
-    } catch (err) {
+    } catch (err: any) {
       console.log(`Harvest failed: ${err.message}`);
       retryHarvestTask.start();
     }
 
     try {
       await compound(vaultAddress, maxGasPrice, slippage);
-    } catch (err) {
+    } catch (err: any) {
       console.log(`Compound failed: ${err.message}`);
       retryCompoundTask.start();
     }
@@ -43,7 +44,7 @@ import cron from "node-cron";
       try {
         await harvest(vaultAddress, stakerAddress, maxGasPrice, slippage);
         retryHarvestTask.stop();
-      } catch (err) {
+      } catch (err: any) {
         console.log(`Harvest failed: ${err.message}`);
       }
     },
@@ -55,7 +56,7 @@ import cron from "node-cron";
       try {
         await compound(vaultAddress, maxGasPrice, slippage);
         retryCompoundTask.stop();
-      } catch (err) {
+      } catch (err: any) {
         console.log(`Compound failed: ${err.message}`);
       }
     },

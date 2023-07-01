@@ -25,7 +25,7 @@ const harvest = async (
   try {
     claimableRewards = await staker.getUserTotalClaimableRewards(vaultAddress);
     console.log(`Claimable rewards: ${claimableRewards}`);
-  } catch (err) {
+  } catch (err: any) {
     throw new Error(`Rpc call failed: ${err.message}`);
   }
 
@@ -65,7 +65,7 @@ const harvest = async (
       );
       inputData.push(data);
     }
-  } catch (err) {
+  } catch (err: any) {
     throw new Error(`Cannot get input data: ${err.message}`);
   }
 
@@ -81,7 +81,7 @@ const harvest = async (
     if (receipt.status === 0) {
       throw new Error(`Transaction reverted: ${tx.hash}`);
     }
-  } catch (err) {
+  } catch (err: any) {
     throw new Error(`Cannot harvest: ${err.message}`);
   }
 };

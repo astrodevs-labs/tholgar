@@ -1,5 +1,5 @@
 import { BigNumber } from "ethers";
-import ky from "ky";
+import axios from "axios";
 
 export default async function getParaswapData(
   srcToken: string,
@@ -12,16 +12,15 @@ export default async function getParaswapData(
   slippage: number
 ): Promise<string> {
   try {
-    const priceRoute: any = await ky
+    const priceRoute: any = await axios
       .get(
         `https://apiv5.paraswap.io/prices?srcToken=${srcToken}&destToken=${destToken}&amount=${amount.toString()}&side=SELL&network=${chainId}&srcDecimals=${srcDecimals}&destDecimals=${destDecimals}&userAddress=${userAddress}`
       )
-      .json();
     if (!priceRoute["priceRoute"]) {
       throw new Error("No price route found");
     }
 
-    const priceData: any = await ky
+    const priceData: any = await axios
       .post(
         `https://apiv5.paraswap.io/transactions/${chainId}?ignoreChecks=true&ignoreGasEstimate=true`,
         {
@@ -44,12 +43,11 @@ export default async function getParaswapData(
           },
         }
       )
-      .json();
     if (!priceData["data"]) {
       throw new Error("No data returned from Paraswap");
     }
     return priceData["data"];
-  } catch (error) {
+  } catch (error: any) {
     throw new Error(error.message);
   }
 }

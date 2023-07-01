@@ -1,4 +1,4 @@
-import ky from "ky";
+import axios from "axios";
 import "dotenv/config";
 
 const checkGasPrice = async (maxGasPrice: number): Promise<number> => {
@@ -9,13 +9,12 @@ const checkGasPrice = async (maxGasPrice: number): Promise<number> => {
 
   let gasPrice: number;
   try {
-    const result: any = await ky
+    const result: any = await axios
       .get(
         `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${etherscanApiKey}`
       )
-      .json();
     gasPrice = parseFloat(result.result.SafeGasPrice);
-  } catch (err) {
+  } catch (err: any) {
     throw new Error(`Cannot get gas price: ${err.message}`);
   }
   if (gasPrice > maxGasPrice) {

@@ -44,7 +44,7 @@ const compound = async (
       );
       outputData.push(data[0]);
     }
-  } catch (err) {
+  } catch (err: any) {
     throw new Error(`Cannot get output data: ${err.message}`);
   }
 
@@ -58,7 +58,7 @@ const compound = async (
     if (receipt.status === 0) {
       throw new Error(`Transaction reverted: ${tx.hash}`);
     }
-  } catch (err) {
+  } catch (err: any) {
     throw new Error(`Cannot compound: ${err.message}`);
   }
 };
