@@ -34,7 +34,7 @@ abstract contract ASwapper is Ownable2Step {
     /**
      *  @notice Event emitted when the token proxy is updated
      */
-    event TokenProxyUpdated(address oldTokenProxy, address newTokenProxy);
+    event tokenTransferAddressUpdated(address oldTokenTransferAddress, address newTokenTransferAddress);
 
     /*//////////////////////////////////////////////////////////////
                                 CONSTANTS
@@ -60,6 +60,7 @@ abstract contract ASwapper is Ownable2Step {
     /**
      *  @notice list of tokens to swap to when receiving harvest rewards
      */
+
     OutputToken[] public outputTokens;
 
     /**
@@ -69,17 +70,17 @@ abstract contract ASwapper is Ownable2Step {
     /**
      * @notice Address to allow to swap tokens
      */
-    address public tokenProxy;
+    address public tokenTransferAddress;
 
     /*//////////////////////////////////////////////////////////////
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor(address initialSwapRouter, address initialTokenProxy) {
-        if (initialSwapRouter == address(0) || initialTokenProxy == address(0)) revert Errors.ZeroAddress();
+    constructor(address initialSwapRouter, address initialTokenTransferAddress) {
+        if (initialSwapRouter == address(0) || initialTokenTransferAddress == address(0)) revert Errors.ZeroAddress();
 
         swapRouter = initialSwapRouter;
-        tokenProxy = initialTokenProxy;
+        tokenTransferAddress = initialTokenTransferAddress;
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -165,16 +166,16 @@ abstract contract ASwapper is Ownable2Step {
 
     /**
      * @notice Set the token proxy address to allow to swap tokens
-     * @param newTokenProxy address of the token proxy
+     * @param newTokenTransferAddress address of the token proxy
      * @custom:requires owner
      */
-    function setTokenProxy(address newTokenProxy) external onlyOwner {
-        if (newTokenProxy == address(0)) revert Errors.ZeroAddress();
+    function setTokenTransferAddress(address newTokenTransferAddress) external onlyOwner {
+        if (newTokenTransferAddress == address(0)) revert Errors.ZeroAddress();
 
-        address oldTokenProxy = tokenProxy;
-        tokenProxy = newTokenProxy;
+        address oldtokenTransferAddress = tokenTransferAddress;
+        tokenTransferAddress = newTokenTransferAddress;
 
-        emit TokenProxyUpdated(oldTokenProxy, newTokenProxy);
+        emit tokenTransferAddressUpdated(oldtokenTransferAddress, newTokenTransferAddress);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -192,7 +193,7 @@ abstract contract ASwapper is Ownable2Step {
         for (uint256 i; i < length;) {
             address token = tokens[i];
             emit TokenSwapped(token, ERC20(token).balanceOf(address(this)));
-            _approveTokenIfNeeded(token, tokenProxy);
+            _approveTokenIfNeeded(token, tokenTransferAddress);
             _performRouterSwap(callDatas[i]);
             unchecked {
                 ++i;

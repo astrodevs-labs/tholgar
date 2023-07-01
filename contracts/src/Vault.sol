@@ -241,7 +241,11 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
      * @param inputCallDatas swapper routes to swap to feeToken
      * @custom:requires operator or owner
      */
-    function harvest(address[] calldata inputTokens, bytes[] calldata inputCallDatas) external nonReentrant onlyOperatorOrOwner {
+    function harvest(address[] calldata inputTokens, bytes[] calldata inputCallDatas)
+        external
+        nonReentrant
+        onlyOperatorOrOwner
+    {
         IStaker.UserClaimedRewards[] memory rewards = IStaker(staker).claimAllRewards(address(this));
         emit Harvested(rewards);
 
@@ -256,11 +260,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
      * @param outputCallDatas swapper routes to swap to more assets
      * @custom:requires operator or owner
      */
-    function compound(bytes[] calldata outputCallDatas)
-        external
-        nonReentrant
-        onlyOperatorOrOwner
-    {
+    function compound(bytes[] calldata outputCallDatas) external nonReentrant onlyOperatorOrOwner {
         // swap to outputtokens with correct ratios
         uint256 length = outputTokens.length;
         address[] memory tokens = new address[](length);
