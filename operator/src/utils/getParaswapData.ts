@@ -1,5 +1,6 @@
 import { BigNumber } from "ethers";
 import axios from "axios";
+import config from "../config/config";
 
 export default async function getParaswapData(
   srcToken: string,
@@ -11,16 +12,17 @@ export default async function getParaswapData(
   chainId: number,
   slippage: number
 ): Promise<string> {
+  const paraswapApiUrl = config.paraswapApiUrl();
   try {
     const priceRoute: any = await axios.get(
-      `https://apiv5.paraswap.io/prices?srcToken=${srcToken}&destToken=${destToken}&amount=${amount.toString()}&side=SELL&network=${chainId}&srcDecimals=${srcDecimals}&destDecimals=${destDecimals}&userAddress=${userAddress}`
+      `${paraswapApiUrl}/prices?srcToken=${srcToken}&destToken=${destToken}&amount=${amount.toString()}&side=SELL&network=${chainId}&srcDecimals=${srcDecimals}&destDecimals=${destDecimals}&userAddress=${userAddress}`
     );
     if (!priceRoute["priceRoute"]) {
       throw new Error("No price route found");
     }
 
     const priceData: any = await axios.post(
-      `https://apiv5.paraswap.io/transactions/${chainId}?ignoreChecks=true&ignoreGasEstimate=true`,
+      `${paraswapApiUrl}/transactions/${chainId}?ignoreChecks=true&ignoreGasEstimate=true`,
       {
         json: {
           srcToken: priceRoute["priceRoute"].srcToken,

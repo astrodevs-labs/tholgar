@@ -1,16 +1,13 @@
 import axios from "axios";
-import "dotenv/config";
+import config from "../config/config";
 
 const checkGasPrice = async (maxGasPrice: number): Promise<number> => {
-  if (!process.env.ETHERSCAN_API_KEY) {
-    throw new Error("ETHERSCAN_API_KEY not found in .env file");
-  }
-  const etherscanApiKey = process.env.ETHERSCAN_API_KEY;
+  const etherscanApiKey = config.etherscanApiKey();
 
   let gasPrice: number;
   try {
     const result: any = await axios.get(
-      `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${etherscanApiKey}`
+      `${etherscanApiKey}/api?module=gastracker&action=gasoracle&apikey=${etherscanApiKey}`
     );
     gasPrice = parseFloat(result.result.SafeGasPrice);
   } catch (err: any) {

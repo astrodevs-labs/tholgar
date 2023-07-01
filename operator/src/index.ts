@@ -1,26 +1,13 @@
 import compound from "./utils/compound";
 import harvest from "./utils/harvest";
 import cron from "node-cron";
-import "dotenv/config";
+import config from "./config/config";
 
 (async () => {
-  if (!process.env.SLIPPAGE) {
-    throw new Error("SLIPPAGE is not defined");
-  }
-  if (!process.env.MAX_GAS_PRICE) {
-    throw new Error("MAX_GAS_PRICE is not defined");
-  }
-  if (!process.env.VAULT_ADDRESS) {
-    throw new Error("VAULT_ADDRESS is not defined");
-  }
-  if (!process.env.STAKER_ADDRESS) {
-    throw new Error("STAKER_ADDRESS is not defined");
-  }
-
-  const slippage = parseInt(process.env.SLIPPAGE);
-  const maxGasPrice = parseFloat(process.env.MAX_GAS_PRICE);
-  const vaultAddress = process.env.VAULT_ADDRESS;
-  const stakerAddress = process.env.STAKER_ADDRESS;
+  let vaultAddress = config.vaultAddress();
+  let stakerAddress = config.stakerAddress();
+  let maxGasPrice = config.maxGasPrice();
+  let slippage = config.slippage();
 
   let running = false;
   cron.schedule("0 4 * * 0", async () => {
