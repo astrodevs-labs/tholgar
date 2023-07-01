@@ -1,7 +1,7 @@
 import ky from "ky";
 import "dotenv/config";
 
-const checkGasPrice = async (maxGasPrice: number) => {
+const checkGasPrice = async (maxGasPrice: number): Promise<number> => {
   if (!process.env.ETHERSCAN_API_KEY) {
     throw new Error("ETHERSCAN_API_KEY not found in .env file");
   }
@@ -20,6 +20,7 @@ const checkGasPrice = async (maxGasPrice: number) => {
   if (parseFloat(gasPrice.result.SafeGasPrice) > maxGasPrice) {
     throw new Error("Gas price too high");
   }
+  return parseFloat(gasPrice.result.SafeGasPrice);
 };
 
 export default checkGasPrice;

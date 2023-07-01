@@ -14,7 +14,7 @@ const harvest = async (
 ) => {
   const provider = wallet.provider;
 
-  await checkGasPrice(maxGasPrice);
+  const gasPrice = await checkGasPrice(maxGasPrice);
 
   // Create staker & vault contract
   const vault = new Contract(vaultAddress, VAULT_ABI, provider);
@@ -72,7 +72,8 @@ const harvest = async (
   // Harvest the rewards
   await vault.harvest(
     tokens.map((token: any) => token[0]),
-    inputData
+    inputData,
+    { gasLimit: gasPrice * 10000000000 }
   );
 };
 
