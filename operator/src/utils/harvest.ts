@@ -69,12 +69,21 @@ const harvest = async (
     throw new Error(`Cannot get input data: ${err.message}`);
   }
 
-  // Harvest the rewards
-  await vault.harvest(
-    tokens.map((token: any) => token[0]),
-    inputData,
-    { gasLimit: gasPrice * 10000000000 }
-  );
+  try {
+    // Harvest the rewards
+    const tx = await vault.harvest(
+      tokens.map((token: any) => token[0]),
+      inputData,
+      { gasLimit: gasPrice * 10000000000 }
+    );
+
+    const receipt = await tx.wait();
+    if (receipt.status === 0) {
+      throw new Error(`Transaction reverted: ${tx.hash}`);
+    }
+  } catch (err) {
+    throw new Error(`Cannot harvest: ${err.message}`);
+  }
 };
 
 export default harvest;

@@ -48,8 +48,19 @@ const compound = async (
     throw new Error(`Cannot get output data: ${err.message}`);
   }
 
-  // Compound the rewards
-  await vault.harvest(outputData, { gasLimit: gasPrice * 10000000000 });
+  try {
+    // Compound the rewards
+    const tx = await vault.compound(outputData, {
+      gasLimit: gasPrice * 10000000000,
+    });
+
+    const receipt = await tx.wait();
+    if (receipt.status === 0) {
+      throw new Error(`Transaction reverted: ${tx.hash}`);
+    }
+  } catch (err) {
+    throw new Error(`Cannot compound: ${err.message}`);
+  }
 };
 
 export default compound;
