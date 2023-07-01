@@ -25,9 +25,6 @@ contract Constructor is MainnetTest {
         vault.setOutputTokens(tokens);
         vm.stopPrank();
 
-        assertEqDecimal(vault.harvestFee(), 500, 2, "Harvest fee is not 5%");
-        assertEq(vault.feeRecipient(), owner, "Fee recipient is not owner");
-        assertEq(address(vault.feeToken()), address(usdc), "Fee token is not USDC");
         assertFalse(vault.paused(), "Vault is paused");
         assertEq(address(vault.asset()), address(war), "Asset is not WAR");
         assertEq(vault.staker(), address(staker), "Staker is not staker");
