@@ -35,9 +35,9 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
      */
     event MinterUpdated(address oldMinter, address newMinter);
     /**
-     * @notice Event emitted when rewards have been harvested
+     * @notice Event emitted when reward have been harvested
      */
-    event Harvested(IStaker.UserClaimedRewards[] rewards);
+    event Harvested(IStaker.UserClaimableRewards reward);
     /**
      * @notice Event emitted when rewards are compounded into more stkWAR
      */
@@ -55,6 +55,11 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
      *  @notice Address of the WAR minter contract
      */
     address public minter;
+
+    /**
+     * @notice mapping to keep track of which tokens to harvest
+     */
+    mapping(address token => bool harvestOrNot) public tokensToHarvest;
 
     /*//////////////////////////////////////////////////////////////
                                CONSTRUCTOR
@@ -164,6 +169,16 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
         _unpause();
     }
 
+    /**
+     * @notice Set the token to harvest or not
+     * @param token the token to harvest or not
+     * @param harvestOrNot true or false
+     * @custom:requires owner
+     */
+    function setTokenToHarvest(address token, bool harvestOrNot) external onlyOwner {
+        tokensToHarvest[token] = harvestOrNot;
+    }
+
     /*//////////////////////////////////////////////////////////////
                             ERC4626 LOGIC
     //////////////////////////////////////////////////////////////*/
@@ -246,8 +261,14 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
         nonReentrant
         onlyOperatorOrOwner
     {
-        IStaker.UserClaimedRewards[] memory rewards = IStaker(staker).claimAllRewards(address(this));
-        emit Harvested(rewards);
+        IStaker.UserClaimableRewards[] memory rewards = IStaker(staker).getUserTotalClaimableRewards(address(this));
+
+        for (uint256 i; i < rewards.length; i++) {
+            if (tokensToHarvest[rewards[i].reward] && rewards[i].claimableAmount != 0) {
+                IStaker(staker).claimRewards(rewards[i].reward, address(this));
+                emit Harvested(rewards[i]);
+            }
+        }
 
         // swap to fee token
         _swap(inputTokens, inputCallDatas);
