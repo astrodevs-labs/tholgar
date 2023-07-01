@@ -1,24 +1,25 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity 0.8.20;
 
-import "./VaultTest.sol";
-import {Errors} from "../../src/utils/Errors.sol";
+import "./AFeesTest.sol";
 
-contract SetHarvestFee is VaultTest {
+contract SetHarvestFee is AFeesTest {
     function setUp() public override {
-        VaultTest.setUp();
+        AFeesTest.setUp();
     }
 
-    function test_setHarvestFee_Normal() public {
+    function testFuzz_setHarvestFee_Normal(uint256 amount) public {
+        amount = bound(amount, 0, 10000);
+
         vm.prank(owner);
-        vault.setHarvestFee(100);
-        assertEq(vault.harvestFee(), 100, "HarvestFee should be 100");
+        fees.setHarvestFee(100);
+        assertEq(fees.harvestFee(), 100, "HarvestFee should be 100");
     }
 
     function test_setHarvestFee_NotOwner() public {
         vm.prank(bob);
         vm.expectRevert("Ownable: caller is not the owner");
-        vault.setHarvestFee(100);
+        fees.setHarvestFee(100);
     }
 
     function testFuzz_setHarvestFee_InvalidFee(uint256 amount) public {
@@ -26,6 +27,6 @@ contract SetHarvestFee is VaultTest {
 
         vm.expectRevert(Errors.InvalidFee.selector);
         vm.prank(owner);
-        vault.setHarvestFee(10001);
+        fees.setHarvestFee(10001);
     }
 }

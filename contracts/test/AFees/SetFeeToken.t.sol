@@ -1,29 +1,32 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity 0.8.20;
 
-import "./VaultTest.sol";
-import {Errors} from "../../src/utils/Errors.sol";
+import "./AFeesTest.sol";
 
-contract SetFeeToken is VaultTest {
-    function setUp() public override {
-        VaultTest.setUp();
+contract SetFeeToken is AFeesTest {
+    ERC20Mock fakeMock;
+
+    function setUp() public virtual override {
+        super.setUp();
+
+        fakeMock = new ERC20Mock("USDC", "USDC", 6);
     }
 
     function test_setFeeToken_Normal() public {
         vm.prank(owner);
-        vault.setFeeToken(address(usdc));
-        assertEq(address(vault.feeToken()), address(usdc), "FeeToken should be usdc");
+        fees.setFeeToken(address(fakeMock));
+        assertEq(address(fees.feeToken()), address(fakeMock), "FeeToken should be usdc");
     }
 
     function test_setFeeToken_NotOwner() public {
         vm.prank(bob);
         vm.expectRevert("Ownable: caller is not the owner");
-        vault.setFeeToken(address(usdc));
+        fees.setFeeToken(address(fakeMock));
     }
 
     function test_setFeeToken_ZeroAddress() public {
         vm.expectRevert(Errors.ZeroAddress.selector);
         vm.prank(owner);
-        vault.setFeeToken(address(0));
+        fees.setFeeToken(address(0));
     }
 }
