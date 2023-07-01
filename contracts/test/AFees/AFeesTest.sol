@@ -9,6 +9,10 @@ contract AFeesTest is BaseTest {
     AFeesMock fees;
     ERC20Mock feeToken;
 
+    event HarvestFeeUpdated(uint256 oldHarvestFee, uint256 newHarvestFee);
+    event FeeRecipientUpdated(address oldFeeRecipient, address newFeeRecipient);
+    event FeeTokenUpdated(address oldFeeToken, address newFeeToken);
+
     function setUp() public virtual {
         vm.startPrank(owner);
 

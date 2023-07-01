@@ -13,6 +13,9 @@ contract SetFeeToken is AFeesTest {
     }
 
     function test_setFeeToken_Normal() public {
+        vm.expectEmit(true, true, false, true);
+        emit FeeTokenUpdated(fees.feeToken(), address(fakeMock));
+
         vm.prank(owner);
         fees.setFeeToken(address(fakeMock));
         assertEq(address(fees.feeToken()), address(fakeMock), "FeeToken should be usdc");

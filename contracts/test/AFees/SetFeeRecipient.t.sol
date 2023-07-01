@@ -8,6 +8,9 @@ contract SetFeeRecipient is AFeesTest {
     function test_setFeeRecipient_Normal(address recipient) public {
         vm.assume(recipient != address(0));
 
+        vm.expectEmit(true, true, false, true);
+        emit FeeRecipientUpdated(fees.feeRecipient(), recipient);
+
         vm.prank(owner);
         fees.setFeeRecipient(recipient);
         assertEq(fees.feeRecipient(), recipient, "FeeRecipient should be recipient");

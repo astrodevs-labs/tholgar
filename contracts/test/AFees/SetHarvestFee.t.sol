@@ -7,6 +7,9 @@ contract SetHarvestFee is AFeesTest {
     function test_setHarvestFee_Normal(uint256 amount) public {
         amount = bound(amount, 0, fees.MAX_BPS());
 
+        vm.expectEmit(true, true, false, true);
+        emit HarvestFeeUpdated(fees.harvestFee(), amount);
+
         vm.prank(owner);
         fees.setHarvestFee(amount);
         assertEq(fees.harvestFee(), amount, "HarvestFee should be amount");
