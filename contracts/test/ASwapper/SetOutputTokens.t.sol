@@ -20,6 +20,11 @@ contract SetOutputTokens is ASwapperTest {
 
         vm.prank(owner);
         swapper.setOutputTokens(outputTokens);
+
+        assertEq(swapper.getOutputTokenAddresses(), tokens, "outputAddresses should be the fuzzed tokens");
+        for (uint256 i = 0; i < length; ++i) {
+            assertEq(swapper.getOutputTokenRatio(tokens[i]), amounts[i], "outputAmounts should be the fuzzed amounts");
+        }
     }
 
     function test_setOutputTokens_Normal(uint256 seed, uint256 length) public {
@@ -55,16 +60,16 @@ contract SetOutputTokens is ASwapperTest {
         swapper.setOutputTokens(outputTokens);
     }
 
-    function test_setOutputTokens_BiggerArrayThenSmaller(uint256 seed, uint256 length1, uint256 length2) public {
+    function test_setOutputTokens_BiggerArrayThenSmaller(uint256 seed1, uint256 seed2, uint256 length1, uint256 length2) public {
         length1 = bound(length1, 2, 10);
         length2 = bound(length2, 1, length1);
-        address[] memory tokens1 = generateAddressArrayFromHash(seed, length1);
-        uint256[] memory amounts1 = generateNumberArrayFromHash(seed, length1, UINT256_MAX);
+        address[] memory tokens1 = generateAddressArrayFromHash(seed1, length1);
+        uint256[] memory amounts1 = generateNumberArrayFromHash(seed1, length1, UINT256_MAX);
 
         _setOutputTokens(length1, tokens1, amounts1);
 
-        address[] memory tokens2 = generateAddressArrayFromHash(seed, length2);
-        uint256[] memory amounts2 = generateNumberArrayFromHash(seed, length2, UINT256_MAX);
+        address[] memory tokens2 = generateAddressArrayFromHash(seed2, length2);
+        uint256[] memory amounts2 = generateNumberArrayFromHash(seed2, length2, UINT256_MAX);
 
         _setOutputTokens(length2, tokens2, amounts2);
     }

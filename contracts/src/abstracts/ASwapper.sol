@@ -234,21 +234,17 @@ abstract contract ASwapper is Ownable2Step {
 
     /**
      * @notice Copy a OutputToken array to a OutputToken storage array
-     * clear the storage array before copying
+     * set the dest length to 0 before copying
      * @param dest OutputToken storage array
      * @param src OutputToken calldata array
      */
     function _copy(OutputToken[] storage dest, OutputToken[] calldata src) internal {
-        // clear dest storage pointer
-        uint256 length = dest.length;
-        for (uint256 i; i < length;) {
-            delete dest[i];
-            unchecked {
-                ++i;
-            }
+        // set length to 0 before copying
+        assembly {
+            sstore(dest.slot, 0)
         }
 
-        length = src.length;
+        uint256 length = src.length;
         for (uint256 i; i < length;) {
             dest.push(src[i]);
             unchecked {
