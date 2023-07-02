@@ -34,7 +34,7 @@ abstract contract ASwapper is Ownable2Step {
     /**
      *  @notice Event emitted when the token proxy is updated
      */
-    event tokenTransferAddressUpdated(address oldTokenTransferAddress, address newTokenTransferAddress);
+    event TokenTransferAddressUpdated(address oldTokenTransferAddress, address newTokenTransferAddress);
 
     /*//////////////////////////////////////////////////////////////
                                 CONSTANTS
@@ -175,7 +175,7 @@ abstract contract ASwapper is Ownable2Step {
         address oldtokenTransferAddress = tokenTransferAddress;
         tokenTransferAddress = newTokenTransferAddress;
 
-        emit tokenTransferAddressUpdated(oldtokenTransferAddress, newTokenTransferAddress);
+        emit TokenTransferAddressUpdated(oldtokenTransferAddress, newTokenTransferAddress);
     }
 
     /*//////////////////////////////////////////////////////////////
