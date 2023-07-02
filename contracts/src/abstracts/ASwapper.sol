@@ -54,7 +54,6 @@ abstract contract ASwapper is Ownable2Step {
      */
     struct OutputToken {
         address token; // address of the token
-        uint8 decimals; // decimals of the token
         uint256 ratio; // weight (on MAX_WEIGHT total)
     }
     /**

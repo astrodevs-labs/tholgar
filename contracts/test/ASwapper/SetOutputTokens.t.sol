@@ -12,7 +12,7 @@ contract SetOutputTokens is ASwapperTest {
             uint256 maxAmount = (i == length - 1) ? left : left / length - i;
             amounts[i] = bound(amounts[i], 1, maxAmount);
             left -= amounts[i];
-            outputTokens[i] = ASwapper.OutputToken(tokens[i], 18, amounts[i]);
+            outputTokens[i] = ASwapper.OutputToken(tokens[i], amounts[i]);
         }
 
         vm.expectEmit(true, true, false, true);
@@ -47,7 +47,7 @@ contract SetOutputTokens is ASwapperTest {
         uint256 max = swapper.MAX_WEIGHT() + 1;
         for (uint256 i = 0; i < length; ++i) {
             amounts[i] = bound(amounts[i], max, 1e18);
-            outputTokens[i] = ASwapper.OutputToken(tokens[i], 18, amounts[i]);
+            outputTokens[i] = ASwapper.OutputToken(tokens[i], amounts[i]);
         }
 
         vm.expectRevert(Errors.RatioOverflow.selector);
