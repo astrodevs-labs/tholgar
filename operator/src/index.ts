@@ -3,12 +3,7 @@ import harvest from "./utils/harvest";
 import cron from "node-cron";
 import config from "./config/config";
 
-(async () => {
-  let vaultAddress = config.vaultAddress();
-  let stakerAddress = config.stakerAddress();
-  let maxGasPrice = config.maxGasPrice();
-  let slippage = config.slippage();
-
+function mainJob(vaultAddress: string, stakerAddress: string, maxGasPrice: number, slippage: number, retryCompoundTask: cron.ScheduledTask, retryHarvestTask: cron.ScheduledTask) {
   let running = false;
   cron.schedule("0 4 * * 0", async () => {
     if (running) {
@@ -32,7 +27,9 @@ import config from "./config/config";
       retryCompoundTask.start();
     }
   });
+}
 
+function retryHarvestJob(vaultAddress: string, stakerAddress: string, maxGasPrice: number, slippage: number): cron.ScheduledTask {
   let retryHarvestRunning = false;
   const retryHarvestTask = cron.schedule(
     "0 5 * * * *",
@@ -53,7 +50,10 @@ import config from "./config/config";
     },
     { scheduled: false }
   );
+  return retryHarvestTask;
+}
 
+function retryCompoundJob(vaultAddress: string, maxGasPrice: number, slippage: number): cron.ScheduledTask {
   let retryCompoundRunning = false;
   const retryCompoundTask = cron.schedule(
     "0 5 * * * *",
@@ -74,4 +74,17 @@ import config from "./config/config";
     },
     { scheduled: false }
   );
+  return retryCompoundTask;
+}
+
+(async () => {
+  let vaultAddress = config.vaultAddress();
+  let stakerAddress = config.stakerAddress();
+  let maxGasPrice = config.maxGasPrice();
+  let slippage = config.slippage();
+
+  const retryCompoundTask = retryCompoundJob(vaultAddress, maxGasPrice, slippage);
+  const retryHarvestTask = retryHarvestJob(vaultAddress, stakerAddress, maxGasPrice, slippage);
+
+  mainJob(vaultAddress, stakerAddress, maxGasPrice, slippage, retryCompoundTask, retryHarvestTask);
 })();
