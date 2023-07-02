@@ -2,3 +2,5 @@ out
 cache
 .env
 broadcast
+lcov.info
+out-html
