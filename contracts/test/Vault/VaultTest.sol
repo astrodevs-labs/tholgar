@@ -19,7 +19,7 @@ contract VaultTest is MainnetTest {
         tokens[0] = ASwapper.OutputToken(address(usdc), 18, 10_000);
         staker = new WarStaker(address(war));
         vault =
-        new Vault(address(staker), address(minter), 500, owner, address(usdc), augustusSwapper, operator, address(war));
+        new Vault(address(staker), address(minter), 500, owner, address(usdc), augustusSwapper, tokenTransferAddress, operator, address(war));
         vault.setOutputTokens(tokens);
         vm.stopPrank();
     }

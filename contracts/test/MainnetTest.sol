@@ -14,6 +14,7 @@ contract MainnetTest is BaseTest {
 
     IERC20 constant usdc = IERC20(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48);
     address constant augustusSwapper = 0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57;
+    address constant tokenTransferAddress = 0x216B4B4Ba9F3e719726886d34a177484278Bfcae;
 
     IERC20 constant aura = IERC20(0xC0c293ce456fF0ED870ADd98a0828Dd4d2903DBF);
     IERC20 constant vlAura = IERC20(0x3Fa73f1E5d8A792C80F426fc8F84FBF7Ce9bBCAC);
