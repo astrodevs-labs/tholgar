@@ -22,7 +22,7 @@ contract ZapMutiple is ZapTest {
         assertEq(war.balanceOf(address(zap)), 0);
 
         uint256 initialDepositedAmount = vault.balanceOf(receiver);
-        uint256 initialBalanceStaker = war.balanceOf(address(vault));
+        uint256 initialBalanceVault = staker.balanceOf(address(vault));
 
         assertEq(initialDepositedAmount, 0, "initial deposited balance should be zero");
 
@@ -51,10 +51,11 @@ contract ZapMutiple is ZapTest {
         assertEq(war.balanceOf(address(zap)), 0);
 
         assertEq(war.balanceOf(alice), 0);
-        assertEq(
-            war.balanceOf(address(staker)),
-            initialBalanceStaker + expectedMintAmount,
-            "contract should have received sender's war tokens"
+        assertEqDecimal(
+            staker.balanceOf(address(vault)),
+            initialBalanceVault + expectedMintAmount,
+            18,
+            "vault should have stakes sender's war tokens"
         );
         assertEq(
             vault.balanceOf(receiver),

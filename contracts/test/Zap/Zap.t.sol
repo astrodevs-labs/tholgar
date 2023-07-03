@@ -17,7 +17,7 @@ contract TestZap is ZapTest {
         );
 
         uint256 initialDepositedAmount = vault.balanceOf(receiver);
-        uint256 initialBalanceStaker = war.balanceOf(address(vault));
+        uint256 initialBalanceVault = staker.balanceOf(address(vault));
 
         assertEqDecimal(initialDepositedAmount, 0, 18, "initial deposited balance should be zero");
 
@@ -57,10 +57,10 @@ contract TestZap is ZapTest {
 
         assertEqDecimal(war.balanceOf(alice), 0, 18, "alice shouldn't have any unstaked war after zap");
         assertEqDecimal(
-            war.balanceOf(address(staker)),
-            initialBalanceStaker + expectedMintAmount,
+            staker.balanceOf(address(vault)),
+            initialBalanceVault + expectedMintAmount,
             18,
-            "staker should have received sender's war tokens"
+            "vault should have stakes sender's war tokens"
         );
     }
 
