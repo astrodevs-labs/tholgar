@@ -24,12 +24,14 @@ contract Deposit is VaultTest {
 
         deal(address(vault.asset()), pranker, amount);
 
+        uint256 initialBalance = vault.asset().balanceOf(address(staker));
+
         vm.startPrank(pranker);
         vault.asset().approve(address(vault), amount);
         vault.deposit(amount, pranker);
         vm.stopPrank();
 
-        assertEqDecimal(vault.asset().balanceOf(address(staker)), amount, 18, "Staker should have received the assets");
+        assertEqDecimal(vault.asset().balanceOf(address(staker)), initialBalance + amount, 18, "Staker should have received the assets");
         assertEqDecimal(vault.asset().balanceOf(address(vault)), 0, 18, "Vault should have 0 assets");
         assertEqDecimal(staker.balanceOf(address(vault)), amount, 18, "Vault should have received the shares");
         assertEqDecimal(vault.totalAssets(), amount, 18, "Vault should have 0 assets");
@@ -48,6 +50,8 @@ contract Deposit is VaultTest {
         deal(address(vault.asset()), pranker1, amount1);
         deal(address(vault.asset()), pranker2, amount2);
 
+        uint256 initialBalance = vault.asset().balanceOf(address(staker));
+
         vm.startPrank(pranker1);
         vault.asset().approve(address(vault), amount1);
         vault.deposit(amount1, pranker1);
@@ -59,7 +63,7 @@ contract Deposit is VaultTest {
         vm.stopPrank();
 
         assertEqDecimal(
-            vault.asset().balanceOf(address(staker)), amount1 + amount2, 18, "Staker should have received the assets"
+            vault.asset().balanceOf(address(staker)), initialBalance + amount1 + amount2, 18, "Staker should have received the assets"
         );
         assertEqDecimal(vault.asset().balanceOf(address(vault)), 0, 18, "Vault should have 0 assets");
         assertEqDecimal(

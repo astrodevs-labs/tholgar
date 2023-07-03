@@ -11,6 +11,7 @@ contract MainnetTest is BaseTest {
     IRatios constant ratios = IRatios(0xE40004395384455326c7a27A85204801C7f85F94);
     IERC20 constant war = IERC20(0xa8258deE2a677874a48F5320670A869D74f0cbC1);
     IMinter constant minter = IMinter(0x144a689A8261F1863c89954930ecae46Bd950341);
+    WarStaker constant staker = WarStaker(0xA86c53AF3aadF20bE5d7a8136ACfdbC4B074758A);
 
     IERC20 constant usdc = IERC20(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48);
     address constant augustusSwapper = 0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57;

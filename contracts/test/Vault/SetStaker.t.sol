@@ -43,6 +43,8 @@ contract SetStaker is VaultTest {
     }
 
     function testFuzz_setStaker_Normal(uint256 amount) public {
+        amount = bound(amount, 1, 3000 ether);
+
         WarStaker newStaker = new WarStaker(address(vault.asset()));
 
         deal(address(vault.asset()), address(staker), amount);
