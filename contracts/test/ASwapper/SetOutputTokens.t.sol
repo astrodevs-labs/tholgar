@@ -60,7 +60,9 @@ contract SetOutputTokens is ASwapperTest {
         swapper.setOutputTokens(outputTokens);
     }
 
-    function test_setOutputTokens_BiggerArrayThenSmaller(uint256 seed1, uint256 seed2, uint256 length1, uint256 length2) public {
+    function test_setOutputTokens_BiggerArrayThenSmaller(uint256 seed1, uint256 seed2, uint256 length1, uint256 length2)
+        public
+    {
         length1 = bound(length1, 2, 10);
         length2 = bound(length2, 1, length1);
         address[] memory tokens1 = generateAddressArrayFromHash(seed1, length1);

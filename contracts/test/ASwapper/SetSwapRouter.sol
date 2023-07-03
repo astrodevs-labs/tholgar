@@ -2,7 +2,6 @@
 pragma solidity 0.8.20;
 
 import "./ASwapperTest.sol";
-import {Errors} from "../../src/utils/Errors.sol";
 
 contract SetSwapRouter is ASwapperTest {
     function test_setSwapRouter_Normal(address newSwapRouter) public {

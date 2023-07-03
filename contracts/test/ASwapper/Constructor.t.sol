@@ -6,7 +6,9 @@ import "./ASwapperTest.sol";
 contract Constructor is ASwapperTest {
     function test_constructor_Normal() public {
         assertEq(swapper.swapRouter(), augustusSwapper, "SwapRouter should be augustusSwapper");
-        assertEq(swapper.tokenTransferAddress(), tokenTransferAddress, "TokenTransferAddress should be tokenTransferAddress");
+        assertEq(
+            swapper.tokenTransferAddress(), tokenTransferAddress, "TokenTransferAddress should be tokenTransferAddress"
+        );
         assertEq(swapper.getOutputTokenAddresses(), new address[](0));
         assertEq(swapper.getOutputTokenRatio(address(usdc)), 0);
     }

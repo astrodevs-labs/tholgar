@@ -2,7 +2,6 @@
 pragma solidity 0.8.20;
 
 import "./ASwapperTest.sol";
-import {Errors} from "../../src/utils/Errors.sol";
 
 contract SetTokenTransferAddress is ASwapperTest {
     function test_setTokenTransferAddress_Normal(address newTokenTransferAddress) public {
@@ -13,7 +12,11 @@ contract SetTokenTransferAddress is ASwapperTest {
 
         vm.prank(owner);
         swapper.setTokenTransferAddress(newTokenTransferAddress);
-        assertEq(swapper.tokenTransferAddress(), newTokenTransferAddress, "tokenTransferAddress should be newTokenTransferAddress");
+        assertEq(
+            swapper.tokenTransferAddress(),
+            newTokenTransferAddress,
+            "tokenTransferAddress should be newTokenTransferAddress"
+        );
     }
 
     function test_setTokenTransferAddress_NotOwner(address newTokenTransferAddress) public {
