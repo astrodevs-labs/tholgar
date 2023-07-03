@@ -9,7 +9,7 @@ const checkGasPrice = async (maxGasPrice: number): Promise<number> => {
     const result: any = await axios.get(
       `${etherscanApiKey}/api?module=gastracker&action=gasoracle&apikey=${etherscanApiKey}`
     );
-    gasPrice = parseFloat(result.result.SafeGasPrice);
+    gasPrice = parseFloat(result.data.result.SafeGasPrice);
   } catch (err: any) {
     throw new Error(`Cannot get gas price: ${err.message}`);
   }
