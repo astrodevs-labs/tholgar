@@ -37,7 +37,7 @@ contract VaultTest is AutoCompounderTest {
         assertTrue(vault.paused());
     }
 
-    function testFuzz_pause_NotOwner(address pranker) public {
+    function test_pause_NotOwner(address pranker) public {
         vm.assume(pranker != owner);
 
         vm.prank(pranker);
@@ -53,7 +53,7 @@ contract VaultTest is AutoCompounderTest {
         assertFalse(vault.paused());
     }
 
-    function testFuzz_unpause_NotOwner(address pranker) public {
+    function test_unpause_NotOwner(address pranker) public {
         vm.assume(pranker != owner);
 
         vm.prank(pranker);

@@ -6,7 +6,7 @@ import "./ZapTest.sol";
 contract TestZap is ZapTest {
     address receiver = makeAddr("receiver");
 
-    function testFuzz_zap_Normal(uint256 amount) public {
+    function test_zap_Normal(uint256 amount) public {
         IERC20 token = IERC20(randomVlToken(amount));
         amount = bound(amount, 1e4, token.balanceOf(alice));
 

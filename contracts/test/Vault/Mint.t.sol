@@ -10,7 +10,7 @@ contract Mint is VaultTest {
         VaultTest.setUp();
     }
 
-    function testFuzz_mint_Normal(uint256 amount, address pranker) public {
+    function test_mint_Normal(uint256 amount, address pranker) public {
         amount = bound(amount, 1, 3000 ether);
         vm.assume(pranker != owner);
         vm.assume(pranker != address(0));
@@ -32,7 +32,7 @@ contract Mint is VaultTest {
         assertEqDecimal(vault.balanceOf(pranker), amount, 18, "Pranker should have received the vault tokens");
     }
 
-    function testFuzz_mint_Multiple(uint256 amount1, uint256 amount2, address pranker1, address pranker2) public {
+    function test_mint_Multiple(uint256 amount1, uint256 amount2, address pranker1, address pranker2) public {
         amount1 = bound(amount1, 1, 3000 ether);
         amount2 = bound(amount2, 1, 3000 ether);
         vm.assume(pranker1 != owner);

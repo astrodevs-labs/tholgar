@@ -17,7 +17,7 @@ contract Redeem is VaultTest {
         vm.stopPrank();
     }
 
-    function testFuzz_redeem_Normal(uint256 amount1, uint256 amount2, address pranker) public {
+    function test_redeem_Normal(uint256 amount1, uint256 amount2, address pranker) public {
         amount2 = bound(amount2, 1, 3000 ether - 1);
         amount1 = bound(amount1, amount2, 3000 ether);
         vm.assume(pranker != address(0));

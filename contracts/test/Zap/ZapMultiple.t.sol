@@ -6,7 +6,7 @@ import "./ZapTest.sol";
 contract ZapMutiple is ZapTest {
     address receiver = makeAddr("receiver");
 
-    function testFuzz_zapMultiple_DefaultBehavior(uint256 amountCvx, uint256 amountAura) public {
+    function test_zapMultiple_DefaultBehavior(uint256 amountCvx, uint256 amountAura) public {
         amountCvx = bound(amountCvx, 1e4, cvx.balanceOf(alice));
         amountAura = bound(amountAura, 1e4, aura.balanceOf(alice));
 

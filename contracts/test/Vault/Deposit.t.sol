@@ -38,7 +38,7 @@ contract Deposit is VaultTest {
         assertEqDecimal(vault.balanceOf(pranker), amount, 18, "Pranker should have received the shares");
     }
 
-    function testFuzz_deposit_Multiple(uint256 amount1, uint256 amount2, address pranker1, address pranker2) public {
+    function test_deposit_Multiple(uint256 amount1, uint256 amount2, address pranker1, address pranker2) public {
         amount1 = bound(amount1, 1, 3000 ether);
         amount2 = bound(amount2, 1, 3000 ether);
         vm.assume(pranker1 != owner);

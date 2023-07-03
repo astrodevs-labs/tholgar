@@ -6,7 +6,7 @@ import {Errors} from "../../src/utils/Errors.sol";
 import {ERC20} from "solmate/tokens/ERC20.sol";
 
 contract Withdraw is VaultTest {
-    function testFuzz_withdraw_Normal(uint256 amount1, uint256 amount2, address pranker) public {
+    function test_withdraw_Normal(uint256 amount1, uint256 amount2, address pranker) public {
         amount2 = bound(amount2, 1, 3000 ether - 1);
         amount1 = bound(amount1, amount2, 3000 ether);
         vm.assume(pranker != address(0));

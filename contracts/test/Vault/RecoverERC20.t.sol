@@ -10,7 +10,7 @@ contract RecoverERC20 is VaultTest {
         VaultTest.setUp();
     }
 
-    function testFuzz_recoverERC20_Normal(uint256 amount) public {
+    function test_recoverERC20_Normal(uint256 amount) public {
         vm.assume(amount != 0);
 
         deal(address(usdc), address(vault), amount);
