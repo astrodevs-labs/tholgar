@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from 'app/App';
 import reportWebVitals from 'utils/reportWebVitals';
-import theme from "utils/theme";
+import theme from "config/theme";
 import {ColorModeScript} from "@chakra-ui/react";
 
 const root = ReactDOM.createRoot(
