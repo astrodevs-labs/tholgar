@@ -2,14 +2,8 @@
 pragma solidity 0.8.20;
 
 import "./VaultTest.sol";
-import {Errors} from "../../src/utils/Errors.sol";
-import {ERC20} from "solmate/tokens/ERC20.sol";
 
 contract Redeem is VaultTest {
-    function setUp() public override {
-        VaultTest.setUp();
-    }
-
     function test_redeem_ZeroAssets() public {
         vm.startPrank(alice);
         vm.expectRevert("ZERO_ASSETS");

@@ -2,14 +2,8 @@
 pragma solidity 0.8.20;
 
 import "./VaultTest.sol";
-import {Errors} from "../../src/utils/Errors.sol";
-import {ERC20} from "solmate/tokens/ERC20.sol";
 
 contract Unpause is VaultTest {
-    function setUp() public override {
-        VaultTest.setUp();
-    }
-
     function test_unpause_Normal() public {
         vm.startPrank(owner);
         vault.pause();

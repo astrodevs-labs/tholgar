@@ -4,7 +4,6 @@ pragma solidity 0.8.20;
 import "./VaultTest.sol";
 
 contract Constructor is VaultTest {
-
     function test_constructor_Normal() public {
         assertEq(vault.owner(), owner, "Owner is not owner");
         assertFalse(vault.paused(), "Vault is paused");
@@ -19,18 +18,21 @@ contract Constructor is VaultTest {
     function test_constructor_ZeroAddressAsset() public {
         vm.expectRevert(Errors.ZeroAddress.selector);
         vm.prank(owner);
-        vault = new Vault(address(staker), address(minter), 500, owner, address(usdc), augustusSwapper, tokenTransferAddress, operator, address(0));
+        vault =
+        new Vault(address(staker), address(minter), 500, owner, address(usdc), augustusSwapper, tokenTransferAddress, operator, address(0));
     }
 
     function test_constructor_ZeroAddressStaker() public {
         vm.expectRevert(Errors.ZeroAddress.selector);
         vm.prank(owner);
-        vault = new Vault(address(0), address(minter), 500, owner, address(usdc), augustusSwapper, tokenTransferAddress, operator, address(war));
+        vault =
+        new Vault(address(0), address(minter), 500, owner, address(usdc), augustusSwapper, tokenTransferAddress, operator, address(war));
     }
 
     function test_constructor_ZeroAddressMinter() public {
         vm.expectRevert(Errors.ZeroAddress.selector);
         vm.prank(owner);
-        vault = new Vault(address(staker), address(0), 500, owner, address(usdc), augustusSwapper, tokenTransferAddress, operator, address(war));
+        vault =
+        new Vault(address(staker), address(0), 500, owner, address(usdc), augustusSwapper, tokenTransferAddress, operator, address(war));
     }
 }

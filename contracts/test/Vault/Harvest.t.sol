@@ -2,7 +2,6 @@
 pragma solidity 0.8.20;
 
 import "./VaultTest.sol";
-import {IStaker} from "warlord/interfaces/IStaker.sol";
 
 contract Harvest is VaultTest {
     function test_harvest_NotOwnerOrOperator() public {
@@ -27,7 +26,11 @@ contract Harvest is VaultTest {
         claimableAmounts[1].reward = address(weth);
         claimableAmounts[2].claimableAmount = 0;
         claimableAmounts[2].reward = address(aura);
-        vm.mockCall(vault.staker(), abi.encodeWithSelector(staker.getUserTotalClaimableRewards.selector, address(vault)), abi.encode(claimableAmounts));
+        vm.mockCall(
+            vault.staker(),
+            abi.encodeWithSelector(staker.getUserTotalClaimableRewards.selector, address(vault)),
+            abi.encode(claimableAmounts)
+        );
         deal(address(vault.feeToken()), address(vault), amount);
 
         vm.expectEmit(true, false, false, true);

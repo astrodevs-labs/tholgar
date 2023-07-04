@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 pragma solidity 0.8.20;
 
 import {ERC20} from "solmate/tokens/ERC20.sol";
@@ -311,6 +310,8 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
             }
         }
         _swap(tokens, outputCallDatas);
+
+        // Mint more stkWAR
         uint256[] memory amounts = new uint256[](length);
         address[] memory outputTokensAddresses = getOutputTokenAddresses();
         for (uint256 i; i < length;) {

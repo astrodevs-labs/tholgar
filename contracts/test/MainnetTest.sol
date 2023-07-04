@@ -6,6 +6,7 @@ import {IERC20} from "openzeppelin-contracts/token/ERC20/ERC20.sol";
 import {WarStaker} from "warlord/Staker.sol";
 import {IMinter} from "warlord/interfaces/IMinter.sol";
 import {IRatios} from "warlord/interfaces/IRatios.sol";
+import {IStaker} from "warlord/interfaces/IStaker.sol";
 
 contract MainnetTest is BaseTest {
     IRatios constant ratios = IRatios(0xE40004395384455326c7a27A85204801C7f85F94);

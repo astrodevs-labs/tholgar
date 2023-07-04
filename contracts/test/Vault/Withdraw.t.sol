@@ -2,8 +2,6 @@
 pragma solidity 0.8.20;
 
 import "./VaultTest.sol";
-import {Errors} from "../../src/utils/Errors.sol";
-import {ERC20} from "solmate/tokens/ERC20.sol";
 
 contract Withdraw is VaultTest {
     function test_withdraw_Normal(uint256 amount1, uint256 amount2, address pranker) public {

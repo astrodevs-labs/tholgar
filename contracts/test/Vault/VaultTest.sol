@@ -3,7 +3,6 @@ pragma solidity 0.8.20;
 
 import "../MainnetTest.sol";
 import {ASwapper} from "../../src/abstracts/ASwapper.sol";
-import {WarStaker} from "warlord/Staker.sol";
 import {Vault} from "../../src/Vault.sol";
 
 contract VaultTest is MainnetTest {

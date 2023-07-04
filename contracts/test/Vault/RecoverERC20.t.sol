@@ -2,16 +2,10 @@
 pragma solidity 0.8.20;
 
 import "./VaultTest.sol";
-import {Errors} from "../../src/utils/Errors.sol";
-import {ERC20} from "solmate/tokens/ERC20.sol";
 
 contract RecoverERC20 is VaultTest {
-    function setUp() public override {
-        VaultTest.setUp();
-    }
-
     function test_recoverERC20_Normal(uint256 amount) public {
-        vm.assume(amount != 0);
+        amount = bound(amount, 1, UINT256_MAX);
 
         deal(address(usdc), address(vault), amount);
 
