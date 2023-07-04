@@ -133,8 +133,10 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
     function setMinter(address newMinter) external onlyOwner {
         if (newMinter == address(0)) revert Errors.ZeroAddress();
 
+        address oldMinter = minter;
         minter = newMinter;
-        emit MinterUpdated(minter, newMinter);
+
+        emit MinterUpdated(oldMinter, newMinter);
     }
 
     /**
