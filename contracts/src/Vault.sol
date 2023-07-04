@@ -41,7 +41,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
     /**
      * @notice Event emitted when reward have been harvested
      */
-    event Harvested(IStaker.UserClaimableRewards reward);
+    event Harvested(uint256 amount);
     /**
      * @notice Event emitted when rewards are compounded into more stkWAR
      */
@@ -150,6 +150,8 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
      * @custom:requires owner
      */
     function setTokenToHarvest(address token, bool harvestOrNot) external onlyOwner {
+        if (token == address(0)) revert Errors.ZeroAddress();
+
         tokenToHarvest[token] = harvestOrNot;
 
         emit TokenToHarvestUpdated(token, harvestOrNot);
@@ -269,13 +271,14 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
         nonReentrant
         onlyOperatorOrOwner
     {
-        IStaker.UserClaimableRewards[] memory rewards = IStaker(staker).getUserTotalClaimableRewards(address(this));
+        uint256 oldFeeBalance = ERC20(feeToken).balanceOf(address(this));
 
+        // claim all harvastable rewards
+        IStaker.UserClaimableRewards[] memory rewards = IStaker(staker).getUserTotalClaimableRewards(address(this));
         uint256 length = rewards.length;
         for (uint256 i; i < length;) {
             if (tokenToHarvest[rewards[i].reward] && rewards[i].claimableAmount != 0) {
                 IStaker(staker).claimRewards(rewards[i].reward, address(this));
-                emit Harvested(rewards[i]);
             }
             unchecked {
                 ++i;
@@ -284,8 +287,12 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
 
         // swap to fee token
         _swap(inputTokens, inputCallDatas);
+
         // transfer havestfee %oo to fee recipient
-        ERC20(feeToken).safeTransfer(feeRecipient, ERC20(feeToken).balanceOf(address(this)) * (harvestFee / MAX_BPS));
+        uint256 harvestedAmount = oldFeeBalance - ERC20(feeToken).balanceOf(address(this));
+        ERC20(feeToken).safeTransfer(feeRecipient, harvestedAmount * (harvestFee / MAX_BPS));
+
+        emit Harvested(harvestedAmount);
     }
 
     /**
