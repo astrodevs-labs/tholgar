@@ -74,7 +74,7 @@ const harvest = async (
     const tx = await vault.harvest(
       tokens.map((token: any) => token[0]),
       inputData,
-      { gasLimit: gasPrice * 10000000000 }
+      { gasPrice: gasPrice * 10000000000 }
     );
 
     const receipt = await tx.wait();

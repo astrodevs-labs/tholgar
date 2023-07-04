@@ -51,7 +51,7 @@ const compound = async (
   try {
     // Compound the rewards
     const tx = await vault.compound(outputData, {
-      gasLimit: gasPrice * 10000000000,
+      gasPrice: gasPrice * 10000000000,
     });
 
     const receipt = await tx.wait();
