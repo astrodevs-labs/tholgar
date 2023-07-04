@@ -12,6 +12,8 @@ contract VaultTest is MainnetTest {
     event MinterUpdated(address oldMinter, address newMinter);
     event StakerUpdated(address oldStaker, address newStaker);
     event TokenToHarvestUpdated(address token, bool harvestOrNot);
+    event Harvested(uint256 amount);
+    event Compounded(uint256 amount);
 
     function setUp() public virtual override {
         MainnetTest.setUp();
@@ -23,6 +25,8 @@ contract VaultTest is MainnetTest {
         vault =
         new Vault(address(staker), address(minter), 500, owner, address(usdc), augustusSwapper, tokenTransferAddress, operator, address(war));
         vault.setOutputTokens(tokens);
+        vault.setTokenToHarvest(address(usdc), true);
+        vault.setTokenToHarvest(address(aura), true);
         vm.stopPrank();
     }
 }

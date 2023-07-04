@@ -11,6 +11,8 @@ contract Constructor is VaultTest {
         assertEq(vault.minter(), address(minter), "Minter is not minter");
         assertEq(address(vault.asset()), address(war), "Asset is not WAR");
         assertEq(vault.staker(), address(staker), "Staker is not staker");
+        assertTrue(vault.tokenToHarvest(address(usdc)), "usdc should be tokenToHarvest");
+        assertTrue(vault.tokenToHarvest(address(aura)), "aura should be tokenToHarvest");
         assertEq(vault.asset().allowance(address(vault), address(staker)), UINT256_MAX, "Staker allowance is not max");
     }
 
