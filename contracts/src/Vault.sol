@@ -271,10 +271,14 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
     {
         IStaker.UserClaimableRewards[] memory rewards = IStaker(staker).getUserTotalClaimableRewards(address(this));
 
-        for (uint256 i; i < rewards.length; i++) {
+        uint256 length = rewards.length;
+        for (uint256 i; i < length;) {
             if (tokenToHarvest[rewards[i].reward] && rewards[i].claimableAmount != 0) {
                 IStaker(staker).claimRewards(rewards[i].reward, address(this));
                 emit Harvested(rewards[i]);
+            }
+            unchecked {
+                ++i;
             }
         }
 
