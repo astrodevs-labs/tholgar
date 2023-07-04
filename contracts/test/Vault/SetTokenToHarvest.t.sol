@@ -22,6 +22,7 @@ contract SetTokenToHarvest is VaultTest {
 
     function test_setTokenToHarvest_ZeroAddress() public {
         vm.expectRevert(Errors.ZeroAddress.selector);
+        vm.prank(owner);
         vault.setTokenToHarvest(address(0), true);
     }
 
