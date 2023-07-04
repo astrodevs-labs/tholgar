@@ -9,6 +9,8 @@ import {Vault} from "../../src/Vault.sol";
 contract VaultTest is MainnetTest {
     Vault vault;
 
+    event MinterUpdated(address oldMinter, address newMinter);
+
     function setUp() public virtual override {
         MainnetTest.setUp();
         fork();
