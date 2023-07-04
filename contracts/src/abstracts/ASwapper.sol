@@ -24,10 +24,6 @@ abstract contract ASwapper is Ownable2Step {
      */
     event OutputTokensUpdated(OutputToken[] tokens);
     /**
-     *  @notice Event emitted when a token is swapped
-     */
-    event TokenSwapped(address indexed token, uint256 amount);
-    /**
      *  @notice Event emitted when the swap router is updated
      */
     event SwapRouterUpdated(address oldSwapRouter, address newSwapRouter);
@@ -191,7 +187,6 @@ abstract contract ASwapper is Ownable2Step {
 
         for (uint256 i; i < length;) {
             address token = tokens[i];
-            emit TokenSwapped(token, ERC20(token).balanceOf(address(this)));
             _approveTokenIfNeeded(token, tokenTransferAddress);
             _performRouterSwap(callDatas[i]);
             unchecked {
