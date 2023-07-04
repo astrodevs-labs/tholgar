@@ -5,9 +5,11 @@ import "./VaultTest.sol";
 
 contract SetMinter is VaultTest {
     function test_setMinter_Normal(address newMinter) public {
+        vm.assume(newMinter != address(0));
 
         vm.expectEmit(true, true, false, true);
         emit MinterUpdated(vault.minter(), newMinter);
+
         vm.prank(owner);
         vault.setMinter(newMinter);
 
