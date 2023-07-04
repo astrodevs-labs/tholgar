@@ -1,5 +1,5 @@
-import {Colors, extendTheme, ThemeConfig} from '@chakra-ui/react'
-
+import {Colors, extendTheme, StyleFunctionProps, ThemeConfig} from '@chakra-ui/react'
+import { mode } from '@chakra-ui/theme-tools'
 const config: ThemeConfig = {
   initialColorMode: 'dark',
   useSystemColorMode: false,
@@ -11,11 +11,29 @@ const colors: Colors = {
     secondary: '#00ff00',
   },
   background: {
-    dark: '#0d0d0d',
+    dark: '#1A202C',
     light: '#f5f5f5',
+  },
+  border: {
+    dark: '#2D3748',
+    light: '#E2E8F0',
   }
 }
 
-const theme = extendTheme({ config, colors })
+const theme = extendTheme({
+  config,
+  colors,
+  styles: {
+    global: (props: StyleFunctionProps) => ({
+      body: {
+        bg: mode('background.light', 'background.dark')(props)
+      },
+      // border color
+      '*, ::before, ::after': {
+        borderColor: mode('border.light', 'border.dark')(props)
+      }
+    })
+  }
+})
 
 export default theme

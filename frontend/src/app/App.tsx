@@ -8,6 +8,7 @@ import { createPublicClient, http } from 'viem'
 import { ChakraProvider } from '@chakra-ui/react'
 import {Home, Test} from "pages";
 import theme from "utils/theme";
+import {NavigablePage} from "../components/layout";
 
 const config = createConfig({
   autoConnect: true,
@@ -32,7 +33,9 @@ export default function App() {
   return (
     <WagmiConfig config={config}>
       <ChakraProvider theme={theme}>
-        <RouterProvider router={router}/>
+        <NavigablePage>
+          <RouterProvider router={router}/>
+        </NavigablePage>
       </ChakraProvider>
     </WagmiConfig>
   )

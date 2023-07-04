@@ -1,34 +1,37 @@
-import {FC, PropsWithChildren} from "react";
-import { Box, Center, IconButton, Text, Flex } from '@chakra-ui/react'
-import { ChevronRightIcon } from '@chakra-ui/icons'
+import {FC} from "react";
+import {IconButton, Flex, useColorModeValue, Button} from '@chakra-ui/react'
+import {HamburgerIcon} from '@chakra-ui/icons'
+import {ColorModeToggle} from "components/ui/ColorModeToggle";
 
 export interface HeaderProps {
-  onShowSidebar: () => void
-  showSidebarButton?: boolean
+  onOpen: () => void
 }
 
-export const Header: FC<HeaderProps> =  ({ showSidebarButton, onShowSidebar }) => {
-  return (
-    <Flex bg="tomato" p={4} color="white" justifyContent="center">
-      <Box flex="1">
-        {showSidebarButton && (
-          <IconButton
-            icon={<ChevronRightIcon w={8} h={8} />}
-            colorScheme="blackAlpha"
-            variant="outline"
-            onClick={onShowSidebar}
-            aria-label={"Show sidebar"}
-          />
-        )}
-      </Box>
-      <Center flex="1" h="40px">
-        <Text fontSize="xl">Page Title</Text>
-      </Center>
-      <Box flex="1" />
+export const Header: FC<HeaderProps> =  ({ onOpen }) => (
+  <Flex
+    as="header"
+    align="center"
+    justify={{ base: 'space-between', md: 'flex-end' }}
+    w="full"
+    px="4"
+    borderBottomWidth="1px"
+    borderColor={useColorModeValue('border.light', 'border.dark')}
+    boxShadow="sm"
+    h="14"
+  >
+    <IconButton
+      aria-label="Menu"
+      display={{ base: 'inline-flex', md: 'none' }}
+      onClick={onOpen}
+      icon={<HamburgerIcon />}
+      size="md"
+    />
+
+    <Flex align="center" gap={2}>
+      <ColorModeToggle/>
+      <Button>REPLACE ME</Button>
     </Flex>
-  )
-}
+  </Flex>
+)
 
-Header.defaultProps = {
-  showSidebarButton: true
-}
+Header.defaultProps = {}
