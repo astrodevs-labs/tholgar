@@ -63,7 +63,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
     /**
      * @notice mapping to keep track of which tokens to harvest
      */
-    mapping(address token => bool harvestOrNot) public tokensToHarvest;
+    mapping(address token => bool harvestOrNot) public tokenToHarvest;
 
     /*//////////////////////////////////////////////////////////////
                                CONSTRUCTOR
@@ -150,7 +150,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
      * @custom:requires owner
      */
     function setTokenToHarvest(address token, bool harvestOrNot) external onlyOwner {
-        tokensToHarvest[token] = harvestOrNot;
+        tokenToHarvest[token] = harvestOrNot;
 
         emit TokenToHarvestUpdated(token, harvestOrNot);
     }
@@ -272,7 +272,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
         IStaker.UserClaimableRewards[] memory rewards = IStaker(staker).getUserTotalClaimableRewards(address(this));
 
         for (uint256 i; i < rewards.length; i++) {
-            if (tokensToHarvest[rewards[i].reward] && rewards[i].claimableAmount != 0) {
+            if (tokenToHarvest[rewards[i].reward] && rewards[i].claimableAmount != 0) {
                 IStaker(staker).claimRewards(rewards[i].reward, address(this));
                 emit Harvested(rewards[i]);
             }
