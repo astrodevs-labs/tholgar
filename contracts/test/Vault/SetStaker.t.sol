@@ -13,6 +13,8 @@ contract SetStaker is VaultTest {
     function test_setStaker_ZeroBalance() public {
         WarStaker newStaker = new WarStaker(address(vault.asset()));
 
+        vm.expectEmit(true, true, false, true);
+        emit StakerUpdated(vault.staker(), address(newStaker));
         vm.prank(owner);
         vault.setStaker(address(newStaker));
 
@@ -50,6 +52,8 @@ contract SetStaker is VaultTest {
         deal(address(vault.asset()), address(staker), amount);
         deal(address(staker), address(vault), amount);
 
+        vm.expectEmit(true, true, false, true);
+        emit StakerUpdated(vault.staker(), address(newStaker));
         vm.prank(owner);
         vault.setStaker(address(newStaker));
 

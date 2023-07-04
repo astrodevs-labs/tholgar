@@ -10,6 +10,7 @@ contract VaultTest is MainnetTest {
     Vault vault;
 
     event MinterUpdated(address oldMinter, address newMinter);
+    event StakerUpdated(address oldStaker, address newStaker);
 
     function setUp() public virtual override {
         MainnetTest.setUp();
