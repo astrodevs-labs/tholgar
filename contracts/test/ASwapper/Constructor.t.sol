@@ -9,8 +9,13 @@ contract Constructor is ASwapperTest {
         assertEq(
             swapper.tokenTransferAddress(), tokenTransferAddress, "TokenTransferAddress should be tokenTransferAddress"
         );
-        assertEq(swapper.getOutputTokenAddresses(), new address[](0));
-        assertEq(swapper.getOutputTokenRatio(address(usdc)), 0);
+        address[] memory tokens = new address[](2);
+        tokens[0] = address(usdc);
+        tokens[1] = address(weth);
+        assertEq(swapper.getOutputTokenAddresses(), tokens);
+        assertEq(swapper.getOutputTokenRatio(address(usdc)), 5_000);
+        assertEq(swapper.getOutputTokenRatio(address(weth)), 5_000);
+        assertEq(swapper.getOutputTokenRatio(address(aura)), 0);
     }
 
     function test_constructor_ZeroAddressSwapRouter() public {

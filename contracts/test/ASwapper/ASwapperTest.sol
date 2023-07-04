@@ -19,6 +19,10 @@ contract ASwapperTest is MainnetTest {
         vm.startPrank(owner);
 
         swapper = new ASwapperMock(augustusSwapper, tokenTransferAddress);
+        ASwapper.OutputToken[] memory tokens = new ASwapper.OutputToken[](2);
+        tokens[0] = ASwapper.OutputToken(address(usdc), 5_000);
+        tokens[1] = ASwapper.OutputToken(address(weth), 5_000);
+        swapper.setOutputTokens(tokens);
 
         vm.stopPrank();
     }
