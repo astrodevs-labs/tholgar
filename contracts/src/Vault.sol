@@ -35,6 +35,10 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
      */
     event MinterUpdated(address oldMinter, address newMinter);
     /**
+     * @notice Event emitted when a token is added to the list of tokens to harvest
+     */
+    event TokenToHarvestUpdated(address token, bool harvestOrNot);
+    /**
      * @notice Event emitted when reward have been harvested
      */
     event Harvested(IStaker.UserClaimableRewards reward);
@@ -140,6 +144,18 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
     }
 
     /**
+     * @notice Set the token to harvest or not
+     * @param token the token to harvest or not
+     * @param harvestOrNot true or false
+     * @custom:requires owner
+     */
+    function setTokenToHarvest(address token, bool harvestOrNot) external onlyOwner {
+        tokensToHarvest[token] = harvestOrNot;
+
+        emit TokenToHarvestUpdated(token, harvestOrNot);
+    }
+
+    /**
      * @notice Recover ERC2O tokens in the contract
      * @dev Recover ERC2O tokens in the contract
      * @param token Address of the ERC2O token
@@ -169,16 +185,6 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
      */
     function unpause() external onlyOwner {
         _unpause();
-    }
-
-    /**
-     * @notice Set the token to harvest or not
-     * @param token the token to harvest or not
-     * @param harvestOrNot true or false
-     * @custom:requires owner
-     */
-    function setTokenToHarvest(address token, bool harvestOrNot) external onlyOwner {
-        tokensToHarvest[token] = harvestOrNot;
     }
 
     /*//////////////////////////////////////////////////////////////
