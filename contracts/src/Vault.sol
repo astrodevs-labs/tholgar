@@ -84,7 +84,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
         ASwapper(initialSwapRouter, initialTokenTransferAddress)
         AOperator(initialOperator)
     {
-        if (initialStaker == address(0) || definitiveAsset == address(0) || initialMinter == address(0)) {
+        if (initialStaker == address(0) || initialMinter == address(0)) {
             revert Errors.ZeroAddress();
         }
 
@@ -261,23 +261,25 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
 
     /**
      * @notice Harvest all rewards from staker
-     * @param inputTokens reward tokens claimed from staker
-     * @param inputCallDatas swapper routes to swap to feeToken
+     * @param tokens reward tokens claimed from staker
+     * @param callDatas swapper routes to swap to feeToken
      * @custom:requires operator or owner
      */
-    function harvest(address[] calldata inputTokens, bytes[] calldata inputCallDatas)
+    function harvest(address[] calldata tokens, bytes[] calldata callDatas)
         external
         nonReentrant
         onlyOperatorOrOwner
     {
-        uint256 oldFeeBalance = ERC20(feeToken).balanceOf(address(this));
+        address _feeToken = feeToken;
+        uint256 oldFeeBalance = ERC20(_feeToken).balanceOf(address(this));
 
         // claim all harvastable rewards
         IStaker.UserClaimableRewards[] memory rewards = IStaker(staker).getUserTotalClaimableRewards(address(this));
         uint256 length = rewards.length;
         for (uint256 i; i < length;) {
-            if (tokenToHarvest[rewards[i].reward] && rewards[i].claimableAmount != 0) {
-                IStaker(staker).claimRewards(rewards[i].reward, address(this));
+            IStaker.UserClaimableRewards memory reward = rewards[i];
+            if (tokenToHarvest[reward.reward] && reward.claimableAmount != 0) {
+                IStaker(staker).claimRewards(reward.reward, address(this));
             }
             unchecked {
                 ++i;
@@ -285,21 +287,21 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
         }
 
         // swap to fee token
-        _swap(inputTokens, inputCallDatas);
+        _swap(tokens, callDatas);
 
         // transfer havestfee %oo to fee recipient
-        uint256 harvestedAmount = oldFeeBalance - ERC20(feeToken).balanceOf(address(this));
-        ERC20(feeToken).safeTransfer(feeRecipient, harvestedAmount * (harvestFee / MAX_BPS));
+        uint256 harvestedAmount = oldFeeBalance - ERC20(_feeToken).balanceOf(address(this));
+        ERC20(_feeToken).safeTransfer(feeRecipient, harvestedAmount * (harvestFee / MAX_BPS));
 
         emit Harvested(harvestedAmount);
     }
 
     /**
      * @notice Turn  all rewards into more staked assets
-     * @param outputCallDatas swapper routes to swap to more assets
+     * @param callDatas swapper routes to swap to more assets
      * @custom:requires operator or owner
      */
-    function compound(bytes[] calldata outputCallDatas) external nonReentrant onlyOperatorOrOwner {
+    function compound(bytes[] calldata callDatas) external nonReentrant onlyOperatorOrOwner {
         // swap to outputtokens with correct ratios
         uint256 length = outputTokens.length;
         address[] memory tokens = new address[](length);
@@ -309,7 +311,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
                 ++i;
             }
         }
-        _swap(tokens, outputCallDatas);
+        _swap(tokens, callDatas);
 
         // Mint more stkWAR
         uint256[] memory amounts = new uint256[](length);

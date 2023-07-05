@@ -54,7 +54,6 @@ abstract contract ASwapper is Ownable2Step {
     /**
      *  @notice list of tokens to swap to when receiving harvest rewards
      */
-
     OutputToken[] public outputTokens;
 
     /**

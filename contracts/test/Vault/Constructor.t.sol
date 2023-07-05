@@ -15,13 +15,6 @@ contract Constructor is VaultTest {
         assertEq(vault.asset().allowance(address(vault), address(staker)), UINT256_MAX, "Staker allowance is not max");
     }
 
-    function test_constructor_ZeroAddressAsset() public {
-        vm.expectRevert(Errors.ZeroAddress.selector);
-        vm.prank(owner);
-        vault =
-        new Vault(address(staker), address(minter), 500, owner, address(usdc), augustusSwapper, tokenTransferAddress, operator, address(0));
-    }
-
     function test_constructor_ZeroAddressStaker() public {
         vm.expectRevert(Errors.ZeroAddress.selector);
         vm.prank(owner);

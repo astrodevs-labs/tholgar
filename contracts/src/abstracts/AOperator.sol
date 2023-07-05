@@ -32,14 +32,6 @@ abstract contract AOperator is Ownable2Step {
                                MODIFIERS
     //////////////////////////////////////////////////////////////*/
 
-    /**
-     *  @notice Modifier to allow only operator to call functions
-     */
-    modifier onlyOperator() {
-        if (msg.sender != operator) revert Errors.NotOperator();
-        _;
-    }
-
     modifier onlyOperatorOrOwner() {
         if (msg.sender != operator && msg.sender != owner()) revert Errors.NotOperatorOrOwner();
         _;
