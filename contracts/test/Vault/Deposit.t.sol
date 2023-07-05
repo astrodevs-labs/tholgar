@@ -4,6 +4,14 @@ pragma solidity 0.8.20;
 import "./VaultTest.sol";
 
 contract Deposit is VaultTest {
+    function test_deposit_Paused() public {
+        vm.startPrank(owner);
+        vault.pause();
+        vm.expectRevert("Pausable: paused");
+        vault.deposit(1, alice);
+        vm.stopPrank();
+    }
+
     function test_deposit_ZeroShares() public {
         vm.startPrank(alice);
         vm.expectRevert("ZERO_SHARES");

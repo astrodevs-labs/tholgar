@@ -4,6 +4,13 @@ pragma solidity 0.8.20;
 import "./VaultTest.sol";
 
 contract Mint is VaultTest {
+    function test_mint_Paused() public {
+        vm.prank(owner);
+        vault.pause();
+        vm.expectRevert("Pausable: paused");
+        vault.mint(1, owner);
+    }
+
     function test_mint_Normal(uint256 amount, address pranker) public {
         amount = bound(amount, 1, 3000 ether);
         vm.assume(pranker != owner);

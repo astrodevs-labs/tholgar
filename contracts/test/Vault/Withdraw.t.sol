@@ -4,6 +4,13 @@ pragma solidity 0.8.20;
 import "./VaultTest.sol";
 
 contract Withdraw is VaultTest {
+    function test_withdraw_Paused() public {
+        vm.prank(owner);
+        vault.pause();
+        vm.expectRevert("Pausable: paused");
+        vault.withdraw(0, owner, owner);
+    }
+
     function test_withdraw_Normal(uint256 amount1, uint256 amount2, address pranker) public {
         amount2 = bound(amount2, 1, 3000 ether - 1);
         amount1 = bound(amount1, amount2, 3000 ether);

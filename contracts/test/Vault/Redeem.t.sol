@@ -4,6 +4,14 @@ pragma solidity 0.8.20;
 import "./VaultTest.sol";
 
 contract Redeem is VaultTest {
+    function test_redeem_Paused() public {
+        vm.startPrank(owner);
+        vault.pause();
+        vm.expectRevert("Pausable: paused");
+        vault.redeem(1, alice, alice);
+        vm.stopPrank();
+    }
+
     function test_redeem_ZeroAssets() public {
         vm.startPrank(alice);
         vm.expectRevert("ZERO_ASSETS");
