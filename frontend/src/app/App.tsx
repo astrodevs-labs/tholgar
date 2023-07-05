@@ -2,11 +2,11 @@ import React from "react";
 import {
   createBrowserRouter,
   RouterProvider,
+  Navigate
 } from "react-router-dom";
-import { WagmiConfig, createConfig, mainnet } from 'wagmi'
-import { createPublicClient, http } from 'viem'
+import { WagmiConfig } from 'wagmi'
 import { ChakraProvider } from '@chakra-ui/react'
-import {Home, Test} from "pages";
+import {AutoCompounder, FAQ, Pounder} from "pages";
 import theme from "config/theme";
 import {NavigablePage} from "../components/layout";
 import config from "config/wagmi";
@@ -14,11 +14,19 @@ import config from "config/wagmi";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home/>
+    element: <AutoCompounder/>
   },
   {
-    path: "/test",
-    element: <Test/>
+    path: "/pounder",
+    element: <Pounder/>
+  },
+  {
+    path: "/faq",
+    element: <FAQ/>
+  },
+  {
+    path: "*",
+    element: <Navigate to="/"/>
   }
 ])
 

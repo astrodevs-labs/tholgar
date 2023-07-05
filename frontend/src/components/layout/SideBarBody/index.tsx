@@ -40,7 +40,7 @@ export const SideBarBody: FC<PropsWithChildren<SideBarBodyProps>> = (props) => {
         </Text>
       </Flex>
       <Flex direction="column" as="nav" fontSize="md" color="gray.600" aria-label="Main Navigation">
-        <NavItem icon={DragHandleIcon}><a href={"auto-compounder"}>Auto-compounder</a></NavItem>
+        <NavItem icon={DragHandleIcon}><a href={"/"}>Auto-compounder</a></NavItem>
         <NavItem icon={DragHandleIcon}><a href={"pounder"}>Pounder</a></NavItem>
         <NavItem icon={DragHandleIcon}><a href={"faq"}>FAQ</a></NavItem>
       </Flex>

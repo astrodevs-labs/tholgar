@@ -1,4 +1,5 @@
-import {Home} from "./Home"
-import {Test} from "./Test"
+import AutoCompounder from "./AutoCompounder";
+import Pounder from "./Pounder";
+import FAQ from "./FAQ";
 
-export { Home, Test }
+export { AutoCompounder, Pounder, FAQ }
