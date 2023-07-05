@@ -315,6 +315,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
         uint256[] memory amounts = new uint256[](length);
         address[] memory outputTokensAddresses = getOutputTokenAddresses();
         for (uint256 i; i < length;) {
+            _approveTokenIfNeeded(outputTokensAddresses[i], minter);
             amounts[i] = ERC20(outputTokensAddresses[i]).balanceOf(address(this));
             unchecked {
                 ++i;
