@@ -16,7 +16,7 @@ contract SetTokenToHarvest is VaultTest {
             vm.prank(owner);
             vault.setTokenToHarvest(tokens[i], harvests[i] != 0);
 
-            assertTrue(vault.tokenToHarvest(tokens[i]), "tokenToHarvest should be true");
+            assertTrue(vault.tokensToHarvest(tokens[i]), "tokensToHarvest should be true");
         }
     }
 

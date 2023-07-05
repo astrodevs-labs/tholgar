@@ -23,6 +23,7 @@ contract DeployScript is Script {
     address feeToken;
     address operator;
     ASwapper.OutputToken[] tokens;
+    address newOwner;
 
     function setUp() public {
         // ALl variables to set up the vault
@@ -63,7 +64,6 @@ contract DeployScript is Script {
 
         // transfer ownership
         vault.transferOwnership(newOwner);
-        zap.transferOwnership(newOwner);
 
         vm.stopBroadcast();
     }

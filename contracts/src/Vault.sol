@@ -62,7 +62,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
     /**
      * @notice mapping to keep track of which tokens to harvest
      */
-    mapping(address token => bool harvestOrNot) public tokenToHarvest;
+    mapping(address token => bool harvestOrNot) public tokensToHarvest;
 
     /*//////////////////////////////////////////////////////////////
                                CONSTRUCTOR
@@ -151,7 +151,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
     function setTokenToHarvest(address token, bool harvestOrNot) external onlyOwner {
         if (token == address(0)) revert Errors.ZeroAddress();
 
-        tokenToHarvest[token] = harvestOrNot;
+        tokensToHarvest[token] = harvestOrNot;
 
         emit TokenToHarvestUpdated(token, harvestOrNot);
     }
@@ -278,7 +278,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
         uint256 length = rewards.length;
         for (uint256 i; i < length;) {
             IStaker.UserClaimableRewards memory reward = rewards[i];
-            if (tokenToHarvest[reward.reward] && reward.claimableAmount != 0) {
+            if (tokensToHarvest[reward.reward] && reward.claimableAmount != 0) {
                 IStaker(staker).claimRewards(reward.reward, address(this));
             }
             unchecked {
