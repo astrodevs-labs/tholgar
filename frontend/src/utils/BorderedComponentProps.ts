@@ -1,4 +1,4 @@
-import * as CSS from "csstype";
+import * as CSS from 'csstype';
 
 export default interface BorderedComponentProps {
   borders?: boolean;
@@ -17,5 +17,5 @@ export const defaultBorderedComponentProps: BorderedComponentProps = {
   borderThickness: '1px',
   bordersRadius: '5px',
   borderslightColor: 'gray.200',
-  bordersdarkColor: 'gray.700',
-}
+  bordersdarkColor: 'gray.700'
+};

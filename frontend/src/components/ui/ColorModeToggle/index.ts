@@ -1,1 +1,1 @@
-export * from "./ColorModeToggle"
+export * from './ColorModeToggle';

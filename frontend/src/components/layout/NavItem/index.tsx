@@ -1,10 +1,8 @@
-import {FC, PropsWithChildren} from "react";
-import {
-  Flex, Icon, useColorModeValue
-} from '@chakra-ui/react'
+import { FC, PropsWithChildren } from 'react';
+import { Flex, Icon, useColorModeValue } from '@chakra-ui/react';
 
 export interface NavItemProps {
-  icon?: any
+  icon?: any;
 }
 
 export const NavItem: FC<PropsWithChildren<NavItemProps>> = (props: any) => {
@@ -41,6 +39,4 @@ export const NavItem: FC<PropsWithChildren<NavItemProps>> = (props: any) => {
   );
 };
 
-NavItem.defaultProps = {
-
-}
+NavItem.defaultProps = {};

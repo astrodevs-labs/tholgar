@@ -1,1 +1,1 @@
-export * from "./NavigablePage"
+export * from './NavigablePage';

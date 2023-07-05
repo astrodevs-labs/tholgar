@@ -1,9 +1,7 @@
-import {FC} from "react";
+import { FC } from 'react';
 
 const Pounder: FC = () => {
-  return (
-    <p>Pounder</p>
-  )
-}
+  return <p>Pounder</p>;
+};
 
-export default Pounder
+export default Pounder;

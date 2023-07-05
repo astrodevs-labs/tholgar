@@ -1,5 +1,5 @@
-import {FC} from "react";
-import {Box, HStack, Text, VStack} from "@chakra-ui/react";
+import { FC } from 'react';
+import { Box, HStack, Text, VStack } from '@chakra-ui/react';
 
 export interface CaptionedNumberProps {
   /**
@@ -18,17 +18,16 @@ export interface CaptionedNumberProps {
   symbol?: string;
 }
 
-export const CaptionedNumber: FC<CaptionedNumberProps> = ({caption, number, symbol}) => {
-
+export const CaptionedNumber: FC<CaptionedNumberProps> = ({ caption, number, symbol }) => {
   return (
     <VStack>
-      <Text size={"l"}>{caption}</Text>
+      <Text size={'l'}>{caption}</Text>
       <HStack>
-        <Text size={"l"}>{number}</Text>
-        {symbol && <Text size={"l"}>{symbol}</Text>}
+        <Text size={'l'}>{number}</Text>
+        {symbol && <Text size={'l'}>{symbol}</Text>}
       </HStack>
     </VStack>
-  )
-}
+  );
+};
 
-CaptionedNumber.defaultProps = {}
+CaptionedNumber.defaultProps = {};

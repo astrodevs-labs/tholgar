@@ -1,5 +1,5 @@
-import AutoCompounder from "./AutoCompounder";
-import Pounder from "./Pounder";
-import FAQ from "./FAQ";
+import AutoCompounder from './AutoCompounder';
+import Pounder from './Pounder';
+import FAQ from './FAQ';
 
-export { AutoCompounder, Pounder, FAQ }
+export { AutoCompounder, Pounder, FAQ };

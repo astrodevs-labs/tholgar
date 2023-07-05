@@ -1,14 +1,10 @@
-import {FC, PropsWithChildren} from "react";
-import {
-  Drawer,
-  DrawerOverlay,
-  DrawerContent,
-} from '@chakra-ui/react'
-import {SideBarBody} from "../SideBarBody";
+import { FC, PropsWithChildren } from 'react';
+import { Drawer, DrawerOverlay, DrawerContent } from '@chakra-ui/react';
+import { SideBarBody } from '../SideBarBody';
 
 export interface SideBarProps {
-  onClose: () => void
-  isOpen: boolean
+  onClose: () => void;
+  isOpen: boolean;
 }
 
 export const SideBar: FC<PropsWithChildren<SideBarProps>> = ({ isOpen, onClose }) => {
@@ -22,7 +18,7 @@ export const SideBar: FC<PropsWithChildren<SideBarProps>> = ({ isOpen, onClose }
         </DrawerContent>
       </Drawer>
     </>
-  )
-}
+  );
+};
 
-SideBar.defaultProps = {}
+SideBar.defaultProps = {};
