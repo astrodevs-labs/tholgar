@@ -12,7 +12,7 @@ contract Mint is VaultTest {
     }
 
     function test_mint_Normal(uint256 amount, address pranker) public {
-        amount = bound(amount, 1, 3000 ether);
+        amount = bound(amount, 1, 3000e18);
         vm.assume(pranker != owner);
         vm.assume(pranker != address(0));
 
@@ -39,8 +39,8 @@ contract Mint is VaultTest {
     }
 
     function test_mint_Multiple(uint256 amount1, uint256 amount2, address pranker1, address pranker2) public {
-        amount1 = bound(amount1, 1, 3000 ether);
-        amount2 = bound(amount2, 1, 3000 ether);
+        amount1 = bound(amount1, 1, 3000e18);
+        amount2 = bound(amount2, 1, 3000e18);
         vm.assume(pranker1 != owner);
         vm.assume(pranker2 != owner);
         vm.assume(pranker1 != pranker2);
