@@ -10,7 +10,7 @@ export interface CaptionedNumberProps {
   /**
    * @property number The number to display
    */
-  number: number;
+  number: number | string;
 
   /**
    * @property symbol The number symbol
