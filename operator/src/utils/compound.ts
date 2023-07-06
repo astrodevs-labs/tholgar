@@ -19,6 +19,7 @@ const compound = async (
 
   // Get swap data for fee token to mintable token
   const outputData: string[] = [];
+  const outputTokens: string[] = [];
   try {
     const chainId = (await provider.getNetwork()).chainId;
     const feeToken = await vault.feeToken();
@@ -27,6 +28,11 @@ const compound = async (
     const balance = await feeContract.balanceOf(vaultAddress);
     const outputTokens = await vault.getOutputTokenAddresses();
     const MAX_WEIGHT = await vault.MAX_WEIGHT();
+
+    for (let i = 0; i < outputTokens.length; i++) {
+      outputTokens[i] = feeToken;
+    }
+
     for (const token of outputTokens) {
       const ratio = await vault.getOutputTokenRatio(token);
       const tokenContract = new Contract(token, ERC20_ABI, provider);
@@ -50,7 +56,7 @@ const compound = async (
 
   try {
     // Compound the rewards
-    const tx = await vault.compound(outputData, {
+    const tx = await vault.compound(outputTokens, outputData, {
       gasPrice: gasPrice * 10000000000,
     });
 

@@ -54,6 +54,7 @@ abstract contract ASwapper is Ownable2Step {
     /**
      *  @notice list of tokens to swap to when receiving harvest rewards
      */
+
     OutputToken[] public outputTokens;
 
     /**
@@ -180,7 +181,7 @@ abstract contract ASwapper is Ownable2Step {
      * @param tokens array of tokens to swap
      * @param callDatas array of bytes to call the router/aggregator
      */
-    function _swap(address[] memory tokens, bytes[] calldata callDatas) internal {
+    function _swap(address[] calldata tokens, bytes[] calldata callDatas) internal {
         uint256 length = tokens.length;
 
         for (uint256 i; i < length;) {

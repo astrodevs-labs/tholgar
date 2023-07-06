@@ -6,10 +6,14 @@ import "./VaultTest.sol";
 contract Compound is VaultTest {
     function test_compound_NotOwnerOrOperator() public {
         bytes[] memory data = new bytes[](2);
+        address[] memory tokens = new address[](2);
+
+        tokens[0] = vault.feeToken();
+        tokens[1] = vault.feeToken();
 
         vm.prank(bob);
         vm.expectRevert(Errors.NotOperatorOrOwner.selector);
-        vault.compound(data);
+        vault.compound(tokens, data);
     }
 
     function test_compound_Normal(uint256 amount1, uint256 amount2) public {
@@ -17,6 +21,10 @@ contract Compound is VaultTest {
         amount2 = bound(amount2, 1e18, 3000e18);
 
         bytes[] memory data = new bytes[](2);
+        address[] memory tokens = new address[](2);
+
+        tokens[0] = vault.feeToken();
+        tokens[1] = vault.feeToken();
 
         uint256 stakerBalance = staker.balanceOf(address(vault));
 
@@ -30,7 +38,7 @@ contract Compound is VaultTest {
         emit Compounded(expectedMintedAmount);
 
         vm.prank(owner);
-        vault.compound(data);
+        vault.compound(tokens, data);
 
         assertEqDecimal(aura.balanceOf(address(vault)), 0, 18, "Vault should have no AURA");
         assertEqDecimal(cvx.balanceOf(address(vault)), 0, 18, "Vault should have no CVX");

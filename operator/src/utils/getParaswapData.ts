@@ -24,21 +24,21 @@ export default async function getParaswapData(
     const priceData: any = await axios.post(
       `${paraswapApiUrl}/transactions/${chainId}?ignoreChecks=true&ignoreGasEstimate=true`,
       {
-          srcToken: priceRoute.data["priceRoute"].srcToken,
-          destToken: priceRoute.data["priceRoute"].destToken,
-          srcAmount: priceRoute.data["priceRoute"].srcAmount,
-          destAmount: BigNumber.from(priceRoute.data["priceRoute"].destAmount)
-            .sub(
-              BigNumber.from(priceRoute.data["priceRoute"].destAmount)
-                .div(100)
-                .mul(slippage)
-            )
-            .toString(),
-          priceRoute: priceRoute.data["priceRoute"],
-          userAddress: userAddress,
-          partner: "paraswap.io",
-          srcDecimals: priceRoute.data["priceRoute"].srcDecimals,
-          destDecimals: priceRoute.data["priceRoute"].destDecimals,
+        srcToken: priceRoute.data["priceRoute"].srcToken,
+        destToken: priceRoute.data["priceRoute"].destToken,
+        srcAmount: priceRoute.data["priceRoute"].srcAmount,
+        destAmount: BigNumber.from(priceRoute.data["priceRoute"].destAmount)
+          .sub(
+            BigNumber.from(priceRoute.data["priceRoute"].destAmount)
+              .div(100)
+              .mul(slippage)
+          )
+          .toString(),
+        priceRoute: priceRoute.data["priceRoute"],
+        userAddress: userAddress,
+        partner: "paraswap.io",
+        srcDecimals: priceRoute.data["priceRoute"].srcDecimals,
+        destDecimals: priceRoute.data["priceRoute"].destDecimals,
       }
     );
     if (!priceData.data["data"]) {

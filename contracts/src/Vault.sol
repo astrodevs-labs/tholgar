@@ -265,11 +265,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
      * @param callDatas swapper routes to swap to feeToken
      * @custom:requires operator or owner
      */
-    function harvest(address[] calldata tokens, bytes[] calldata callDatas)
-        external
-        nonReentrant
-        onlyOperatorOrOwner
-    {
+    function harvest(address[] calldata tokens, bytes[] calldata callDatas) external nonReentrant onlyOperatorOrOwner {
         address _feeToken = feeToken;
         uint256 oldFeeBalance = ERC20(_feeToken).balanceOf(address(this));
 
@@ -301,21 +297,18 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
      * @param callDatas swapper routes to swap to more assets
      * @custom:requires operator or owner
      */
-    function compound(bytes[] calldata callDatas) external nonReentrant onlyOperatorOrOwner {
+    function compound(address[] calldata tokens, bytes[] calldata callDatas)
+        external
+        nonReentrant
+        onlyOperatorOrOwner
+    {
         // swap to outputtokens with correct ratios
-        uint256 length = outputTokens.length;
-        address[] memory tokens = new address[](length);
-        for (uint256 i; i < length;) {
-            tokens[i] = feeToken;
-            unchecked {
-                ++i;
-            }
-        }
         _swap(tokens, callDatas);
 
         // Mint more stkWAR
-        uint256[] memory amounts = new uint256[](length);
         address[] memory outputTokensAddresses = getOutputTokenAddresses();
+        uint256 length = outputTokensAddresses.length;
+        uint256[] memory amounts = new uint256[](length);
         for (uint256 i; i < length;) {
             _approveTokenIfNeeded(outputTokensAddresses[i], minter);
             amounts[i] = ERC20(outputTokensAddresses[i]).balanceOf(address(this));

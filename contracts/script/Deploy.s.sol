@@ -7,7 +7,6 @@ import {Zap} from "../src/Zap.sol";
 import "forge-std/Script.sol";
 
 contract DeployScript is Script {
-
     address constant pal = 0xAB846Fb6C81370327e784Ae7CbB6d6a6af6Ff4BF;
     address constant weth = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     address constant war = 0xa8258deE2a677874a48F5320670A869D74f0cbC1;
