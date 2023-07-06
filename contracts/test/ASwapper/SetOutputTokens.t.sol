@@ -10,6 +10,7 @@ contract SetOutputTokens is ASwapperTest {
         uint256 left = swapper.MAX_WEIGHT();
         for (uint256 i = 0; i < length; ++i) {
             uint256 maxAmount = (i == length - 1) ? left : left / length - i;
+            console.log(left, maxAmount);
             amounts[i] = bound(amounts[i], 1, maxAmount);
             left -= amounts[i];
             outputTokens[i] = ASwapper.OutputToken(tokens[i], amounts[i]);

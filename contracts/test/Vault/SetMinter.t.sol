@@ -14,6 +14,11 @@ contract SetMinter is VaultTest {
         vault.setMinter(newMinter);
 
         assertEq(vault.minter(), newMinter, "Minter should be newMinter");
+
+        address[] memory tokens = vault.getOutputTokenAddresses();
+        for (uint256 i = 0; i < tokens.length; ++i) {
+            assertEq(IERC20(tokens[i]).allowance(address(vault), newMinter), UINT256_MAX, "allowance should be max");
+        }
     }
 
     function test_setMinter_ZeroAddress() public {

@@ -126,7 +126,7 @@ abstract contract ASwapper is Ownable2Step {
      * @param newOutputTokens array of OutputToken struct
      * @custom:requires owner
      */
-    function setOutputTokens(OutputToken[] calldata newOutputTokens) external onlyOwner {
+    function setOutputTokens(OutputToken[] calldata newOutputTokens) public virtual onlyOwner {
         uint256 total;
         uint256 length = newOutputTokens.length;
 

@@ -140,6 +140,16 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
         minter = newMinter;
 
         emit MinterUpdated(oldMinter, newMinter);
+
+        OutputToken[] memory _outputTokens = outputTokens;
+        uint256 length = _outputTokens.length;
+
+        for (uint256 i = 0; i < length;) {
+            ERC20(_outputTokens[i].token).safeApprove(newMinter, type(uint256).max);
+            unchecked {
+                ++i;
+            }
+        }
     }
 
     /**
@@ -310,7 +320,6 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
         uint256 length = outputTokensAddresses.length;
         uint256[] memory amounts = new uint256[](length);
         for (uint256 i; i < length;) {
-            _approveTokenIfNeeded(outputTokensAddresses[i], minter);
             amounts[i] = ERC20(outputTokensAddresses[i]).balanceOf(address(this));
             unchecked {
                 ++i;
@@ -320,5 +329,19 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
         uint256 stakedAmount = IStaker(staker).stake(ERC20(address(asset)).balanceOf(address(this)), address(this));
 
         emit Compounded(stakedAmount);
+    }
+
+    /**
+     * @dev Approve the output tokens to minter
+     */
+    function setOutputTokens(OutputToken[] calldata newOutputTokens) public override {
+        super.setOutputTokens(newOutputTokens);
+
+        for (uint256 i; i < newOutputTokens.length;) {
+            _approveTokenIfNeeded(newOutputTokens[i].token, minter);
+            unchecked {
+                ++i;
+            }
+        }
     }
 }
