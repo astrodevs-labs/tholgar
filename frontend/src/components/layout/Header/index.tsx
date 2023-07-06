@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { IconButton, Flex, useColorModeValue, Button } from '@chakra-ui/react';
+import { IconButton, Flex, useColorModeValue } from '@chakra-ui/react';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { ColorModeToggle } from 'components/ui/ColorModeToggle';
 import { WalletConnectButton } from '../../blockchain/WalletConnectButton';

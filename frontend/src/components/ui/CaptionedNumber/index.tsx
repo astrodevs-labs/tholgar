@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Box, HStack, Text, VStack } from '@chakra-ui/react';
+import { HStack, Text, VStack } from '@chakra-ui/react';
 
 export interface CaptionedNumberProps {
   /**

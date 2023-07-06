@@ -1,12 +1,8 @@
 import React, { FC, PropsWithChildren } from 'react';
 import {
-  Box,
-  HStack,
   IconButton,
-  Switch,
   useColorMode,
   useColorModeValue,
-  useStyleConfig
 } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSun, faMoon, IconLookup } from '@fortawesome/free-solid-svg-icons';

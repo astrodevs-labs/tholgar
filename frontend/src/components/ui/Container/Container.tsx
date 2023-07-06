@@ -15,6 +15,7 @@ export const Container: FC<PropsWithChildren<ContainerProps>> = (props) => {
   const backgroundColor = useColorModeValue(lightColor, darkColor);
   const borderProps = useFormatBorderProps(props);
   const {
+    /* eslint-disable no-unused-vars */
     children,
     borders,
     bordersRounded,
@@ -25,6 +26,7 @@ export const Container: FC<PropsWithChildren<ContainerProps>> = (props) => {
     bordersdarkColor,
     ...boxProps
   } = rest;
+  /* eslint-enable no-unused-vars */
 
   return (
     <Box backgroundColor={backgroundColor} {...borderProps} {...boxProps}>
