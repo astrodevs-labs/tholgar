@@ -291,7 +291,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, ASwapper, AOperator
 
         // transfer havestfee %oo to fee recipient
         uint256 harvestedAmount = ERC20(_feeToken).balanceOf(address(this)) - oldFeeBalance;
-        ERC20(_feeToken).safeTransfer(feeRecipient, harvestedAmount * (harvestFee / MAX_BPS));
+        ERC20(_feeToken).safeTransfer(feeRecipient, (harvestedAmount * harvestFee) / MAX_BPS);
 
         emit Harvested(harvestedAmount);
     }
