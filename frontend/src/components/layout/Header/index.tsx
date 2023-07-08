@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { IconButton, Flex, useColorModeValue } from '@chakra-ui/react';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { ColorModeToggle } from 'components/ui/ColorModeToggle';
-import { WalletConnectButton } from '../../blockchain/WalletConnectButton';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 export interface HeaderProps {
   onOpen: () => void;
@@ -30,7 +30,7 @@ export const Header: FC<HeaderProps> = ({ onOpen }) => (
 
     <Flex align="center" gap={2}>
       <ColorModeToggle />
-      <WalletConnectButton />
+      <ConnectButton />
     </Flex>
   </Flex>
 );

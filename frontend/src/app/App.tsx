@@ -5,7 +5,8 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { AutoCompounder, FAQ, Pounder } from 'pages';
 import theme from 'config/theme';
 import { NavigablePage } from '../components/layout';
-import config from 'config/wagmi';
+import { config, chains } from 'config/wagmi';
+import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 
 const router = createBrowserRouter([
   {
@@ -29,11 +30,13 @@ const router = createBrowserRouter([
 export default function App() {
   return (
     <WagmiConfig config={config}>
-      <ChakraProvider theme={theme}>
-        <NavigablePage>
-          <RouterProvider router={router} />
-        </NavigablePage>
-      </ChakraProvider>
+      <RainbowKitProvider chains={chains}>
+        <ChakraProvider theme={theme}>
+          <NavigablePage>
+            <RouterProvider router={router} />
+          </NavigablePage>
+        </ChakraProvider>
+      </RainbowKitProvider>
     </WagmiConfig>
   );
 }
