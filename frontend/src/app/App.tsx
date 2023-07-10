@@ -6,7 +6,12 @@ import { AutoCompounder, FAQ, Pounder } from 'pages';
 import theme from 'config/theme';
 import { NavigablePage } from '../components/layout';
 import { config, chains } from 'config/wagmi';
-import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import {
+  RainbowKitProvider,
+  cssStringFromTheme,
+  darkTheme,
+  lightTheme
+} from '@rainbow-me/rainbowkit';
 
 const router = createBrowserRouter([
   {
@@ -29,14 +34,27 @@ const router = createBrowserRouter([
 
 export default function App() {
   return (
-    <WagmiConfig config={config}>
-      <RainbowKitProvider chains={chains}>
-        <ChakraProvider theme={theme}>
+    <ChakraProvider theme={theme}>
+      <WagmiConfig config={config}>
+        <RainbowKitProvider chains={chains} theme={null}>
+          <style
+            dangerouslySetInnerHTML={{
+              __html: `
+            html[data-theme='light'] {
+              ${cssStringFromTheme(lightTheme)}
+            }
+
+            html[data-theme='dark'] {
+              ${cssStringFromTheme(darkTheme)}
+            }
+          `
+            }}
+          />
           <NavigablePage>
             <RouterProvider router={router} />
           </NavigablePage>
-        </ChakraProvider>
-      </RainbowKitProvider>
-    </WagmiConfig>
+        </RainbowKitProvider>
+      </WagmiConfig>
+    </ChakraProvider>
   );
 }

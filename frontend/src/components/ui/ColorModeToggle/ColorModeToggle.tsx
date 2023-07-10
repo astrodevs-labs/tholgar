@@ -1,9 +1,5 @@
 import React, { FC, PropsWithChildren } from 'react';
-import {
-  IconButton,
-  useColorMode,
-  useColorModeValue,
-} from '@chakra-ui/react';
+import { IconButton, useColorMode, useColorModeValue } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSun, faMoon, IconLookup } from '@fortawesome/free-solid-svg-icons';
 
