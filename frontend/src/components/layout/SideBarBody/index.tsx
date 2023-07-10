@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react';
 import { DragHandleIcon } from '@chakra-ui/icons';
 import { NavItem } from '../NavItem';
+import { Link } from '@chakra-ui/react';
 
 export interface SideBarBodyProps extends BoxProps {}
 
@@ -45,15 +46,15 @@ export const SideBarBody: FC<PropsWithChildren<SideBarBodyProps>> = (props) => {
         </Text>
       </Flex>
       <Flex direction="column" as="nav" fontSize="md" color="gray.600" aria-label="Main Navigation">
-        <NavItem icon={DragHandleIcon}>
-          <a href={'/'}>Auto-compounder</a>
-        </NavItem>
-        <NavItem icon={DragHandleIcon}>
-          <a href={'pounder'}>Pounder</a>
-        </NavItem>
-        <NavItem icon={DragHandleIcon}>
-          <a href={'faq'}>FAQ</a>
-        </NavItem>
+        <Link href={'/'}>
+          <NavItem icon={DragHandleIcon}>Home</NavItem>
+        </Link>
+        <Link href={'/pounder'}>
+          <NavItem icon={DragHandleIcon}>Pounder</NavItem>
+        </Link>
+        <Link href={'faq'}>
+          <NavItem icon={DragHandleIcon}>FAQ</NavItem>
+        </Link>
       </Flex>
       <Spacer />
       <Box px="4" py="5">
