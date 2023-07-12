@@ -68,7 +68,8 @@ const harvest = async (
         token[1],
         vaultAddress,
         chainId,
-        slippage
+        slippage,
+        vaultAddress
       );
       inputData.push(data);
     }

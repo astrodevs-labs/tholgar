@@ -46,7 +46,8 @@ const compound = async (
         amount,
         vaultAddress,
         chainId,
-        slippage
+        slippage,
+        vaultAddress
       );
       outputData.push(data[0]);
     }

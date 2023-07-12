@@ -10,7 +10,8 @@ export default async function getParaswapData(
   amount: BigNumber,
   userAddress: string,
   chainId: number,
-  slippage: number
+  slippage: number,
+  recipient: string
 ): Promise<string> {
   const paraswapApiUrl = config.paraswapApiUrl();
   try {
@@ -39,6 +40,7 @@ export default async function getParaswapData(
         partner: "paraswap.io",
         srcDecimals: priceRoute.data["priceRoute"].srcDecimals,
         destDecimals: priceRoute.data["priceRoute"].destDecimals,
+        recipient,
       }
     );
     if (!priceData.data["data"]) {
