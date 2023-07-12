@@ -20,7 +20,7 @@ contract Harvest is VaultTest {
         address[] memory tokens = new address[](3);
 
         IStaker.UserClaimableRewards[] memory claimableAmounts = new IStaker.UserClaimableRewards[](3);
-        claimableAmounts[0].claimableAmount = 0;
+        claimableAmounts[0].claimableAmount = amount;
         claimableAmounts[0].reward = address(cvx);
         claimableAmounts[1].claimableAmount = 0;
         claimableAmounts[1].reward = address(weth);

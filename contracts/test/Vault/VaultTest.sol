@@ -31,7 +31,7 @@ contract VaultTest is MainnetTest {
         vault =
         new Vault(address(staker), address(minter), address(swapper), 500, owner, address(usdc), operator, address(war));
         vault.setWeightedTokens(tokens);
-        vault.setTokenToHarvest(address(usdc), true);
+        vault.setTokenToHarvest(address(cvx), true);
         vault.setTokenToHarvest(address(aura), true);
         vm.stopPrank();
     }

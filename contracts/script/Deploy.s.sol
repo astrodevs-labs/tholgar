@@ -45,10 +45,8 @@ contract DeployScript is Script {
         console.log("Swapper deployed at: %s", address(swapper));
 
         // deploy vault
-        Vault vault =
-        new Vault(staker, minter, address(swapper), harvestFee, feeRecipient, weth, operator, war);
+        Vault vault = new Vault(staker, minter, address(swapper), harvestFee, feeRecipient, weth, operator, war);
         console.log("Vault deployed at: %s", address(vault));
-
 
         // set output tokens
         uint256 length = tokens.length;
