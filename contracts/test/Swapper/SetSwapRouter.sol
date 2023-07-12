@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity 0.8.20;
 
-import "./ASwapperTest.sol";
+import "./SwapperTest.sol";
 
-contract SetSwapRouter is ASwapperTest {
+contract SetSwapRouter is SwapperTest {
     function test_setSwapRouter_Normal(address newSwapRouter) public {
         vm.assume(newSwapRouter != address(0));
 

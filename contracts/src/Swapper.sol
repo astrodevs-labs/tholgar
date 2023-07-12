@@ -1,0 +1,139 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+pragma solidity 0.8.20;
+
+import {ERC20} from "solmate/tokens/ERC20.sol";
+import {Ownable2Step} from "openzeppelin-contracts/access/Ownable2Step.sol";
+import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
+import {Errors} from "./utils/Errors.sol";
+import {Allowance} from "./utils/Allowance.sol";
+
+/**
+ *  @title contract
+ *  @notice Provide swapper functions to swap tokens using a router/aggregator
+ *  @author 0xMemoryGrinder
+ */
+contract Swapper is Ownable2Step {
+    using SafeTransferLib for ERC20;
+
+    /**
+     *  @notice Event emitted when the swap router is updated
+     */
+    event SwapRouterUpdated(address oldSwapRouter, address newSwapRouter);
+    /**
+     *  @notice Event emitted when the token proxy is updated
+     */
+    event TokenTransferAddressUpdated(address oldTokenTransferAddress, address newTokenTransferAddress);
+
+    /*//////////////////////////////////////////////////////////////
+                            MUTABLE VARIABLES
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     *  @notice Dex/aggregaor router to call to perform swaps
+     */
+    address public swapRouter;
+    /**
+     * @notice Address to allow to swap tokens
+     */
+    address public tokenTransferAddress;
+
+    /*//////////////////////////////////////////////////////////////
+                               CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
+    constructor(address initialSwapRouter, address initialTokenTransferAddress) {
+        if (initialSwapRouter == address(0) || initialTokenTransferAddress == address(0)) revert Errors.ZeroAddress();
+
+        swapRouter = initialSwapRouter;
+        tokenTransferAddress = initialTokenTransferAddress;
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                            ADMIN LOGIC
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     * @notice Set the dex/aggregator router to call to perform swaps
+     * @param newSwapRouter address of the router
+     * @custom:requires owner
+     */
+    function setSwapRouter(address newSwapRouter) external onlyOwner {
+        if (newSwapRouter == address(0)) revert Errors.ZeroAddress();
+
+        address oldSwapRouter = swapRouter;
+        swapRouter = newSwapRouter;
+
+        emit SwapRouterUpdated(oldSwapRouter, newSwapRouter);
+    }
+
+    /**
+     * @notice Set the token proxy address to allow to swap tokens
+     * @param newTokenTransferAddress address of the token proxy
+     * @custom:requires owner
+     */
+    function setTokenTransferAddress(address newTokenTransferAddress) external onlyOwner {
+        if (newTokenTransferAddress == address(0)) revert Errors.ZeroAddress();
+
+        address oldtokenTransferAddress = tokenTransferAddress;
+        tokenTransferAddress = newTokenTransferAddress;
+
+        emit TokenTransferAddressUpdated(oldtokenTransferAddress, newTokenTransferAddress);
+    }
+
+    /**
+     * @notice Recover ERC2O tokens in the contract
+     * @dev Recover ERC2O tokens in the contract
+     * @param token Address of the ERC2O token
+     * @return bool: success
+     * @custom:requires owner
+     */
+    function recoverERC20(address token) external onlyOwner returns (bool) {
+        if (token == address(0)) revert Errors.ZeroAddress();
+
+        uint256 amount = ERC20(token).balanceOf(address(this));
+        if (amount == 0) revert Errors.ZeroValue();
+
+        ERC20(token).safeTransfer(owner(), amount);
+
+        return true;
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                            SWAP LOGIC
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     * @notice Swap tokens using the router/aggregator
+     * @param tokens array of tokens to swap
+     * @param callDatas array of bytes to call the router/aggregator
+     */
+    function swap(address[] calldata tokens, bytes[] calldata callDatas) external {
+        uint256 length = tokens.length;
+
+        for (uint256 i; i < length;) {
+            address token = tokens[i];
+            Allowance._approveTokenIfNeeded(token, tokenTransferAddress);
+            _performRouterSwap(callDatas[i]);
+            unchecked {
+                ++i;
+            }
+        }
+    }
+
+    /**
+     * @notice Perform the swap using the router/aggregator
+     * @param callData bytes to call the router/aggregator
+     */
+    function _performRouterSwap(bytes calldata callData) internal {
+        (bool success, bytes memory retData) = swapRouter.call(callData);
+
+        if (!success) {
+            if (retData.length != 0) {
+                assembly {
+                    revert(add(32, retData), mload(retData))
+                }
+            }
+            revert Errors.SwapError();
+        }
+    }
+}

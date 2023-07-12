@@ -2,15 +2,18 @@
 pragma solidity 0.8.20;
 
 import "../MainnetTest.sol";
-import {ASwapper} from "../../src/abstracts/ASwapper.sol";
+import {AWeightedTokens} from "../../src/abstracts/AWeightedTokens.sol";
 import {Vault} from "../../src/Vault.sol";
+import {Swapper} from "../../src/Swapper.sol";
 
 contract VaultTest is MainnetTest {
     Vault vault;
+    Swapper swapper;
 
     event MinterUpdated(address oldMinter, address newMinter);
     event StakerUpdated(address oldStaker, address newStaker);
     event TokenToHarvestUpdated(address token, bool harvestOrNot);
+    event SwapperUpdated(address oldSwapper, address newSwapper);
     event Harvested(uint256 amount);
     event Compounded(uint256 amount);
 
@@ -19,12 +22,15 @@ contract VaultTest is MainnetTest {
         fork();
 
         vm.startPrank(owner);
-        ASwapper.OutputToken[] memory tokens = new ASwapper.OutputToken[](2);
-        tokens[0] = ASwapper.OutputToken(address(aura), 5_000);
-        tokens[1] = ASwapper.OutputToken(address(cvx), 5_000);
+
+        swapper = new Swapper(augustusSwapper, tokenTransferAddress);
+
+        AWeightedTokens.WeightedToken[] memory tokens = new AWeightedTokens.WeightedToken[](2);
+        tokens[0] = AWeightedTokens.WeightedToken(address(aura), 5_000);
+        tokens[1] = AWeightedTokens.WeightedToken(address(cvx), 5_000);
         vault =
-        new Vault(address(staker), address(minter), 500, owner, address(usdc), augustusSwapper, tokenTransferAddress, operator, address(war));
-        vault.setOutputTokens(tokens);
+        new Vault(address(staker), address(minter), address(swapper), 500, owner, address(usdc), operator, address(war));
+        vault.setWeightedTokens(tokens);
         vault.setTokenToHarvest(address(usdc), true);
         vault.setTokenToHarvest(address(aura), true);
         vm.stopPrank();

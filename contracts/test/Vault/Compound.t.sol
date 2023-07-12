@@ -16,9 +16,10 @@ contract Compound is VaultTest {
         vault.compound(tokens, data);
     }
 
-    function test_compound_Normal(uint256 amount1, uint256 amount2) public {
+    function test_compound_Normal(uint256 amount1, uint256 amount2, uint256 amount3) public {
         amount1 = bound(amount1, 1e18, 3000e18);
         amount2 = bound(amount2, 1e18, 3000e18);
+        amount3 = bound(amount3, 1e18, 3000e18);
 
         bytes[] memory data = new bytes[](2);
         address[] memory tokens = new address[](2);
@@ -30,6 +31,7 @@ contract Compound is VaultTest {
 
         deal(address(aura), address(vault), amount1);
         deal(address(cvx), address(vault), amount2);
+        deal(address(vault.feeToken()), address(vault), amount3);
 
         uint256 expectedMintedAmount =
             stakerBalance + ratios.getMintAmount(address(aura), amount1) + ratios.getMintAmount(address(cvx), amount2);
@@ -45,5 +47,7 @@ contract Compound is VaultTest {
         assertEqDecimal(
             staker.balanceOf(address(vault)), expectedMintedAmount, 18, "Vault should have same staker balance"
         );
+        assertEqDecimal(usdc.balanceOf(address(vault)), 0, 6, "Vault should have no USDC");
+        assertEqDecimal(usdc.balanceOf(address(swapper)), amount3, 6, "Swapper should have all USDC");
     }
 }

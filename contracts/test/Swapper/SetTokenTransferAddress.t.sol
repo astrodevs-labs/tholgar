@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity 0.8.20;
 
-import "./ASwapperTest.sol";
+import "./SwapperTest.sol";
 
-contract SetTokenTransferAddress is ASwapperTest {
+contract SetTokenTransferAddress is SwapperTest {
     function test_setTokenTransferAddress_Normal(address newTokenTransferAddress) public {
         vm.assume(newTokenTransferAddress != address(0));
 

@@ -2,8 +2,9 @@
 
 pragma solidity 0.8.20;
 
-import {Vault, ASwapper} from "../src/Vault.sol";
+import {Vault, AWeightedTokens} from "../src/Vault.sol";
 import {Zap} from "../src/Zap.sol";
+import {Swapper} from "../src/Swapper.sol";
 import "forge-std/Script.sol";
 
 contract DeployScript is Script {
@@ -21,7 +22,7 @@ contract DeployScript is Script {
     address feeRecipient;
     address feeToken;
     address operator;
-    ASwapper.OutputToken[] tokens;
+    AWeightedTokens.WeightedToken[] tokens;
     address newOwner;
 
     function setUp() public {
@@ -31,8 +32,8 @@ contract DeployScript is Script {
         operator = makeAddr("operator");
         newOwner = makeAddr("newOwner");
 
-        tokens.push(ASwapper.OutputToken(address(aura), 5_000));
-        tokens.push(ASwapper.OutputToken(address(cvx), 5_000));
+        tokens.push(AWeightedTokens.WeightedToken(address(aura), 5_000));
+        tokens.push(AWeightedTokens.WeightedToken(address(cvx), 5_000));
     }
 
     function run() external {
@@ -40,18 +41,22 @@ contract DeployScript is Script {
         address deployer = vm.rememberKey(deployerPrivateKey);
         vm.broadcast(deployer);
 
+        Swapper swapper = new Swapper(augustusSwapper, tokenTransferAddress);
+        console.log("Swapper deployed at: %s", address(swapper));
+
         // deploy vault
         Vault vault =
-        new Vault(staker, minter, harvestFee, feeRecipient, weth, augustusSwapper, tokenTransferAddress, operator, war);
+        new Vault(staker, minter, address(swapper), harvestFee, feeRecipient, weth, operator, war);
         console.log("Vault deployed at: %s", address(vault));
+
 
         // set output tokens
         uint256 length = tokens.length;
-        ASwapper.OutputToken[] memory outTokens = new ASwapper.OutputToken[](length);
+        AWeightedTokens.WeightedToken[] memory outTokens = new AWeightedTokens.WeightedToken[](length);
         for (uint256 i = 0; i < length; i++) {
-            outTokens[i] = ASwapper.OutputToken(tokens[i].token, tokens[i].ratio);
+            outTokens[i] = AWeightedTokens.WeightedToken(tokens[i].token, tokens[i].ratio);
         }
-        vault.setOutputTokens(outTokens);
+        vault.setWeightedTokens(outTokens);
 
         // set token to harvest
         vault.setTokenToHarvest(address(weth), true);

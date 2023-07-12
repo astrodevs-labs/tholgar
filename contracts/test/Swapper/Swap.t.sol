@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity 0.8.20;
 
-import "./ASwapperTest.sol";
+import "./SwapperTest.sol";
 
-contract Swap is ASwapperTest {
+contract Swap is SwapperTest {
     function test_swap_Normal() public {
         address[] memory tokens = new address[](1);
         bytes[] memory data = new bytes[](1);

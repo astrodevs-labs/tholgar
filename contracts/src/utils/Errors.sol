@@ -12,9 +12,11 @@ library Errors {
     error InvalidFee();
 
     // Swapper errors
-    error NoOutputTokens();
-    error RatioOverflow();
     error SwapError();
+
+    // Weighted tokens errors
+    error RatioOverflow();
+    error NoWeightedTokens();
 
     // Gelato errors
     error NotOperator();
