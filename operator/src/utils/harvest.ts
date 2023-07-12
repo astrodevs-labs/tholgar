@@ -29,11 +29,19 @@ const harvest = async (
     throw new Error(`Rpc call failed: ${err.message}`);
   }
 
+  let feeToken: string;
+  try {
+    feeToken = await vault.feeToken();
+  } catch (err: any) {
+    throw new Error(`Rpc call failed: ${err.message}`);
+  }
+
   const tokens: any = [];
   for (const reward of claimableRewards) {
     if (
       tokens.indexOf(reward) === -1 &&
-      !(await vault.tokensToHarvest(tokens[0]))
+      !(await vault.tokensToHarvest(tokens[0])) &&
+      reward !== feeToken
     )
       tokens.push(reward);
   }
@@ -47,7 +55,6 @@ const harvest = async (
   const inputData: string[] = [];
   try {
     const chainId = (await provider.getNetwork()).chainId;
-    const feeToken = await vault.feeToken();
     const feeContract = new Contract(feeToken, ERC20_ABI, provider);
     const feeDecimals = await feeContract.decimals();
     for (const token of tokens) {
