@@ -136,7 +136,7 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
 
   return (
     <Container>
-      <Grid display={'flex'} gap={'2em'} templateColumns={'repeat(3, 1fr)'}>
+      <Grid gap={'2em'} templateColumns={'repeat(4, 1fr)'}>
         <GridItem minW={'22%'}>
           <CirculatingSupply />
         </GridItem>
