@@ -29,7 +29,16 @@ export const Container: FC<PropsWithChildren<ContainerProps>> = (props) => {
   /* eslint-enable no-unused-vars */
 
   return (
-    <Box backgroundColor={backgroundColor} {...borderProps} {...boxProps}>
+    <Box
+      p={'1.25em'}
+      mt={'1.25em'}
+      mb={'1.25em'}
+      maxW={'90%'}
+      boxSizing="border-box"
+      backgroundColor={backgroundColor}
+      {...borderProps}
+      {...boxProps}
+    >
       {props.children}
     </Box>
   );
