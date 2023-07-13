@@ -66,6 +66,7 @@ contract DeployScript is Script {
 
         // transfer ownership
         vault.transferOwnership(newOwner);
+        swapper.transferOwnership(newOwner);
 
         vm.stopBroadcast();
     }
