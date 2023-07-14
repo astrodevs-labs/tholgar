@@ -1,17 +1,23 @@
 import { FC } from 'react';
 import { Container } from 'components/ui/Container';
 import { BalanceDisplay } from '../../components/blockchain/BalanceDisplay';
+import {addresses} from "../../config/blockchain";
+import {DepositPanel} from "../../components/panels/Deposit";
 import { StatsDisplay } from 'components/blockchain/StatsDisplay';
 
 const AutoCompounder: FC = () => {
   return (
     <>
       <StatsDisplay />
-      <Container>
+      <Container p={4}>
         <BalanceDisplay
-          token={'0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'}
+          token={addresses.usdc}
           description={'USDC Balance'}
         />
+
+      </Container>
+      <Container p={4} my={4}>
+        <DepositPanel />
       </Container>
     </>
   );

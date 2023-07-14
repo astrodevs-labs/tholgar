@@ -1,5 +1,6 @@
 import { Colors, extendTheme, StyleFunctionProps, ThemeConfig } from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
+import { modalTheme as depositModalTheme } from 'components/panels/DepositModal/style';
 
 const config: ThemeConfig = {
   initialColorMode: 'dark',
@@ -34,6 +35,9 @@ const theme = extendTheme({
         borderColor: mode('border.light', 'border.dark')(props)
       }
     })
+  },
+  components: {
+    Modal: depositModalTheme
   }
 });
 

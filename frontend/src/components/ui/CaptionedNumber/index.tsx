@@ -16,18 +16,22 @@ export interface CaptionedNumberProps {
    * @property symbol The number symbol
    */
   symbol?: string;
+
+  inline?: boolean;
 }
 
-export const CaptionedNumber: FC<CaptionedNumberProps> = ({ caption, number, symbol }) => {
-  return (
-    <VStack>
+export const CaptionedNumber: FC<CaptionedNumberProps> = ({ caption, number, symbol, inline }) => {
+  const inner = <>
       <Text size={'l'}>{caption}</Text>
       <HStack>
         <Text size={'l'}>{number}</Text>
         {symbol && <Text size={'l'}>{symbol}</Text>}
       </HStack>
-    </VStack>
-  );
+    </>;
+
+  return inline ? <HStack>{inner}</HStack> : <VStack>{inner}</VStack>;
 };
 
-CaptionedNumber.defaultProps = {};
+CaptionedNumber.defaultProps = {
+  inline: false
+};
