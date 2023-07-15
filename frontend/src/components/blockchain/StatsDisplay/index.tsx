@@ -6,13 +6,13 @@ import formatNumber from 'utils/formatNumber';
 import {
   redeemerAddress,
   ratioAddress,
-  ratioABI,
+  warRatioABI,
   stakerAddress,
   vaultAddress,
-  redeemerABI,
+  warRedeemerABI,
   auraAddress,
   cvxAddress
-} from 'config/contracts';
+} from 'config/blockchain';
 import getTotalPricePerToken from 'utils/getTotalPricePerToken';
 
 export interface StatsDisplayProps {}
@@ -79,18 +79,18 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
 
     const { data: weights } = useContractRead({
       address: redeemerAddress,
-      abi: redeemerABI,
+      abi: warRedeemerABI,
       functionName: 'getTokenWeights'
     });
     const { data: auraRatio } = useContractRead({
       address: ratioAddress,
-      abi: ratioABI,
+      abi: warRatioABI,
       functionName: 'getTokenRatio',
       args: [auraAddress]
     });
     const { data: cvxRatio } = useContractRead({
       address: ratioAddress,
-      abi: ratioABI,
+      abi: warRatioABI,
       functionName: 'getTokenRatio',
       args: [cvxAddress]
     });

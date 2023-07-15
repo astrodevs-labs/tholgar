@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { Flex } from '@chakra-ui/react';
-import { addresses } from '../../../config/blockchain';
+import { auraAddress, cvxAddress } from '../../../config/blockchain';
 import { TokenNumberInput } from '../../inputs/TokenNumberInput';
 
 export interface AuraCvxDepositPanelProps {
@@ -27,7 +27,7 @@ export const AuraCvxDepositPanel: FC<AuraCvxDepositPanelProps> = ({ amounts, set
   return (
     <Flex direction={'column'} gap={4}>
       <TokenNumberInput
-        token={addresses.aura}
+        token={auraAddress}
         ticker={'AURA'}
         iconUrl={'https://www.convexfinance.com/static/icons/svg/vlcvx.svg'}
         value={auraAmount}
@@ -44,7 +44,7 @@ export const AuraCvxDepositPanel: FC<AuraCvxDepositPanelProps> = ({ amounts, set
         }
       />
       <TokenNumberInput
-        token={addresses.cvx}
+        token={cvxAddress}
         ticker={'CVX'}
         iconUrl={'https://www.convexfinance.com/static/icons/svg/vlcvx.svg'}
         value={cvxAmount}

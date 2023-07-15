@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 import { FC, JSX, useState } from 'react';
 import { Button, Center, Grid, GridItem, useDisclosure } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -10,7 +12,6 @@ import { TokenSelector } from '../../ui/TokenSelector';
 
 export interface DepositPanelProps {}
 
-// eslint-disable-next-line no-unused-vars
 const tokensInputs = new Map<
   string,
   (
