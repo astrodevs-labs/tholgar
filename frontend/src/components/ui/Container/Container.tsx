@@ -33,7 +33,6 @@ export const Container: FC<PropsWithChildren<ContainerProps>> = (props) => {
       p={'1.25em'}
       mt={'1.25em'}
       mb={'1.25em'}
-      maxW={'90%'}
       boxSizing="border-box"
       backgroundColor={backgroundColor}
       {...borderProps}

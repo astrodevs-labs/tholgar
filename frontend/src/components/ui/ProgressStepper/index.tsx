@@ -1,4 +1,4 @@
-import {FC} from 'react';
+import { FC } from 'react';
 import {
   Box,
   Step,
@@ -9,35 +9,31 @@ import {
   Stepper,
   StepSeparator,
   StepStatus,
-  StepTitle,
-} from "@chakra-ui/react";
+  StepTitle
+} from '@chakra-ui/react';
 
 export interface ProgressStepperProps {
   stepIdx: number;
-  steps: {label: string, description: string}[];
+  steps: { label: string; description: string }[];
 }
 
-export const ProgressStepper: FC<ProgressStepperProps> = ({stepIdx, steps}) => (
-          <Stepper index={stepIdx}>
-            {steps.map((step, index) => (
-              <Step key={index}>
-                <StepIndicator>
-                  <StepStatus
-                    complete={<StepIcon />}
-                    incomplete={<StepNumber />}
-                    active={<StepNumber />}
-                  />
-                </StepIndicator>
+export const ProgressStepper: FC<ProgressStepperProps> = ({ stepIdx, steps }) => (
+  <Stepper index={stepIdx}>
+    {steps.map((step, index) => (
+      <Step key={index}>
+        <StepIndicator>
+          <StepStatus complete={<StepIcon />} incomplete={<StepNumber />} active={<StepNumber />} />
+        </StepIndicator>
 
-                <Box flexShrink='0'>
-                  <StepTitle>{step.label}</StepTitle>
-                  <StepDescription>{step.description}</StepDescription>
-                </Box>
+        <Box flexShrink="0">
+          <StepTitle>{step.label}</StepTitle>
+          <StepDescription>{step.description}</StepDescription>
+        </Box>
 
-                <StepSeparator />
-              </Step>
-            ))}
-          </Stepper>
+        <StepSeparator />
+      </Step>
+    ))}
+  </Stepper>
 );
 
 ProgressStepper.defaultProps = {};

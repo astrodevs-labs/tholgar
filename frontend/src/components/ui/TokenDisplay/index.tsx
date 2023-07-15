@@ -1,6 +1,6 @@
 import { FC } from 'react';
-import {HStack, Image, Text} from '@chakra-ui/react';
-import {Container} from "../Container";
+import { HStack, Image, Text } from '@chakra-ui/react';
+import { Container } from '../Container';
 
 export interface TokenDisplayProps {
   /**
@@ -15,9 +15,9 @@ export interface TokenDisplayProps {
 }
 
 export const TokenDisplay: FC<TokenDisplayProps> = ({ tokenIconUrl, ticker }) => (
-  <Container p={2} backgroundColor={"brand.secondary"}>
+  <Container p={2} backgroundColor={'brand.secondary'}>
     <HStack>
-      <Image src={tokenIconUrl} alt={ticker} w={"24px"}/>
+      <Image src={tokenIconUrl} alt={ticker} w={'24px'} />
       <Text size={'l'}>{ticker}</Text>
     </HStack>
   </Container>

@@ -21,13 +21,15 @@ export interface CaptionedNumberProps {
 }
 
 export const CaptionedNumber: FC<CaptionedNumberProps> = ({ caption, number, symbol, inline }) => {
-  const inner = <>
+  const inner = (
+    <>
       <Text size={'l'}>{caption}</Text>
       <HStack>
         <Text size={'l'}>{number}</Text>
         {symbol && <Text size={'l'}>{symbol}</Text>}
       </HStack>
-    </>;
+    </>
+  );
 
   return inline ? <HStack>{inner}</HStack> : <VStack>{inner}</VStack>;
 };

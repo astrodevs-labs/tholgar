@@ -1,4 +1,4 @@
-import React, {FC, useEffect} from 'react';
+import React, { FC, useEffect } from 'react';
 import { useAccount, useBalance } from 'wagmi';
 import { CaptionedNumber } from '../../ui/CaptionedNumber';
 
