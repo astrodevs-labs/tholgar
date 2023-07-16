@@ -9,7 +9,7 @@ export interface BalanceDisplayProps {
   displaySymbol?: boolean;
   inline?: boolean;
   // eslint-disable-next-line no-unused-vars
-  onBalanceRetrieval?: (balance: bigint) => void;
+  onBalanceRetrieval?: (balance: string) => void;
 }
 
 export const BalanceDisplay: FC<BalanceDisplayProps> = ({
@@ -27,7 +27,7 @@ export const BalanceDisplay: FC<BalanceDisplayProps> = ({
 
   useEffect(() => {
     if (data?.value && onBalanceRetrieval) {
-      onBalanceRetrieval(data.value);
+      onBalanceRetrieval(data.formatted);
     }
   }, [data?.value, onBalanceRetrieval]);
 

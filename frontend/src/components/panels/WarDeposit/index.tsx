@@ -10,7 +10,7 @@ export interface WarDepositPanelProps {
 }
 
 export const WarDepositPanel: FC<WarDepositPanelProps> = ({ amounts, setAmount }) => {
-  const [warBalance, setWarBalance] = useState<bigint>(0n);
+  const [warBalance, setWarBalance] = useState<string>('0');
   const amount = amounts.find((am) => am.token == 'war')?.amount || '0';
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export const WarDepositPanel: FC<WarDepositPanelProps> = ({ amounts, setAmount }
         value={amount}
         onInputChange={(amount) => setAmount([{ token: 'war', amount }])}
         onBalanceRetrieval={setWarBalance}
-        onMaxClick={() => setAmount([{ token: 'war', amount: warBalance.toString() }])}
+        onMaxClick={() => setAmount([{ token: 'war', amount: warBalance }])}
       />
     </Flex>
   );

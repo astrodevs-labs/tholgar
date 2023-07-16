@@ -10,8 +10,8 @@ export interface AuraCvxDepositPanelProps {
 }
 
 export const AuraCvxDepositPanel: FC<AuraCvxDepositPanelProps> = ({ amounts, setAmount }) => {
-  const [auraBalance, setAuraBalance] = useState<bigint>(0n);
-  const [cvxBalance, setCvxBalance] = useState<bigint>(0n);
+  const [auraBalance, setAuraBalance] = useState<string>('0');
+  const [cvxBalance, setCvxBalance] = useState<string>('0');
   const auraAmount = amounts.find((am) => am.token == 'aura')?.amount || '0';
   const cvxAmount = amounts.find((am) => am.token == 'cvx')?.amount || '0';
 

@@ -12,7 +12,7 @@ export interface TokenNumberInputProps {
   // eslint-disable-next-line no-unused-vars
   onInputChange: (value: string) => void;
   // eslint-disable-next-line no-unused-vars
-  onBalanceRetrieval: (balance: bigint) => void;
+  onBalanceRetrieval: (balance: string) => void;
   onMaxClick: () => void;
 }
 
