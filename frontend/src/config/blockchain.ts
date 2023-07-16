@@ -1,6 +1,7 @@
 // TODO update once its deployed
-
 export const vaultAddress = '0xc18360217d8f7ab5e7c516566761ea12ce7f9d72';
+export const zapAddress = '';
+
 export const stakerAddress = '0xA86c53AF3aadF20bE5d7a8136ACfdbC4B074758A';
 export const auraAddress = '0xC0c293ce456fF0ED870ADd98a0828Dd4d2903DBF';
 export const cvxAddress = '0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B';
