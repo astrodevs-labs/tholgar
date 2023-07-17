@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 
 import { FC, JSX, useState } from 'react';
-import { Button, Center, Grid, GridItem, useDisclosure } from '@chakra-ui/react';
+import {Button, Center, Flex, Grid, GridItem, useDisclosure} from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { TokenNumberOutput } from '../../ui/TokenNumberOutput';
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
@@ -54,11 +54,13 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
       <Center my={4}>
         <FontAwesomeIcon icon={faArrowDown} size={'2x'} />
       </Center>
-      <TokenNumberOutput
-        ticker={'wstkWAR'}
-        iconUrl={'https://www.convexfinance.com/static/icons/svg/vlcvx.svg'}
-        value={'0.0'}
-      />
+      <Flex direction={'column'}>
+        <TokenNumberOutput
+          ticker={'wstkWAR'}
+          iconUrl={'https://www.convexfinance.com/static/icons/svg/vlcvx.svg'}
+          value={'0.0'}
+        />
+      </Flex>
       <Grid templateColumns="repeat(2, 1fr)" mt={4} gap={6}>
         <GridItem>
           <TokenSelector onTokenSelect={setDepositToken} tokens={tokens} />

@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 
 import { FC, JSX, useState } from 'react';
-import { Button, Center, Grid, GridItem, useDisclosure } from '@chakra-ui/react';
+import {Button, Center, Flex, Grid, GridItem, useDisclosure} from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { TokenNumberOutput } from '../../ui/TokenNumberOutput';
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
@@ -54,7 +54,9 @@ export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
 
   return (
     <>
-      <TokenNumberInput token={vaultAddress} ticker={"wstkWAR"} iconUrl={'https://www.convexfinance.com/static/icons/svg/vlcvx.svg'} onInputChange={setWithdrawAmount} onBalanceRetrieval={(max) => setMaxWithdrawAmount(max.toString())} onMaxClick={() => setWithdrawAmount(maxWithdrawAmount)}/>
+      <Flex direction={'column'}>
+        <TokenNumberInput token={vaultAddress} ticker={"wstkWAR"} iconUrl={'https://www.convexfinance.com/static/icons/svg/vlcvx.svg'} onInputChange={setWithdrawAmount} onBalanceRetrieval={(max) => setMaxWithdrawAmount(max.toString())} onMaxClick={() => setWithdrawAmount(maxWithdrawAmount)}/>
+      </Flex>
       <Center my={4}>
         <FontAwesomeIcon icon={faArrowDown} size={'2x'} />
       </Center>
