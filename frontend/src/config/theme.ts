@@ -1,7 +1,7 @@
 import { Colors, extendTheme, StyleFunctionProps, ThemeConfig } from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
 import { modalTheme as depositModalTheme } from 'components/panels/DepositModal/style';
-import {menuTheme} from "../components/ui/TokenSelector/style";
+import { menuTheme } from '../components/ui/TokenSelector/style';
 
 const config: ThemeConfig = {
   initialColorMode: 'dark',

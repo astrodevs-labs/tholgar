@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 
-import { FC, JSX, useState } from 'react';
-import {Button, Center, Flex, Grid, GridItem, useDisclosure} from '@chakra-ui/react';
+import { FC, JSX, useEffect, useState } from 'react';
+import { Button, Center, Flex, Grid, GridItem, useDisclosure } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { TokenNumberOutput } from '../../ui/TokenNumberOutput';
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
@@ -9,6 +9,16 @@ import { WarDepositPanel } from '../WarDeposit';
 import { AuraCvxDepositPanel } from '../AuraCvxDeposit';
 import { DepositPanelModal } from '../DepositModal';
 import { TokenSelector } from '../../ui/TokenSelector';
+import { vaultABI, warRatioABI, warRedeemerABI } from 'config/abi';
+import {
+  auraAddress,
+  cvxAddress,
+  ratioAddress,
+  redeemerAddress,
+  vaultAddress
+} from 'config/blockchain';
+import { useContractRead, useToken } from 'wagmi';
+import convertFormattedToBigInt from 'utils/convertFormattedToBigInt';
 
 export interface DepositPanelProps {}
 
@@ -41,12 +51,68 @@ const tokens = [
 export const DepositPanel: FC<DepositPanelProps> = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [amounts, setAmounts] = useState<{ token: string; amount: string }[]>([
-    { token: 'war', amount: '0.0' }
+    { token: 'war', amount: '0' }
   ]);
   const [depositToken, setDepositToken] = useState<string>('war');
   const input = tokensInputs.get(depositToken);
+  const [inputAmount, setInputAmount] = useState<bigint>(0n);
 
-  console.log(amounts);
+  const { data: war } = useToken({
+    address: vaultAddress
+  });
+  const { data: aura } = useToken({
+    address: auraAddress
+  });
+  const { data: cvx } = useToken({
+    address: cvxAddress
+  });
+
+  const { data: auraRatio } = useContractRead({
+    address: ratioAddress,
+    abi: warRatioABI,
+    functionName: 'getTokenRatio',
+    args: [auraAddress]
+  });
+  const { data: cvxRatio } = useContractRead({
+    address: ratioAddress,
+    abi: warRatioABI,
+    functionName: 'getTokenRatio',
+    args: [cvxAddress]
+  });
+  const {
+    data: depositAmount,
+    isLoading,
+    isError
+  } = useContractRead({
+    address: vaultAddress,
+    abi: vaultABI,
+    functionName: 'previewDeposit',
+    args: [inputAmount],
+    enabled: true
+  });
+
+  useEffect(() => {
+    if (depositToken === 'war') {
+      if (!war) return;
+      const formattedAmount = amounts.find((amount) => amount.token === 'war')?.amount;
+      if (!formattedAmount) return;
+
+      setInputAmount(convertFormattedToBigInt(formattedAmount, war.decimals));
+    } else {
+      if (!auraRatio || !cvxRatio || !cvx || !aura) return;
+      const auraAmount = amounts.find((amount) => amount.token === 'cvx')?.amount;
+      if (!auraAmount) return;
+      const auraAmountBigInt = convertFormattedToBigInt(auraAmount, aura.decimals);
+      const cvxAmount = amounts.find((amount) => amount.token === 'aura')?.amount;
+      if (!cvxAmount) return;
+      const cvxAmountBigInt = convertFormattedToBigInt(cvxAmount, cvx.decimals);
+
+      const auraAmountInWar = (auraAmountBigInt * (auraRatio as bigint)) / BigInt(1e18);
+      const cvxAmountInWar = (cvxAmountBigInt * (cvxRatio as bigint)) / BigInt(1e18);
+
+      setInputAmount(auraAmountInWar + cvxAmountInWar);
+    }
+  }, [amounts, depositToken, auraRatio, cvxRatio]);
 
   return (
     <>
@@ -58,7 +124,7 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
         <TokenNumberOutput
           ticker={'wstkWAR'}
           iconUrl={'https://www.convexfinance.com/static/icons/svg/vlcvx.svg'}
-          value={'0.0'}
+          value={isLoading ? '...' : isError ? '0' : (depositAmount as bigint).toString()}
         />
       </Flex>
       <Grid templateColumns="repeat(2, 1fr)" mt={4} gap={6}>

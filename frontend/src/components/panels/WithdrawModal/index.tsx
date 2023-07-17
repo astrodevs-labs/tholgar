@@ -20,6 +20,7 @@ export interface WithdrawPanelModalProps {
 }
 
 export const WithdrawPanelModal: FC<WithdrawPanelModalProps> = ({
+  // eslint-disable-next-line no-unused-vars
   amounts,
   withdrawTokens,
   open,
@@ -45,7 +46,6 @@ export const WithdrawPanelModal: FC<WithdrawPanelModalProps> = ({
     index: 0,
     count: steps.length
   });
-  console.log(amounts);
 
   return (
     <Modal size={'xl'} variant={'brand'} isOpen={open} onClose={onClose} isCentered>

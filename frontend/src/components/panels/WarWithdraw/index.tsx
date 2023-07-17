@@ -1,6 +1,6 @@
 import { FC, useEffect } from 'react';
 import { Flex } from '@chakra-ui/react';
-import {TokenNumberOutput} from "../../ui/TokenNumberOutput";
+import { TokenNumberOutput } from '../../ui/TokenNumberOutput';
 
 export interface WarWithdrawPanelProps {
   amounts: { token: string; amount: string }[];
@@ -19,7 +19,11 @@ export const WarWithdrawPanel: FC<WarWithdrawPanelProps> = ({ amounts, setAmount
 
   return (
     <Flex direction={'column'}>
-      <TokenNumberOutput ticker={'WAR'} iconUrl={'https://www.convexfinance.com/static/icons/svg/vlcvx.svg'} value={amount} />
+      <TokenNumberOutput
+        ticker={'WAR'}
+        iconUrl={'https://www.convexfinance.com/static/icons/svg/vlcvx.svg'}
+        value={amount}
+      />
     </Flex>
   );
 };

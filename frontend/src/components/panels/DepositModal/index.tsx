@@ -20,6 +20,7 @@ export interface DepositPanelModalProps {
 }
 
 export const DepositPanelModal: FC<DepositPanelModalProps> = ({
+  // eslint-disable-next-line no-unused-vars
   amounts,
   depositTokens,
   open,
@@ -49,7 +50,6 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({
     index: 0,
     count: steps.length
   });
-  console.log(amounts);
 
   return (
     <Modal size={'xl'} variant={'brand'} isOpen={open} onClose={onClose} isCentered>
