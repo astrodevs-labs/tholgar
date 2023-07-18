@@ -18,9 +18,10 @@ import {
   vaultAddress,
   warIconUrl
 } from 'config/blockchain';
-import { useContractRead, useToken } from 'wagmi';
+import { useContractRead, useToken, useAccount } from 'wagmi';
 import convertFormattedToBigInt from 'utils/convertFormattedToBigInt';
 import convertBigintToFormatted from 'utils/convertBigintToFormatted';
+import { WalletConnectButton } from 'components/blockchain/WalletConnectButton';
 
 export interface DepositPanelProps {}
 
@@ -51,6 +52,7 @@ const tokens = [
 ];
 
 export const DepositPanel: FC<DepositPanelProps> = () => {
+  const { isConnected } = useAccount();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [amounts, setAmounts] = useState<{ token: string; amount: string }[]>([
     { token: 'war', amount: '0' }
@@ -138,9 +140,14 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
           <TokenSelector onTokenSelect={setDepositToken} tokens={tokens} />
         </GridItem>
         <GridItem>
-          <Button w={'full'} backgroundColor={'brand.primary'} onClick={onOpen}>
-            Deposit
-          </Button>
+          {
+            isConnected ? 
+              <Button w={'full'} backgroundColor={'brand.primary'} onClick={onOpen}>
+                Deposit
+              </Button>
+            :
+              <WalletConnectButton/>
+          }
         </GridItem>
       </Grid>
       <DepositPanelModal
