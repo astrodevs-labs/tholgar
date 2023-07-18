@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
-import { Box, Button, Flex } from '@chakra-ui/react';
+import { Box, BoxProps, Button, Flex } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
-export interface WalletConnectButtonProps {}
+export interface WalletConnectButtonProps extends BoxProps {}
 
-export const WalletConnectButton: FC<WalletConnectButtonProps> = () => {
+export const WalletConnectButton: FC<WalletConnectButtonProps> = (props) => {
   return (
     <ConnectButton.Custom>
       {({ account, chain, openAccountModal, openChainModal, openConnectModal, mounted }) => {
@@ -17,11 +17,12 @@ export const WalletConnectButton: FC<WalletConnectButtonProps> = () => {
             pointerEvents={ready ? 'auto' : 'none'}
             userSelect={ready ? 'auto' : 'none'}
             aria-hidden={ready ? undefined : true}
+            {...props}
           >
             {(() => {
               if (!connected) {
                 return (
-                  <Button bg={'brand.primary'} onClick={openConnectModal}>
+                  <Button bg={'brand.primary'} onClick={openConnectModal} w={"100%"}>
                     Connect Wallet
                   </Button>
                 );

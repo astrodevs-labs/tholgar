@@ -11,4 +11,6 @@ export const warAddress = '0xa8258deE2a677874a48F5320670A869D74f0cbC1';
 
 export const warIconUrl = 'https://warlord.paladin.vote/images/icons/war_token.svg';
 
+export const maxAllowance = BigInt(2) ** BigInt(256) - BigInt(1);
+
 export * from './abi';

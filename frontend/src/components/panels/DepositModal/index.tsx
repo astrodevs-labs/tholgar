@@ -1,16 +1,17 @@
 import { FC, useMemo } from 'react';
 import {
-  Button,
+  // Button,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
+  // ModalFooter,
   ModalHeader,
   ModalOverlay,
   useSteps
 } from '@chakra-ui/react';
 import { ProgressStepper } from '../../ui/ProgressStepper';
+import {WarDepositModal} from "../WarDepositModal";
 
 export interface DepositPanelModalProps {
   amounts: { token: string; amount: string }[];
@@ -27,7 +28,6 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({
   onClose
 }) => {
   const steps = useMemo(() => {
-    if (depositTokens.length != 1 || depositTokens[0] != 'war') {
       return [
         {
           label: 'Approve',
@@ -35,17 +35,10 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({
         },
         {
           label: 'Deposit',
-          description: 'Deposit tokens'
+          description: 'Deposit token(s)'
         }
       ];
-    }
-    return [
-      {
-        label: 'Deposit',
-        description: 'Deposit WAR'
-      }
-    ];
-  }, [depositTokens]);
+  }, []);
   const { activeStep, goToNext } = useSteps({
     index: 0,
     count: steps.length
@@ -60,17 +53,23 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <p>test</p>
+          {
+            depositTokens.length == 1 && depositTokens[0] == 'war' ? (
+              <WarDepositModal amounts={amounts} step={activeStep} validateStep={goToNext} />
+            ) : (
+              <p>test</p>
+            )
+          }
         </ModalBody>
 
-        <ModalFooter>
+        {/*<ModalFooter>
           <Button colorScheme="blue" mr={3} onClick={onClose}>
             Close
           </Button>
           <Button variant="ghost" onClick={goToNext}>
             Secondary Action
           </Button>
-        </ModalFooter>
+        </ModalFooter>*/}
       </ModalContent>
     </Modal>
   );
