@@ -10,6 +10,9 @@ export const ratioAddress = '0xE40004395384455326c7a27A85204801C7f85F94';
 export const warAddress = '0xa8258deE2a677874a48F5320670A869D74f0cbC1';
 
 export const warIconUrl = 'https://warlord.paladin.vote/images/icons/war_token.svg';
+export const auraIconUrl = 'https://raw.githubusercontent.com/balancer-labs/assets/master/assets/0xc0c293ce456ff0ed870add98a0828dd4d2903dbf.png';
+export const cvxIconUrl = 'https://www.convexfinance.com/static/icons/svg/vlcvx.svg';
+export const auraCvxIconUrl = '/images/aura-cvx.svg';
 
 export const maxAllowance = BigInt(2) ** BigInt(256) - BigInt(1);
 

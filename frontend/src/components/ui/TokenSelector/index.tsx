@@ -1,5 +1,5 @@
 import { FC, useMemo, useState } from 'react';
-import { Button, HStack, Image, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
+import { Button, HStack, Image, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 
 export interface TokenSelectorProps {
@@ -12,7 +12,7 @@ export interface TokenSelectorProps {
 const Item: FC<{ name: string; iconUrl: string }> = ({ name, iconUrl }) => (
   <HStack py={2}>
     <Image boxSize="2rem" borderRadius="full" src={iconUrl} alt={name} mr="12px" />
-    <span>{name}</span>
+    <Text fontWeight={'medium'}>{name}</Text>
   </HStack>
 );
 

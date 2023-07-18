@@ -12,6 +12,7 @@ import { TokenSelector } from '../../ui/TokenSelector';
 import { vaultABI, warRatioABI, warRedeemerABI } from 'config/abi';
 import {
   auraAddress,
+  auraCvxIconUrl,
   cvxAddress,
   ratioAddress,
   redeemerAddress,
@@ -47,7 +48,7 @@ const tokens = [
   {
     id: 'aura/cvx',
     name: 'AURA/CVX',
-    iconUrl: 'https://www.convexfinance.com/static/icons/svg/vlcvx.svg'
+    iconUrl: auraCvxIconUrl
   }
 ];
 

@@ -12,7 +12,7 @@ export const NavigablePage: FC<PropsWithChildren<NavigablePageProps>> = ({ child
   return (
     <Box as="section" minH="100vh">
       <SideBar onClose={onClose} isOpen={isOpen} />
-      <Box ml={{ base: 0, md: '278' }} transition=".3s ease">
+      <Box ml={{ base: 0, md: '263' }} transition=".3s ease">
         <Header onOpen={onOpen} />
 
         <Box as="main" p={4} minH="25rem">

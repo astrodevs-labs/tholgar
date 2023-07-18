@@ -1,6 +1,7 @@
 import { FC, useEffect } from 'react';
 import { Flex } from '@chakra-ui/react';
 import { TokenNumberOutput } from '../../ui/TokenNumberOutput';
+import { auraIconUrl, cvxIconUrl } from 'config/blockchain';
 
 export interface AuraCvxWithdrawPanelProps {
   amounts: { token: string; amount: string }[];
@@ -25,12 +26,12 @@ export const AuraCvxWithdrawPanel: FC<AuraCvxWithdrawPanelProps> = ({ amounts, s
     <Flex direction={'column'} gap={4}>
       <TokenNumberOutput
         ticker={'AURA'}
-        iconUrl={'https://www.convexfinance.com/static/icons/svg/vlcvx.svg'}
+        iconUrl={auraIconUrl}
         value={auraAmount}
       />
       <TokenNumberOutput
         ticker={'CVX'}
-        iconUrl={'https://www.convexfinance.com/static/icons/svg/vlcvx.svg'}
+        iconUrl={cvxIconUrl}
         value={cvxAmount}
       />
     </Flex>
