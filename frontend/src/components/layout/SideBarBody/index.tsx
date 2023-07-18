@@ -10,6 +10,7 @@ import {
   useColorModeValue
 } from '@chakra-ui/react';
 import { DragHandleIcon } from '@chakra-ui/icons';
+import { BiQuestionMark, BiHome } from 'react-icons/bi';
 import { NavItem } from '../NavItem';
 import { Link } from '@chakra-ui/react';
 
@@ -42,18 +43,15 @@ export const SideBarBody: FC<PropsWithChildren<SideBarBodyProps>> = (props) => {
           color={useColorModeValue('brand.500', 'white')}
           fontWeight="semibold"
         >
-          Auto-Compounder
+          Thalgar
         </Text>
       </Flex>
       <Flex direction="column" as="nav" fontSize="md" color="gray.600" aria-label="Main Navigation">
-        <Link href={'/'}>
-          <NavItem icon={DragHandleIcon}>Home</NavItem>
+        <Link href={'/'} _hover={{fontWeight: 'bold'}}>
+          <NavItem icon={BiHome}>Home</NavItem>
         </Link>
-        <Link href={'/pounder'}>
-          <NavItem icon={DragHandleIcon}>Pounder</NavItem>
-        </Link>
-        <Link href={'faq'}>
-          <NavItem icon={DragHandleIcon}>FAQ</NavItem>
+        <Link href={'faq'} _hover={{fontWeight: 'bold'}}>
+          <NavItem icon={BiQuestionMark}>FAQ</NavItem>
         </Link>
       </Flex>
       <Spacer />
