@@ -12,10 +12,11 @@ import {
 } from '@chakra-ui/react';
 import { ProgressStepper } from '../../ui/ProgressStepper';
 import {WarDepositModal} from "../WarDepositModal";
+import {AuraCvxDepositModal} from "../AuraCvxDepositModal";
 
 export interface DepositPanelModalProps {
   amounts: { token: string; amount: string }[];
-  depositTokens: string[];
+  depositTokens: string;
   open: boolean;
   onClose: () => void;
 }
@@ -28,6 +29,8 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({
   onClose
 }) => {
   const steps = useMemo(() => {
+    console.log("depositTokens", depositTokens);
+    if (depositTokens == 'war')
       return [
         {
           label: 'Approve',
@@ -35,10 +38,25 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({
         },
         {
           label: 'Deposit',
-          description: 'Deposit token(s)'
+          description: 'Deposit token'
         }
       ];
-  }, []);
+    else
+      return [
+        {
+          label: 'Approve AURA',
+          description: 'Token swap'
+        },
+        {
+          label: 'Approve CVX',
+          description: 'Token swap'
+        },
+        {
+          label: 'Deposit',
+          description: 'Deposit tokens'
+        }
+      ];
+  }, [depositTokens]);
   const { activeStep, goToNext } = useSteps({
     index: 0,
     count: steps.length
@@ -54,10 +72,10 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({
         <ModalCloseButton />
         <ModalBody>
           {
-            depositTokens.length == 1 && depositTokens[0] == 'war' ? (
+            depositTokens == 'war' ? (
               <WarDepositModal amounts={amounts} step={activeStep} validateStep={goToNext} />
             ) : (
-              <p>test</p>
+              <AuraCvxDepositModal amounts={amounts} step={activeStep} validateStep={goToNext}/>
             )
           }
         </ModalBody>

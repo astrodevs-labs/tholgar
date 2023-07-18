@@ -1,9 +1,16 @@
 import {FC, useCallback, useEffect,} from 'react';
 import {Button, Center, Flex, HStack, Spinner, Switch, Text, useBoolean} from '@chakra-ui/react';
 import {erc20ABI, useAccount, useContractWrite, useContractRead} from "wagmi";
-import {maxAllowance, vaultABI, vaultAddress, warAddress} from "../../../config/blockchain";
+import {
+  maxAllowance,
+  vaultABI,
+  vaultAddress,
+  auraAddress,
+  cvxAddress,
+  zapAddress
+} from "../../../config/blockchain";
 
-export interface WarDepositModalProps {
+export interface AuraCvxDepositModalProps {
   amounts: { token: string; amount: string }[];
   step: number;
   validateStep: () => void;
@@ -15,29 +22,29 @@ interface StepProps {
   address: `0x${string}`;
 }
 
-const Step1: FC<StepProps> = ({ amounts, validateStep, address }) => {
+const Step1: FC<StepProps & {tokenAddress : `0x${string}`, token: string}> = ({ amounts, validateStep, address, tokenAddress, token }) => {
   const [allowTotal, setAllowTotal] = useBoolean(false);
   const {  data, isLoading, isSuccess, write } = useContractWrite({
-    address: warAddress,
+    address: tokenAddress,
     abi: erc20ABI,
     functionName: 'approve',
   })
   const allowanceRes = useContractRead({
-    address: warAddress,
+    address: tokenAddress,
     abi: erc20ABI,
     functionName: 'allowance',
-    args: [address, vaultAddress]
+    args: [address, zapAddress]
   })
   const allow = useCallback(() => {
     if (!isLoading && !isSuccess) {
       write({
-        args: [vaultAddress, BigInt(allowTotal ? maxAllowance : amounts.find((am) => am.token == 'war')?.amount || '0')],
+        args: [zapAddress, BigInt(allowTotal ? maxAllowance : amounts.find((am) => am.token == token)?.amount || '0')],
       });
     } else if (isSuccess) {
       console.log(data);
       validateStep();
     }
-  }, [amounts, allowTotal]);
+  }, [amounts, allowTotal, token]);
 
   useEffect(() => {
     if (allowanceRes.data && allowanceRes.data > BigInt(amounts[0].amount!))
@@ -72,7 +79,7 @@ const Step2: FC<StepProps> = ({ amounts, validateStep, address}) => {
   const deposit = useCallback(() => {
     if (!isLoading && !isSuccess) {
       write({
-        args: [BigInt(amounts.find((am) => am.token == 'war')?.amount || '0'), address],
+        args: [BigInt(amounts.find((am) => am.token == 'AuraCvx')?.amount || '0'), address],
       });
     } else if (isSuccess) {
       console.log(data);
@@ -87,14 +94,16 @@ const Step2: FC<StepProps> = ({ amounts, validateStep, address}) => {
   );
 }
 
-export const WarDepositModal: FC<WarDepositModalProps> = ({ amounts, step, validateStep }) => {
+export const AuraCvxDepositModal: FC<AuraCvxDepositModalProps> = ({ amounts, step, validateStep }) => {
   const { address } = useAccount();
 
   if (step == 0) {
-    return <Step1 amounts={amounts} validateStep={validateStep} address={address!}/>;
+    return <Step1 amounts={amounts} validateStep={validateStep} address={address!} tokenAddress={auraAddress} token={'aura'}/>;
   } else if (step == 1) {
+    return <Step1 amounts={amounts} validateStep={validateStep} address={address!} tokenAddress={cvxAddress} token={'cvx'}/>;
+  } else if (step == 2) {
     return <Step2 amounts={amounts} validateStep={validateStep} address={address!}/>;
   }
 };
 
-WarDepositModal.defaultProps = {};
+AuraCvxDepositModal.defaultProps = {};

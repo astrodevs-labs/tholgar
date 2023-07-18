@@ -153,7 +153,7 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
       </Grid>
       <DepositPanelModal
         amounts={amounts}
-        depositTokens={['war']}
+        depositTokens={depositToken}
         open={isOpen}
         onClose={onClose}
       />
