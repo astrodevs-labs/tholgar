@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { Flex } from '@chakra-ui/react';
 import { TokenNumberInput } from '../../inputs/TokenNumberInput';
-import { warAddress } from 'config/blockchain';
+import { warAddress, warIconUrl } from 'config/blockchain';
 
 export interface WarDepositPanelProps {
   amounts: { token: string; amount: string }[];
@@ -24,7 +24,7 @@ export const WarDepositPanel: FC<WarDepositPanelProps> = ({ amounts, setAmount }
       <TokenNumberInput
         token={warAddress}
         ticker={'WAR'}
-        iconUrl={'https://www.convexfinance.com/static/icons/svg/vlcvx.svg'}
+        iconUrl={warIconUrl}
         value={amount}
         onInputChange={(amount) => setAmount([{ token: 'war', amount }])}
         onBalanceRetrieval={setWarBalance}

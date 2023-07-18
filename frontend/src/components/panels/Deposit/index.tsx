@@ -15,7 +15,8 @@ import {
   cvxAddress,
   ratioAddress,
   redeemerAddress,
-  vaultAddress
+  vaultAddress,
+  warIconUrl
 } from 'config/blockchain';
 import { useContractRead, useToken } from 'wagmi';
 import convertFormattedToBigInt from 'utils/convertFormattedToBigInt';
@@ -41,7 +42,7 @@ const tokensInputs = new Map<
 ]);
 
 const tokens = [
-  { id: 'war', name: 'WAR', iconUrl: 'https://www.convexfinance.com/static/icons/svg/vlcvx.svg' },
+  { id: 'war', name: 'WAR', iconUrl: warIconUrl },
   {
     id: 'aura/cvx',
     name: 'AURA/CVX',

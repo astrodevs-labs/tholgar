@@ -9,7 +9,7 @@ import { AuraCvxWithdrawPanel } from '../AuraCvxWithdraw';
 import { WithdrawPanelModal } from '../WithdrawModal';
 import { TokenSelector } from '../../ui/TokenSelector';
 import { TokenNumberInput } from '../../inputs/TokenNumberInput';
-import { stakerAddress, vaultAddress } from '../../../config/blockchain';
+import { stakerAddress, vaultAddress, warIconUrl } from '../../../config/blockchain';
 import { useBalance, useToken } from 'wagmi';
 import convertFormattedToBigInt from 'utils/convertFormattedToBigInt';
 import convertBigintToFormatted from 'utils/convertBigintToFormatted';
@@ -34,7 +34,7 @@ const tokensOutputs = new Map<
 ]);
 
 const tokens = [
-  { id: 'war', name: 'WAR', iconUrl: 'https://www.convexfinance.com/static/icons/svg/vlcvx.svg' },
+  { id: 'war', name: 'WAR', iconUrl: warIconUrl },
 ];
 
 export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
