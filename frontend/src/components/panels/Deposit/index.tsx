@@ -44,7 +44,7 @@ const tokens = [
   { id: 'war', name: 'WAR', iconUrl: 'https://www.convexfinance.com/static/icons/svg/vlcvx.svg' },
   {
     id: 'aura/cvx',
-    name: 'Aura/CVX',
+    name: 'AURA/CVX',
     iconUrl: 'https://www.convexfinance.com/static/icons/svg/vlcvx.svg'
   }
 ];

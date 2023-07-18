@@ -29,7 +29,7 @@ export const TokenNumberInput: FC<TokenNumberInputProps> = ({
     <Flex justify={'space-between'}>
       <VStack align={'start'}>
         <Input
-          size={'lg'}
+          fontSize={'1.5em'}
           placeholder={'0.00'}
           variant={'unstyled'}
           colorScheme={'whiteAlpha'}
@@ -43,7 +43,7 @@ export const TokenNumberInput: FC<TokenNumberInputProps> = ({
             inline={true}
             onBalanceRetrieval={onBalanceRetrieval}
           />
-          <Text size={'l'} onClick={() => onMaxClick()}>
+          <Text fontSize={'l'} onClick={() => onMaxClick()}>
             Max
           </Text>
         </HStack>

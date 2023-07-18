@@ -13,7 +13,7 @@ export const TokenNumberOutput: FC<TokenNumberOutputProps> = ({ ticker, iconUrl,
   <Container p={2}>
     <Flex justify={'space-between'}>
       <VStack align={'start'} justify={'center'}>
-        <Text size={'lg'}>{value ?? '0.00'}</Text>
+        <Text fontSize={'1.5em'}>{value ?? '0'}</Text>
       </VStack>
       <VStack justify={'center'}>
         <TokenDisplay tokenIconUrl={iconUrl} ticker={ticker} />
