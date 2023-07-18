@@ -19,6 +19,7 @@ import {
 } from 'config/blockchain';
 import { useContractRead, useToken } from 'wagmi';
 import convertFormattedToBigInt from 'utils/convertFormattedToBigInt';
+import convertBigintToFormatted from 'utils/convertBigintToFormatted';
 
 export interface DepositPanelProps {}
 
@@ -56,6 +57,7 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
   const [depositToken, setDepositToken] = useState<string>('war');
   const input = tokensInputs.get(depositToken);
   const [inputAmount, setInputAmount] = useState<bigint>(0n);
+  const [outputAmount, setOutputAmount] = useState<string>('0');
 
   const { data: war } = useToken({
     address: vaultAddress
@@ -81,8 +83,6 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
   });
   const {
     data: depositAmount,
-    isLoading,
-    isError
   } = useContractRead({
     address: vaultAddress,
     abi: vaultABI,
@@ -90,6 +90,11 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
     args: [inputAmount],
     enabled: true
   });
+
+  useEffect(() => {
+    if (!depositAmount || !war) return;
+    setOutputAmount(convertBigintToFormatted(depositAmount as bigint, war.decimals))
+  }, [depositAmount, war]);
 
   useEffect(() => {
     if (depositToken === 'war') {
@@ -124,7 +129,7 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
         <TokenNumberOutput
           ticker={'wstkWAR'}
           iconUrl={'https://www.convexfinance.com/static/icons/svg/vlcvx.svg'}
-          value={isLoading ? '...' : isError ? '0' : (depositAmount as bigint).toString()}
+          value={outputAmount}
         />
       </Flex>
       <Grid templateColumns="repeat(2, 1fr)" mt={4} gap={6}>
