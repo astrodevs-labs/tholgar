@@ -8,8 +8,9 @@ import {Swapper} from "../src/Swapper.sol";
 import "forge-std/Script.sol";
 
 contract DeployScript is Script {
-    address constant pal = 0xAB846Fb6C81370327e784Ae7CbB6d6a6af6Ff4BF;
-    address constant weth = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+    address constant cvxCrv = 0x62B9c7356A2Dc64a1969e19C23e4f579F9810Aa7;
+    address constant auraBal = 0x616e8BfA43F920657B3497DBf40D6b1A02D4608d;
+
     address constant war = 0xa8258deE2a677874a48F5320670A869D74f0cbC1;
     address constant minter = 0x144a689A8261F1863c89954930ecae46Bd950341;
     address constant staker = 0xA86c53AF3aadF20bE5d7a8136ACfdbC4B074758A;
@@ -32,8 +33,8 @@ contract DeployScript is Script {
         operator = makeAddr("operator");
         newOwner = makeAddr("newOwner");
 
-        tokens.push(AWeightedTokens.WeightedToken(address(aura), 5_000));
-        tokens.push(AWeightedTokens.WeightedToken(address(cvx), 5_000));
+        tokens.push(AWeightedTokens.WeightedToken(address(aura), 6666));
+        tokens.push(AWeightedTokens.WeightedToken(address(cvx), 3333));
     }
 
     function run() external {
@@ -57,8 +58,8 @@ contract DeployScript is Script {
         vault.setWeightedTokens(outTokens);
 
         // set token to harvest
-        vault.setTokenToHarvest(address(weth), true);
-        vault.setTokenToHarvest(address(pal), true);
+        vault.setTokenNotToHarvest(cvxCrv, true);
+        vault.setTokenNotToHarvest(auraBal, true);
 
         // deploy zap
         Zap zap = new Zap(war, address(vault), minter);

@@ -1,22 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.8.20;
 
-import {ERC20} from "solmate/tokens/ERC20.sol";
-import {IStaker} from "warlord/interfaces/IStaker.sol";
-import {IMinter} from "warlord/interfaces/IMinter.sol";
 import {Pausable} from "openzeppelin-contracts/security/Pausable.sol";
-import {ERC4626} from "solmate/mixins/ERC4626.sol";
-import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
 import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
+import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
 import {ReentrancyGuard} from "solmate/utils/ReentrancyGuard.sol";
-import {AFees} from "./abstracts/AFees.sol";
+import {IMinter} from "warlord/interfaces/IMinter.sol";
+import {IStaker} from "warlord/interfaces/IStaker.sol";
+import {ERC4626} from "solmate/mixins/ERC4626.sol";
+import {ERC20} from "solmate/tokens/ERC20.sol";
 import {ISwapper} from "./interfaces/ISwapper.sol";
-import {AOperator} from "./abstracts/AOperator.sol";
-import {Errors} from "./utils/Errors.sol";
 import {AWeightedTokens} from "./abstracts/AWeightedTokens.sol";
+import {AOperator} from "./abstracts/AOperator.sol";
+import {AFees} from "./abstracts/AFees.sol";
+import {Errors} from "./utils/Errors.sol";
 import {Allowance} from "./utils/Allowance.sol";
-
-import "forge-std/Script.sol";
 
 /// @author 0xtekgrinder
 /// @title Vault contract
@@ -40,7 +38,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, AOperator, AWeighte
     /**
      * @notice Event emitted when a token is added to the list of tokens to harvest
      */
-    event TokenToHarvestUpdated(address token, bool harvestOrNot);
+    event TokenNotToHarvestUpdated(address token, bool harvestOrNot);
     /**
      * @notice Event emitted when a swapper is updated
      */
@@ -75,7 +73,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, AOperator, AWeighte
     /**
      * @notice mapping to keep track of which tokens to harvest
      */
-    mapping(address token => bool harvestOrNot) public tokensToHarvest;
+    mapping(address token => bool harvestOrNot) public tokensNotToHarvest;
 
     /*//////////////////////////////////////////////////////////////
                                CONSTRUCTOR
@@ -184,12 +182,12 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, AOperator, AWeighte
      * @param harvestOrNot true or false
      * @custom:requires owner
      */
-    function setTokenToHarvest(address token, bool harvestOrNot) external onlyOwner {
+    function setTokenNotToHarvest(address token, bool harvestOrNot) external onlyOwner {
         if (token == address(0)) revert Errors.ZeroAddress();
 
-        tokensToHarvest[token] = harvestOrNot;
+        tokensNotToHarvest[token] = harvestOrNot;
 
-        emit TokenToHarvestUpdated(token, harvestOrNot);
+        emit TokenNotToHarvestUpdated(token, harvestOrNot);
     }
 
     /**
@@ -310,7 +308,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, AOperator, AWeighte
         uint256 length = rewards.length;
         for (uint256 i; i < length;) {
             IStaker.UserClaimableRewards memory reward = rewards[i];
-            if (tokensToHarvest[reward.reward] && reward.claimableAmount != 0) {
+            if (reward.claimableAmount != 0 && !tokensNotToHarvest[reward.reward]) {
                 IStaker(staker).claimRewards(reward.reward, address(this));
             }
             unchecked {

@@ -30,8 +30,10 @@ const harvest = async (
   }
 
   let feeToken: string;
+  let asset: string;
   try {
     feeToken = await vault.feeToken();
+    asset = vault.asset();
   } catch (err: any) {
     throw new Error(`Rpc call failed: ${err.message}`);
   }
@@ -40,8 +42,8 @@ const harvest = async (
   for (const reward of claimableRewards) {
     if (
       tokens.indexOf(reward) === -1 &&
-      !(await vault.tokensToHarvest(tokens[0])) &&
-      reward !== feeToken
+      !(await vault.tokensNotToHarvest(reward)) &&
+      reward !== asset && reward !== feeToken
     )
       tokens.push(reward);
   }

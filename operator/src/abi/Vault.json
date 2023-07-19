@@ -7,12 +7,25 @@
         "type": "address"
       }
     ],
-    "name": "tokensToHarvest",
+    "name": "tokensNotToHarvest",
     "outputs": [
       {
         "internalType": "bool",
         "name": "harvestOrNot",
         "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "asset",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
