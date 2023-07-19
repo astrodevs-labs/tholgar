@@ -3,7 +3,7 @@ pragma solidity 0.8.20;
 
 import "./VaultTest.sol";
 
-contract SetTokenToHarvest is VaultTest {
+contract SetTokenNotToHarvest is VaultTest {
     function test_setTokenToHarvest_Normal(uint256 seed, uint256 length) public {
         length = bound(length, 1, 10);
         address[] memory tokens = generateAddressArrayFromHash(seed, length);
@@ -14,21 +14,21 @@ contract SetTokenToHarvest is VaultTest {
             emit TokenToHarvestUpdated(tokens[i], harvests[i] != 0);
 
             vm.prank(owner);
-            vault.setTokenToHarvest(tokens[i], harvests[i] != 0);
+            vault.setTokenNotToHarvest(tokens[i], harvests[i] != 0);
 
-            assertTrue(vault.tokensToHarvest(tokens[i]), "tokensToHarvest should be true");
+            assertTrue(vault.tokensNotToHarvest(tokens[i]), "tokensNotToHarvest should be true");
         }
     }
 
     function test_setTokenToHarvest_ZeroAddress() public {
         vm.expectRevert(Errors.ZeroAddress.selector);
         vm.prank(owner);
-        vault.setTokenToHarvest(address(0), true);
+        vault.setTokenNotToHarvest(address(0), true);
     }
 
     function test_setTokenToHarvest_NotOwner() public {
         vm.prank(bob);
         vm.expectRevert("Ownable: caller is not the owner");
-        vault.setTokenToHarvest(address(usdc), true);
+        vault.setTokenNotToHarvest(address(usdc), true);
     }
 }
