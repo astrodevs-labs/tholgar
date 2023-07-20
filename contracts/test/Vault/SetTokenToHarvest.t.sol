@@ -11,7 +11,7 @@ contract SetTokenNotToHarvest is VaultTest {
 
         for (uint256 i = 0; i < length; ++i) {
             vm.expectEmit(true, true, false, true);
-            emit TokenToHarvestUpdated(tokens[i], harvests[i] != 0);
+            emit TokenNotToHarvestUpdated(tokens[i], harvests[i] != 0);
 
             vm.prank(owner);
             vault.setTokenNotToHarvest(tokens[i], harvests[i] != 0);

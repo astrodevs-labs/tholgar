@@ -12,7 +12,7 @@ contract VaultTest is MainnetTest {
 
     event MinterUpdated(address oldMinter, address newMinter);
     event StakerUpdated(address oldStaker, address newStaker);
-    event TokenToHarvestUpdated(address token, bool harvestOrNot);
+    event TokenNotToHarvestUpdated(address token, bool harvestOrNot);
     event SwapperUpdated(address oldSwapper, address newSwapper);
     event Harvested(uint256 amount);
     event Compounded(uint256 amount);
