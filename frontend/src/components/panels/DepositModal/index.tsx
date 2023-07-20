@@ -62,6 +62,8 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({
     count: steps.length
   });
 
+  console.log("step: ", activeStep);
+
   return (
     <Modal size={'xl'} variant={'brand'} isOpen={open} onClose={onClose} isCentered>
       <ModalOverlay />

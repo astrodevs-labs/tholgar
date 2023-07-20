@@ -1344,7 +1344,7 @@ const vaultABI = [
         type: 'bool'
       }
     ],
-    name: 'setTokenToHarvest',
+    name: 'setTokenNotToHarvest',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function'
@@ -1422,7 +1422,7 @@ const vaultABI = [
         type: 'address'
       }
     ],
-    name: 'tokensToHarvest',
+    name: 'tokensNotToHarvest',
     outputs: [
       {
         internalType: 'bool',

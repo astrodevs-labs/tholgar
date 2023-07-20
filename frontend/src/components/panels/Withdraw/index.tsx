@@ -60,6 +60,7 @@ export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
 
   useEffect(() => {
     if (!warBalance || !vault) return;
+    if (vault.totalSupply.value === 0n || convertFormattedToBigInt(withdrawAmount, vault.decimals) === 0n) return;
     const amount = warBalance.value / vault.totalSupply.value * convertFormattedToBigInt(withdrawAmount, vault.decimals);
 
     setMaxWithdrawAmount(convertBigintToFormatted(amount, warBalance.decimals));

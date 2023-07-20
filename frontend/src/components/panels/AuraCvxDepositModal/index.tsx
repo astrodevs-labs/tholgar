@@ -1,14 +1,14 @@
 import {FC, useCallback, useEffect,} from 'react';
 import {Button, Center, Flex, HStack, Spinner, Switch, Text, useBoolean} from '@chakra-ui/react';
-import {erc20ABI, useAccount, useContractWrite, useContractRead} from "wagmi";
+import {erc20ABI, useAccount, useContractWrite, useContractRead, useWaitForTransaction} from "wagmi";
 import {
   maxAllowance,
-  vaultABI,
-  vaultAddress,
   auraAddress,
   cvxAddress,
-  zapAddress
+  zapAddress,
+  zapABI
 } from "../../../config/blockchain";
+import convertFormattedToBigInt from 'utils/convertFormattedToBigInt';
 
 export interface AuraCvxDepositModalProps {
   amounts: { token: string; amount: string }[];
@@ -24,10 +24,13 @@ interface StepProps {
 
 const Step1: FC<StepProps & {tokenAddress : `0x${string}`, token: string}> = ({ amounts, validateStep, address, tokenAddress, token }) => {
   const [allowTotal, setAllowTotal] = useBoolean(false);
-  const {  data, isLoading, isSuccess, write } = useContractWrite({
+  const {  data, write } = useContractWrite({
     address: tokenAddress,
     abi: erc20ABI,
     functionName: 'approve',
+  })
+  const { isLoading, isSuccess } = useWaitForTransaction({
+    hash: data?.hash
   })
   const allowanceRes = useContractRead({
     address: tokenAddress,
@@ -38,13 +41,17 @@ const Step1: FC<StepProps & {tokenAddress : `0x${string}`, token: string}> = ({ 
   const allow = useCallback(() => {
     if (!isLoading && !isSuccess) {
       write({
-        args: [zapAddress, BigInt(allowTotal ? maxAllowance : amounts.find((am) => am.token == token)?.amount || '0')],
+        args: [zapAddress, allowTotal ? maxAllowance : convertFormattedToBigInt(amounts.find((am) => am.token == token)?.amount!, 18)],
       });
-    } else if (isSuccess) {
+    }
+  }, [amounts, allowTotal, token]);
+
+  useEffect(() => {
+    if (isSuccess) {
       console.log(data);
       validateStep();
     }
-  }, [amounts, allowTotal, token]);
+  }, [isSuccess])
 
   useEffect(() => {
     if (allowanceRes.data && allowanceRes.data > BigInt(amounts[0].amount!))
@@ -71,21 +78,35 @@ const Step1: FC<StepProps & {tokenAddress : `0x${string}`, token: string}> = ({ 
 }
 
 const Step2: FC<StepProps> = ({ amounts, validateStep, address}) => {
-  const {  data, isLoading, isSuccess, write } = useContractWrite({
-    address: vaultAddress,
-    abi: vaultABI,
-    functionName: 'deposit',
+  const {  data, write } = useContractWrite({
+    address: zapAddress,
+    abi: zapABI,
+    functionName: 'zapMultiple',
+  })
+  const { isLoading, isSuccess } = useWaitForTransaction({
+    hash: data?.hash
   })
   const deposit = useCallback(() => {
     if (!isLoading && !isSuccess) {
       write({
-        args: [BigInt(amounts.find((am) => am.token == 'AuraCvx')?.amount || '0'), address],
+        args: [
+          [auraAddress, cvxAddress], 
+          [
+            convertFormattedToBigInt(amounts.find((am) => am.token == 'aura')?.amount!, 18), 
+            convertFormattedToBigInt(amounts.find((am) => am.token == 'cvx')?.amount!, 18)
+          ], 
+          address
+        ],
       });
-    } else if (isSuccess) {
+    }
+  }, [amounts, validateStep]);
+
+  useEffect(() => {
+    if (isSuccess) {
       console.log(data);
       validateStep();
     }
-  }, [amounts, validateStep]);
+  }, [isSuccess])
 
   return (
     <Flex direction={'column'}>
