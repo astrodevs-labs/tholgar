@@ -18,7 +18,9 @@ export const TokenDisplay: FC<TokenDisplayProps> = ({ tokenIconUrl, ticker }) =>
   <Container p={2} backgroundColor={'brand.secondary'}>
     <HStack>
       <Image src={tokenIconUrl} alt={ticker} w={'24px'} />
-      <Text fontSize={'l'} fontWeight={'medium'} >{ticker}</Text>
+      <Text fontSize={'l'} fontWeight={'medium'}>
+        {ticker}
+      </Text>
     </HStack>
   </Container>
 );

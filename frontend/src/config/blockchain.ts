@@ -1,6 +1,6 @@
 // TODO update once its deployed
-export const vaultAddress = '0x05bB67cB592C1753425192bF8f34b95ca8649f09';
-export const zapAddress = '0x1757a98c1333B9dc8D408b194B2279b5AFDF70Cc';
+export const vaultAddress = '0xfB12F7170FF298CDed84C793dAb9aBBEcc01E798';
+export const zapAddress = '0x12456Fa31e57F91B70629c1196337074c966492a';
 
 export const stakerAddress = '0xA86c53AF3aadF20bE5d7a8136ACfdbC4B074758A';
 export const auraAddress = '0xC0c293ce456fF0ED870ADd98a0828Dd4d2903DBF';
@@ -10,7 +10,8 @@ export const ratioAddress = '0xE40004395384455326c7a27A85204801C7f85F94';
 export const warAddress = '0xa8258deE2a677874a48F5320670A869D74f0cbC1';
 
 export const warIconUrl = 'https://warlord.paladin.vote/images/icons/war_token.svg';
-export const auraIconUrl = 'https://raw.githubusercontent.com/balancer-labs/assets/master/assets/0xc0c293ce456ff0ed870add98a0828dd4d2903dbf.png';
+export const auraIconUrl =
+  'https://raw.githubusercontent.com/balancer-labs/assets/master/assets/0xc0c293ce456ff0ed870add98a0828dd4d2903dbf.png';
 export const cvxIconUrl = 'https://www.convexfinance.com/static/icons/svg/vlcvx.svg';
 export const auraCvxIconUrl = '/images/aura-cvx.svg';
 

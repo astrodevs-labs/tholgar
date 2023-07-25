@@ -1,45 +1,50 @@
-import {FC, useCallback, useEffect,} from 'react';
-import {Button, Center, Flex, HStack, Spinner, Switch, Text, useBoolean} from '@chakra-ui/react';
-import {erc20ABI, useAccount, useContractWrite, useContractRead, useWaitForTransaction} from "wagmi";
-import {maxAllowance, vaultABI, vaultAddress, warAddress} from "../../../config/blockchain";
-import convertFormattedToBigInt from 'utils/convertFormattedToBigInt';
+import { FC, useCallback, useEffect } from 'react';
+import { Button, Center, Flex, HStack, Spinner, Switch, Text, useBoolean } from '@chakra-ui/react';
+import {
+  erc20ABI,
+  useAccount,
+  useContractWrite,
+  useContractRead,
+  useWaitForTransaction
+} from 'wagmi';
+import { maxAllowance, vaultABI, vaultAddress, warAddress } from '../../../config/blockchain';
+import { useStore } from '../../../store';
 
 export interface WarDepositModalProps {
-  amounts: { token: string; amount: string }[];
   step: number;
   validateStep: () => void;
 }
 
 interface StepProps {
-  amounts: { token: string; amount: string }[];
   validateStep: () => void;
   address: `0x${string}`;
 }
 
-const Step1: FC<StepProps> = ({ amounts, validateStep, address }) => {
+const Step1: FC<StepProps> = ({ validateStep, address }) => {
+  const warDepositInputAmount = useStore((state) => state.getDepositInputTokenAmount('war'));
   const [allowTotal, setAllowTotal] = useBoolean(false);
-  const [validated, setValidated] = useBoolean(false)
-  const {  data, write } = useContractWrite({
+  const [validated, setValidated] = useBoolean(false);
+  const { data, write } = useContractWrite({
     address: warAddress,
     abi: erc20ABI,
-    functionName: 'approve',
-  })
+    functionName: 'approve'
+  });
   const { isLoading, isSuccess } = useWaitForTransaction({
-    hash: data?.hash,
-  })
-  const {data: allowanceResData} = useContractRead({
+    hash: data?.hash
+  });
+  const { data: allowanceResData } = useContractRead({
     address: warAddress,
     abi: erc20ABI,
     functionName: 'allowance',
     args: [address, vaultAddress]
-  })
+  });
   const allow = useCallback(() => {
     if (!isLoading && !isSuccess) {
       write({
-        args: [vaultAddress, allowTotal ? maxAllowance : convertFormattedToBigInt(amounts.find((am) => am.token == 'war')?.amount!, 18)],
+        args: [vaultAddress, allowTotal ? maxAllowance : warDepositInputAmount]
       });
     }
-  }, [amounts, allowTotal]);
+  }, [warDepositInputAmount, allowTotal]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -49,11 +54,10 @@ const Step1: FC<StepProps> = ({ amounts, validateStep, address }) => {
   }, [isSuccess]);
 
   useEffect(() => {
-    console.log(allowanceResData, convertFormattedToBigInt(amounts[0].amount!, 18))
-    if (allowanceResData && allowanceResData >= convertFormattedToBigInt(amounts[0].amount!, 18) && !validated) {
-      console.log("validated")
+    if (allowanceResData && allowanceResData >= warDepositInputAmount && !validated) {
+      console.log('validated');
       setValidated.on();
-      validateStep()
+      validateStep();
     }
   }, [allowanceResData, validated]);
 
@@ -64,57 +68,63 @@ const Step1: FC<StepProps> = ({ amounts, validateStep, address }) => {
         <Center>
           <HStack>
             <Text>Deposit amount</Text>
-            <Switch onChange={setAllowTotal.toggle}/>
+            <Switch onChange={setAllowTotal.toggle} />
             <Text>Max allowance</Text>
           </HStack>
         </Center>
       </HStack>
-      <Button my={5} onClick={allow} disabled={isLoading}>{isLoading ? <Spinner/> : "Approve"}</Button>
-      <Button my={5} onClick={validateStep}>Next</Button>
+      <Button my={5} onClick={allow} disabled={isLoading}>
+        {isLoading ? <Spinner /> : 'Approve'}
+      </Button>
+      <Button my={5} onClick={validateStep}>
+        Next
+      </Button>
     </Flex>
   );
+};
 
-}
-
-const Step2: FC<StepProps> = ({ amounts, validateStep, address}) => {
+const Step2: FC<StepProps> = ({ validateStep, address }) => {
+  const warDepositInputAmount = useStore((state) => state.getDepositInputTokenAmount('war'));
   const { data, write } = useContractWrite({
     address: vaultAddress,
     abi: vaultABI,
-    functionName: 'deposit',
-  })
+    functionName: 'deposit'
+  });
 
   const { isLoading, isSuccess } = useWaitForTransaction({
-    hash: data?.hash,
-  })
+    hash: data?.hash
+  });
   const deposit = useCallback(() => {
     if (!isLoading && !isSuccess) {
       write({
-        args: [convertFormattedToBigInt(amounts.find((am) => am.token == 'war')?.amount!, 18), address],
+        args: [warDepositInputAmount, address]
       });
     }
-  }, [amounts, validateStep]);
+  }, [warDepositInputAmount, validateStep]);
 
   useEffect(() => {
     if (isSuccess) {
       console.log(data);
       validateStep();
     }
-  }, [isSuccess])
+  }, [isSuccess]);
 
   return (
     <Flex direction={'column'}>
-      <Button my={5} onClick={deposit} disabled={isLoading}>{isLoading ? <Spinner/> : "Deposit"}</Button>
+      <Button my={5} onClick={deposit} disabled={isLoading}>
+        {isLoading ? <Spinner /> : 'Deposit'}
+      </Button>
     </Flex>
   );
-}
+};
 
-export const WarDepositModal: FC<WarDepositModalProps> = ({ amounts, step, validateStep }) => {
+export const WarDepositModal: FC<WarDepositModalProps> = ({ step, validateStep }) => {
   const { address } = useAccount();
 
   if (step == 0) {
-    return <Step1 amounts={amounts} validateStep={validateStep} address={address!}/>;
+    return <Step1 validateStep={validateStep} address={address!} />;
   } else if (step == 1) {
-    return <Step2 amounts={amounts} validateStep={validateStep} address={address!}/>;
+    return <Step2 validateStep={validateStep} address={address!} />;
   }
 };
 

@@ -1,28 +1,47 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import { Flex } from '@chakra-ui/react';
 import { auraAddress, auraIconUrl, cvxAddress, cvxIconUrl } from '../../../config/blockchain';
 import { TokenNumberInput } from '../../inputs/TokenNumberInput';
+import useOrFetchTokenInfos from '../../../hooks/useOrFetchTokenInfos';
+import { useStore } from '../../../store';
+import convertBigintToFormatted from '../../../utils/convertBigintToFormatted';
+import convertFormattedToBigInt from '../../../utils/convertFormattedToBigInt';
 
-export interface AuraCvxDepositPanelProps {
-  amounts: { token: string; amount: string }[];
-  // eslint-disable-next-line no-unused-vars
-  setAmount: (amounts: { token: string; amount: string }[]) => void;
-}
+export interface AuraCvxDepositPanelProps {}
 
-export const AuraCvxDepositPanel: FC<AuraCvxDepositPanelProps> = ({ amounts, setAmount }) => {
-  const [auraBalance, setAuraBalance] = useState<string>('0');
-  const [cvxBalance, setCvxBalance] = useState<string>('0');
-  const auraAmount = amounts.find((am) => am.token == 'aura')?.amount || '0';
-  const cvxAmount = amounts.find((am) => am.token == 'cvx')?.amount || '0';
-
-  useEffect(() => {
-    if (!amounts.find((am) => am.token == 'aura')) {
-      setAmount([...amounts, { token: 'aura', amount: '0' }]);
-    }
-    if (!amounts.find((am) => am.token == 'cvx')) {
-      setAmount([...amounts, { token: 'cvx', amount: '0' }]);
-    }
-  }, [amounts, setAmount]);
+export const AuraCvxDepositPanel: FC<AuraCvxDepositPanelProps> = () => {
+  const auraDecimals = useOrFetchTokenInfos({token: 'aura'});
+  const cvxDecimals = useOrFetchTokenInfos({token: 'cvx'});
+  const auraDepositInputAmount = useStore((state) => state.getDepositInputTokenAmount('aura'));
+  const cvxDepositInputAmount = useStore((state) => state.getDepositInputTokenAmount('cvx'));
+  const [setDepositInputTokenAmount, setMaxDepositInputTokenAmount] = useStore((state) => [
+    state.setDepositInputTokenAmount,
+    state.setMaxDepositInputTokenAmount
+  ]);
+  const auraDepositInputAmountFormatted = useMemo(() => {
+    if (!auraDecimals) return '0';
+    return convertBigintToFormatted(auraDepositInputAmount, auraDecimals);
+  }, [auraDepositInputAmount, auraDecimals]);
+  const cvxDepositInputAmountFormatted = useMemo(() => {
+    if (!cvxDecimals) return '0';
+    return convertBigintToFormatted(cvxDepositInputAmount, cvxDecimals);
+  }, [cvxDepositInputAmount, cvxDecimals]);
+  const setAuraAmount = useCallback(
+    (amount: string) => {
+      if (!auraDecimals) return;
+      const amountInWei = convertFormattedToBigInt(amount, auraDecimals);
+      setDepositInputTokenAmount('aura', amountInWei);
+    },
+    [auraDecimals, setDepositInputTokenAmount]
+  );
+  const setCvxAmount = useCallback(
+    (amount: string) => {
+      if (!cvxDecimals) return;
+      const amountInWei = convertFormattedToBigInt(amount, cvxDecimals);
+      setDepositInputTokenAmount('cvx', amountInWei);
+    },
+    [cvxDecimals, setDepositInputTokenAmount]
+  );
 
   return (
     <Flex direction={'column'} gap={4}>
@@ -30,35 +49,17 @@ export const AuraCvxDepositPanel: FC<AuraCvxDepositPanelProps> = ({ amounts, set
         token={auraAddress}
         ticker={'AURA'}
         iconUrl={auraIconUrl}
-        value={auraAmount}
-        onInputChange={(amount) =>
-          setAmount(amounts.map((am) => (am.token == 'aura' ? { token: 'aura', amount } : am)))
-        }
-        onBalanceRetrieval={setAuraBalance}
-        onMaxClick={() =>
-          setAmount(
-            amounts.map((am) =>
-              am.token == 'aura' ? { token: 'aura', amount: auraBalance.toString() } : am
-            )
-          )
-        }
+        value={auraDepositInputAmountFormatted}
+        onInputChange={setAuraAmount}
+        onMaxClick={() => setMaxDepositInputTokenAmount('aura')}
       />
       <TokenNumberInput
         token={cvxAddress}
         ticker={'CVX'}
         iconUrl={cvxIconUrl}
-        value={cvxAmount}
-        onInputChange={(amount) =>
-          setAmount(amounts.map((am) => (am.token == 'cvx' ? { token: 'cvx', amount } : am)))
-        }
-        onBalanceRetrieval={setCvxBalance}
-        onMaxClick={() =>
-          setAmount(
-            amounts.map((am) =>
-              am.token == 'cvx' ? { token: 'cvx', amount: cvxBalance.toString() } : am
-            )
-          )
-        }
+        value={cvxDepositInputAmountFormatted}
+        onInputChange={setCvxAmount}
+        onMaxClick={() => setMaxDepositInputTokenAmount('cvx')}
       />
     </Flex>
   );

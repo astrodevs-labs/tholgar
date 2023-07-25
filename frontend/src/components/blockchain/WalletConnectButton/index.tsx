@@ -22,7 +22,7 @@ export const WalletConnectButton: FC<WalletConnectButtonProps> = (props) => {
             {(() => {
               if (!connected) {
                 return (
-                  <Button bg={'brand.primary'} onClick={openConnectModal} w={"100%"}>
+                  <Button bg={'brand.primary'} onClick={openConnectModal} w={'100%'}>
                     Connect Wallet
                   </Button>
                 );

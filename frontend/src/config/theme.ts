@@ -10,12 +10,12 @@ const config: ThemeConfig = {
 
 const colors: Colors = {
   brand: {
-    primary: '#ff0000',
-    secondary: '#00ff00'
+    primary: '#2E86AB',
+    secondary: '#F46036'
   },
   background: {
-    dark: '#1A202C',
-    light: '#f5f5f5'
+    dark: '#222222',
+    light: '#F8F8F8'
   },
   border: {
     dark: '#2D3748',

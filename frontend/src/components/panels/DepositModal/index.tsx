@@ -11,25 +11,20 @@ import {
   useSteps
 } from '@chakra-ui/react';
 import { ProgressStepper } from '../../ui/ProgressStepper';
-import {WarDepositModal} from "../WarDepositModal";
-import {AuraCvxDepositModal} from "../AuraCvxDepositModal";
+import { WarDepositModal } from '../WarDepositModal';
+import { AuraCvxDepositModal } from '../AuraCvxDepositModal';
+import { useStore } from '../../../store';
 
 export interface DepositPanelModalProps {
-  amounts: { token: string; amount: string }[];
   depositTokens: string;
   open: boolean;
   onClose: () => void;
 }
 
-export const DepositPanelModal: FC<DepositPanelModalProps> = ({
-  // eslint-disable-next-line no-unused-vars
-  amounts,
-  depositTokens,
-  open,
-  onClose
-}) => {
+export const DepositPanelModal: FC<DepositPanelModalProps> = ({ open, onClose }) => {
+  const depositTokens = useStore((state) => state.depositToken);
   const steps = useMemo(() => {
-    console.log("depositTokens", depositTokens);
+    console.log('depositTokens', depositTokens);
     if (depositTokens == 'war')
       return [
         {
@@ -62,7 +57,7 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({
     count: steps.length
   });
 
-  console.log("step: ", activeStep);
+  console.log('step: ', activeStep);
 
   return (
     <Modal size={'xl'} variant={'brand'} isOpen={open} onClose={onClose} isCentered>
@@ -73,13 +68,11 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          {
-            depositTokens == 'war' ? (
-              <WarDepositModal amounts={amounts} step={activeStep} validateStep={goToNext} />
-            ) : (
-              <AuraCvxDepositModal amounts={amounts} step={activeStep} validateStep={goToNext}/>
-            )
-          }
+          {depositTokens == 'war' ? (
+            <WarDepositModal step={activeStep} validateStep={goToNext} />
+          ) : (
+            <AuraCvxDepositModal step={activeStep} validateStep={goToNext} />
+          )}
         </ModalBody>
 
         {/*<ModalFooter>

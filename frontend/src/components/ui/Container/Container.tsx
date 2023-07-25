@@ -15,18 +15,25 @@ export const Container: FC<PropsWithChildren<ContainerProps>> = (props) => {
   const backgroundColor = useColorModeValue(lightColor, darkColor);
   const borderProps = useFormatBorderProps(props);
   const {
-    /* eslint-disable no-unused-vars */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
     children,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
     borders,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
     bordersRounded,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
     borderType,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
     borderThickness,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
     bordersRadius,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
     borderslightColor,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
     bordersdarkColor,
     ...boxProps
   } = rest;
-  /* eslint-enable no-unused-vars */
+  /* eslint-enable @typescript-eslint/no-unused-vars,no-unused-vars */
 
   return (
     <Box
@@ -44,7 +51,7 @@ export const Container: FC<PropsWithChildren<ContainerProps>> = (props) => {
 };
 
 Container.defaultProps = {
-  lightColor: 'gray.100',
-  darkColor: 'gray.900',
+  lightColor: '#FFFFFF',
+  darkColor: '#333333',
   ...defaultBorderedComponentProps
 };

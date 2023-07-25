@@ -1,6 +1,9 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import { useAccount, useBalance } from 'wagmi';
-import { CaptionedNumber } from '../../ui/CaptionedNumber';
+import { CaptionedNumber } from 'components/ui/CaptionedNumber';
+import useOrFetchTokenBalance from "hooks/useOrFetchTokenBalance";
+import convertBigintToFormatted from "utils/convertBigintToFormatted";
+import useOrFetchTokenInfos from "hooks/useOrFetchTokenInfos";
 
 export interface BalanceDisplayProps {
   token: `0x${string}`;
@@ -8,8 +11,6 @@ export interface BalanceDisplayProps {
   description: string;
   displaySymbol?: boolean;
   inline?: boolean;
-  // eslint-disable-next-line no-unused-vars
-  onBalanceRetrieval?: (balance: string) => void;
 }
 
 export const BalanceDisplay: FC<BalanceDisplayProps> = ({
@@ -18,20 +19,19 @@ export const BalanceDisplay: FC<BalanceDisplayProps> = ({
   description,
   displaySymbol,
   inline,
-  onBalanceRetrieval
 }) => {
   const { address, isConnected } = useAccount();
-  const { data, isLoading } = useBalance({ address: account ?? address ?? '0x0', token: token });
-  const balance = isConnected ? (isLoading ? '...' : data?.formatted!) : '?';
+  const balance = useOrFetchTokenBalance({address: token});
+  const decimals = useOrFetchTokenInfos({address: token});
+  const { data } = useBalance({ address: account ?? address ?? '0x0', token: token });
+  const balanceFormatted = isConnected
+    ? balance && decimals
+      ? convertBigintToFormatted(balance, decimals)
+      : '...'
+    : '?';
   const symbol = displaySymbol ? data?.symbol || '' : '';
 
-  useEffect(() => {
-    if (data?.value && onBalanceRetrieval) {
-      onBalanceRetrieval(data.formatted);
-    }
-  }, [data?.value, onBalanceRetrieval]);
-
-  return <CaptionedNumber caption={description} number={balance} symbol={symbol} inline={inline} />;
+  return <CaptionedNumber caption={description} number={balanceFormatted} symbol={symbol} inline={inline} />;
 };
 
 BalanceDisplay.defaultProps = {

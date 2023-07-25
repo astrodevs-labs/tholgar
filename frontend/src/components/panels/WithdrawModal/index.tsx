@@ -11,23 +11,20 @@ import {
   useSteps
 } from '@chakra-ui/react';
 import { ProgressStepper } from '../../ui/ProgressStepper';
+import {useStore} from "../../../store";
 
 export interface WithdrawPanelModalProps {
-  amounts: { token: string; amount: string }[];
-  withdrawTokens: string[];
   open: boolean;
   onClose: () => void;
 }
 
 export const WithdrawPanelModal: FC<WithdrawPanelModalProps> = ({
-  // eslint-disable-next-line no-unused-vars
-  amounts,
-  withdrawTokens,
   open,
   onClose
 }) => {
+  const withdrawToken = useStore(state => state.withdrawToken);
   const steps = useMemo(() => {
-    if (withdrawTokens.length != 1 || withdrawTokens[0] != 'war') {
+    if (withdrawToken != 'war') {
       return [
         {
           label: 'Withdraw',
@@ -41,7 +38,7 @@ export const WithdrawPanelModal: FC<WithdrawPanelModalProps> = ({
         description: 'Withdraw WAR'
       }
     ];
-  }, [withdrawTokens]);
+  }, [withdrawToken]);
   const { activeStep, goToNext } = useSteps({
     index: 0,
     count: steps.length

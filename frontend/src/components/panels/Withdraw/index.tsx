@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-import { FC, JSX, useEffect, useState } from 'react';
+import {FC, JSX, useCallback, useMemo} from 'react';
 import { Button, Center, Flex, Grid, GridItem, useDisclosure } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
@@ -9,49 +9,73 @@ import { AuraCvxWithdrawPanel } from '../AuraCvxWithdraw';
 import { WithdrawPanelModal } from '../WithdrawModal';
 import { TokenSelector } from '../../ui/TokenSelector';
 import { TokenNumberInput } from '../../inputs/TokenNumberInput';
-import { stakerAddress, vaultAddress, warIconUrl } from '../../../config/blockchain';
-import { useBalance, useToken } from 'wagmi';
+import { vaultAddress, warIconUrl } from '../../../config/blockchain';
+// import { useBalance, useToken } from 'wagmi';
 import convertFormattedToBigInt from 'utils/convertFormattedToBigInt';
 import convertBigintToFormatted from 'utils/convertBigintToFormatted';
+import {tokensSelection, useStore} from "../../../store";
+import useOrFetchTokenInfos from "../../../hooks/useOrFetchTokenInfos";
 
 export interface WithdrawPanelProps {}
 
 const tokensOutputs = new Map<
   string,
-  (
-    amount: { token: string; amount: string }[],
-    setAmount: (amounts: { token: string; amount: string }[]) => void
-  ) => JSX.Element
+  () => JSX.Element
 >([
   [
     'war',
-    (amount, setAmount) => <WarWithdrawPanel key={1} amounts={amount} setAmount={setAmount} />
+    () => <WarWithdrawPanel key={1} />
   ],
   [
     'aura/cvx',
-    (amount, setAmount) => <AuraCvxWithdrawPanel key={2} amounts={amount} setAmount={setAmount} />
+    () => <AuraCvxWithdrawPanel key={2} />
   ]
 ]);
 
-const tokens = [
-  { id: 'war', name: 'WAR', iconUrl: warIconUrl },
-];
+const tokens = [{ id: 'war', name: 'WAR', iconUrl: warIconUrl }];
 
 export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
+  const wstkWARDecimals = useOrFetchTokenInfos({token: 'wstkWAR'});
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [withdrawAmount, setWithdrawAmount] = useState<string>('0');
+  const wstkWARWithdrawInputAmount = useStore((state) => state.getWithdrawInputTokenAmount('wstkWAR'));
+  const setWithdrawInputTokenAmount = useStore((state) => state.setWithdrawInputTokenAmount);
+  const setMaxWithdrawInputTokenAmount = useStore((state) => state.setMaxWithdrawInputTokenAmount);
+  const [withdrawToken, setWithdrawToken] = useStore((state) => [state.withdrawToken, state.setWithdrawToken]);
+  const wstkWARWithdrawInputAmountFormatted = useMemo(() => {
+    if (!wstkWARDecimals) return '0';
+    return convertBigintToFormatted(wstkWARWithdrawInputAmount, wstkWARDecimals)
+  }, [wstkWARWithdrawInputAmount, wstkWARDecimals])
+  const setWithdrawAmount = useCallback((amount: string) => {
+    if (!wstkWARDecimals) return;
+    const amountInWei = convertFormattedToBigInt(amount, wstkWARDecimals);
+    setWithdrawInputTokenAmount('wstkWAR', amountInWei);
+  }, [setWithdrawInputTokenAmount, wstkWARDecimals]);
+  const output = tokensOutputs.get(withdrawToken);
+
+
+
+
+
+
+
+  /*const [withdrawAmount, setWithdrawAmount] = useState<string>('0');
   const [maxWithdrawAmount, setMaxWithdrawAmount] = useState<string>('0');
   const [amounts, setAmounts] = useState<{ token: string; amount: string }[]>([
     { token: 'war', amount: '0' }
   ]);
   const [withdrawToken, setWithdrawToken] = useState<string>('war');
-  const output = tokensOutputs.get(withdrawToken);
+  const output = tokensOutputs.get(withdrawToken);*/
 
-  const {
-    data: warBalance,
-  } = useBalance({
+
+
+
+
+
+/*
+
+  const { data: warBalance } = useBalance({
     address: vaultAddress,
-    token: stakerAddress,
+    token: stakerAddress
   });
 
   const { data: vault } = useToken({
@@ -60,32 +84,37 @@ export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
 
   useEffect(() => {
     if (!warBalance || !vault) return;
-    if (vault.totalSupply.value === 0n || convertFormattedToBigInt(withdrawAmount, vault.decimals) === 0n) return;
-    const amount = warBalance.value / vault.totalSupply.value * convertFormattedToBigInt(withdrawAmount, vault.decimals);
+    if (
+      vault.totalSupply.value === 0n ||
+      convertFormattedToBigInt(withdrawAmount, vault.decimals) === 0n
+    )
+      return;
+    const amount =
+      (warBalance.value / vault.totalSupply.value) *
+      convertFormattedToBigInt(withdrawAmount, vault.decimals);
 
     setMaxWithdrawAmount(convertBigintToFormatted(amount, warBalance.decimals));
-  }, [warBalance, vault])
-
+  }, [warBalance, vault]);
+*/
   return (
     <>
       <Flex direction={'column'}>
         <TokenNumberInput
           token={vaultAddress}
           ticker={'wstkWAR'}
-          value={withdrawAmount}
+          value={wstkWARWithdrawInputAmountFormatted}
           iconUrl={'https://www.convexfinance.com/static/icons/svg/vlcvx.svg'}
           onInputChange={setWithdrawAmount}
-          onBalanceRetrieval={(max) => setMaxWithdrawAmount(max)}
-          onMaxClick={() => setWithdrawAmount(maxWithdrawAmount)}
+          onMaxClick={() => setMaxWithdrawInputTokenAmount('wstkWAR')}
         />
       </Flex>
       <Center my={4}>
         <FontAwesomeIcon icon={faArrowDown} size={'2x'} />
       </Center>
-      {output && output(amounts, setAmounts)}
+      {output && output()}
       <Grid templateColumns="repeat(2, 1fr)" mt={4} gap={6}>
         <GridItem>
-          <TokenSelector onTokenSelect={setWithdrawToken} tokens={tokens} />
+          <TokenSelector onTokenSelect={(token) => setWithdrawToken(token as tokensSelection)} tokens={tokens} />
         </GridItem>
         <GridItem>
           <Button w={'full'} backgroundColor={'brand.primary'} onClick={onOpen}>
@@ -94,8 +123,7 @@ export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
         </GridItem>
       </Grid>
       <WithdrawPanelModal
-        amounts={amounts}
-        withdrawTokens={['war']}
+
         open={isOpen}
         onClose={onClose}
       />
