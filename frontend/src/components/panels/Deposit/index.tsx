@@ -9,18 +9,13 @@ import { WarDepositPanel } from '../WarDeposit';
 import { AuraCvxDepositPanel } from '../AuraCvxDeposit';
 import { DepositPanelModal } from '../DepositModal';
 import { TokenSelector } from '../../ui/TokenSelector';
-import {
-  auraAddress,
-  auraCvxIconUrl,
-  cvxAddress,
-  warIconUrl
-} from 'config/blockchain';
+import { auraAddress, auraCvxIconUrl, cvxAddress, warIconUrl } from 'config/blockchain';
 import convertBigintToFormatted from 'utils/convertBigintToFormatted';
 import { WalletConnectButton } from 'components/blockchain/WalletConnectButton';
 import useConnectedAccount from '../../../hooks/useConnectedAccount';
 import { tokensSelection, useStore } from '../../../store';
 import useOrFetchTokenInfos from '../../../hooks/useOrFetchTokenInfos';
-import useTokenRatio from "../../../hooks/useTokenRatio";
+import useTokenRatio from '../../../hooks/useTokenRatio';
 
 export interface DepositPanelProps {}
 
@@ -50,7 +45,7 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
     state.setDepositToken
   ]);
   const setDepositOutputTokenAmounts = useStore((state) => state.setDepositOutputTokenAmount);
-  const wstkWarDecimals = useOrFetchTokenInfos({token: 'wstkWAR'});
+  const wstkWarDecimals = useOrFetchTokenInfos({ token: 'wstkWAR' });
   const wstkWAROutputAmountFormatted = useMemo(
     () =>
       wstkWAROutputAmount && wstkWarDecimals
@@ -78,18 +73,18 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
   }, [depositAmount, war]);*/
 
   useEffect(() => {
-    console.log('warDepositChanged', warDepositAmount);
+    if (depositToken !== 'war') return;
     setDepositOutputTokenAmounts('wstkWAR', warDepositAmount);
-  }, [warDepositAmount]);
+  }, [warDepositAmount, depositToken === 'war']);
 
   useEffect(() => {
-    if (!auraRatio || !cvxRatio) return;
+    if (!auraRatio || !cvxRatio || depositToken !== 'aura/cvx') return;
 
     const auraAmountInWar = (auraDepositAmount * (auraRatio as bigint)) / BigInt(1e18);
     const cvxAmountInWar = (cvxDepositAmount * (cvxRatio as bigint)) / BigInt(1e18);
 
     setDepositOutputTokenAmounts('wstkWAR', auraAmountInWar + cvxAmountInWar);
-  }, [auraRatio, cvxRatio, auraDepositAmount, cvxDepositAmount]);
+  }, [auraRatio, cvxRatio, auraDepositAmount, cvxDepositAmount, depositToken === 'aura/cvx']);
 
   /*
   useEffect(() => {
