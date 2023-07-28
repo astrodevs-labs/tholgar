@@ -76,9 +76,6 @@ const Step1: FC<StepProps> = ({ validateStep, address }) => {
       <Button my={5} onClick={allow} disabled={isLoading}>
         {isLoading ? <Spinner /> : 'Approve'}
       </Button>
-      <Button my={5} onClick={validateStep}>
-        Next
-      </Button>
     </Flex>
   );
 };

@@ -1,4 +1,4 @@
-import {FC, useCallback, useMemo} from 'react';
+import {FC, useCallback, useEffect, useMemo} from 'react';
 import {
   Button, Flex,
   Modal,
@@ -27,6 +27,7 @@ export const WithdrawPanelModal: FC<WithdrawPanelModalProps> = ({
 }) => {
   const withdrawToken = useStore(state => state.withdrawToken);
   const wstkWARWithdrawInputAmount = useStore((state) => state.getWithdrawInputTokenAmount('wstkWAR'));
+  const resetBalances = useStore(state => state.resetBalances);
   const {address} = useConnectedAccount();
   const { data, write } = useContractWrite({
     address: vaultAddress,
@@ -64,6 +65,13 @@ export const WithdrawPanelModal: FC<WithdrawPanelModalProps> = ({
     index: 0,
     count: steps.length
   });
+
+  useEffect(() => {
+    if (isSuccess) {
+      resetBalances();
+      onClose();
+    }
+  }, [isSuccess, onClose]);
 
   return (
     <Modal size={'xl'} variant={'brand'} isOpen={open} onClose={onClose} isCentered>

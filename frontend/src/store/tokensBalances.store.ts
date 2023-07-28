@@ -16,6 +16,7 @@ export interface TokensBalancesStore {
   setBalances: (balances: TokenBalance[]) => void;
   setTokenBalance: (token: Token, balance?: bigint) => void;
   setAddressBalance: (address: string, balance?: bigint) => void;
+  resetBalances: () => void;
 }
 
 const defaultTokenBalances: TokenBalance[] = [
@@ -74,4 +75,5 @@ export const createTokensBalancesStore: StateCreator<Store, [], [], TokensBalanc
         return tokenBalance;
       })
     })),
+  resetBalances: () => set((state: Store) => ({ ...state, tokensBalances: defaultTokenBalances }))
 });
