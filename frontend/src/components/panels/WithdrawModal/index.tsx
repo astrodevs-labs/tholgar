@@ -1,17 +1,20 @@
-import { FC, useMemo } from 'react';
+import {FC, useCallback, useMemo} from 'react';
 import {
-  Button,
+  Button, Flex,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalFooter,
   ModalHeader,
-  ModalOverlay,
+  ModalOverlay, Spinner,
   useSteps
 } from '@chakra-ui/react';
 import { ProgressStepper } from '../../ui/ProgressStepper';
 import {useStore} from "../../../store";
+import {useContractWrite, useWaitForTransaction} from "wagmi";
+import {vaultABI, vaultAddress} from "../../../config/blockchain";
+import useConnectedAccount from "../../../hooks/useConnectedAccount";
 
 export interface WithdrawPanelModalProps {
   open: boolean;
@@ -23,6 +26,24 @@ export const WithdrawPanelModal: FC<WithdrawPanelModalProps> = ({
   onClose
 }) => {
   const withdrawToken = useStore(state => state.withdrawToken);
+  const wstkWARWithdrawInputAmount = useStore((state) => state.getWithdrawInputTokenAmount('wstkWAR'));
+  const {address} = useConnectedAccount();
+  const { data, write } = useContractWrite({
+    address: vaultAddress,
+    abi: vaultABI,
+    functionName: 'redeem'
+  });
+
+  const { isLoading, isSuccess } = useWaitForTransaction({
+    hash: data?.hash
+  });
+  const withdraw = useCallback(() => {
+    if (!isLoading && !isSuccess) {
+      write({
+        args: [wstkWARWithdrawInputAmount, address, address]
+      });
+    }
+  }, [wstkWARWithdrawInputAmount, address]);
   const steps = useMemo(() => {
     if (withdrawToken != 'war') {
       return [
@@ -39,7 +60,7 @@ export const WithdrawPanelModal: FC<WithdrawPanelModalProps> = ({
       }
     ];
   }, [withdrawToken]);
-  const { activeStep, goToNext } = useSteps({
+  const { activeStep } = useSteps({
     index: 0,
     count: steps.length
   });
@@ -53,17 +74,13 @@ export const WithdrawPanelModal: FC<WithdrawPanelModalProps> = ({
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <p>test</p>
+          <Flex direction={'column'}>
+            <Button my={5} onClick={withdraw} disabled={isLoading}>
+              {isLoading ? <Spinner /> : 'Withdraw'}
+            </Button>
+          </Flex>
         </ModalBody>
-
-        <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={onClose}>
-            Close
-          </Button>
-          <Button variant="ghost" onClick={goToNext}>
-            Secondary Action
-          </Button>
-        </ModalFooter>
+        <ModalFooter/>
       </ModalContent>
     </Modal>
   );
