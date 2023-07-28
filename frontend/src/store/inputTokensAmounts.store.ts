@@ -32,6 +32,10 @@ const defaultTokenAmounts: TokenAmount[] = [
   {
     id: 'cvx',
     amount: BigInt(0)
+  },
+  {
+    id: 'wstkWAR',
+    amount: BigInt(0)
   }
 ];
 
