@@ -14,11 +14,11 @@ export const Header: FC<HeaderProps> = ({ onOpen }) => (
     align="center"
     justify={{ base: 'space-between', md: 'flex-end' }}
     w="full"
-    px="4"
+    px={'2em'}
+    py={'1.25em'}
     borderBottomWidth="1px"
     borderColor={useColorModeValue('border.light', 'border.dark')}
     boxShadow="sm"
-    h="14"
   >
     <IconButton
       aria-label="Menu"

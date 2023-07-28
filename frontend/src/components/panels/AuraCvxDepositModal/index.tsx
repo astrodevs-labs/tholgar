@@ -58,7 +58,6 @@ const Step1: FC<StepProps & { tokenAddress: `0x${string}`; token: inputTokenIds 
 
   useEffect(() => {
     if (isSuccess) {
-      console.log(data);
       validateStep();
     }
   }, [isSuccess]);
@@ -110,7 +109,6 @@ const Step2: FC<StepProps> = ({ validateStep, address }) => {
 
   useEffect(() => {
     if (isSuccess) {
-      console.log(data);
       validateStep();
     }
   }, [isSuccess]);

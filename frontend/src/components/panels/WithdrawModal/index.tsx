@@ -1,34 +1,35 @@
-import {FC, useCallback, useEffect, useMemo} from 'react';
+import { FC, useCallback, useEffect, useMemo } from 'react';
 import {
-  Button, Flex,
+  Button,
+  Flex,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalFooter,
   ModalHeader,
-  ModalOverlay, Spinner,
+  ModalOverlay,
+  Spinner,
   useSteps
 } from '@chakra-ui/react';
 import { ProgressStepper } from '../../ui/ProgressStepper';
-import {useStore} from "../../../store";
-import {useContractWrite, useWaitForTransaction} from "wagmi";
-import {vaultABI, vaultAddress} from "../../../config/blockchain";
-import useConnectedAccount from "../../../hooks/useConnectedAccount";
+import { useStore } from '../../../store';
+import { useContractWrite, useWaitForTransaction } from 'wagmi';
+import { vaultABI, vaultAddress } from '../../../config/blockchain';
+import useConnectedAccount from '../../../hooks/useConnectedAccount';
 
 export interface WithdrawPanelModalProps {
   open: boolean;
   onClose: () => void;
 }
 
-export const WithdrawPanelModal: FC<WithdrawPanelModalProps> = ({
-  open,
-  onClose
-}) => {
-  const withdrawToken = useStore(state => state.withdrawToken);
-  const wstkWARWithdrawInputAmount = useStore((state) => state.getWithdrawInputTokenAmount('wstkWAR'));
-  const resetBalances = useStore(state => state.resetBalances);
-  const {address} = useConnectedAccount();
+export const WithdrawPanelModal: FC<WithdrawPanelModalProps> = ({ open, onClose }) => {
+  const withdrawToken = useStore((state) => state.withdrawToken);
+  const wstkWARWithdrawInputAmount = useStore((state) =>
+    state.getWithdrawInputTokenAmount('wstkWAR')
+  );
+  const resetBalances = useStore((state) => state.resetBalances);
+  const { address } = useConnectedAccount();
   const { data, write } = useContractWrite({
     address: vaultAddress,
     abi: vaultABI,
@@ -88,7 +89,7 @@ export const WithdrawPanelModal: FC<WithdrawPanelModalProps> = ({
             </Button>
           </Flex>
         </ModalBody>
-        <ModalFooter/>
+        <ModalFooter />
       </ModalContent>
     </Modal>
   );

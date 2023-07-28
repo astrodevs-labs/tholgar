@@ -10,11 +10,11 @@ const config: ThemeConfig = {
 
 const colors: Colors = {
   brand: {
-    primary: '#2E86AB',
+    primary: '#02b261',
     secondary: '#F46036'
   },
   background: {
-    dark: '#222222',
+    dark: '#112e2f',
     light: '#F8F8F8'
   },
   border: {

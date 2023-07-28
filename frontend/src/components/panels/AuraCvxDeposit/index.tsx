@@ -10,8 +10,10 @@ import convertFormattedToBigInt from '../../../utils/convertFormattedToBigInt';
 export interface AuraCvxDepositPanelProps {}
 
 export const AuraCvxDepositPanel: FC<AuraCvxDepositPanelProps> = () => {
-  const auraDecimals = useOrFetchTokenInfos({token: 'aura'});
-  const cvxDecimals = useOrFetchTokenInfos({token: 'cvx'});
+  const auraInfos = useOrFetchTokenInfos({ token: 'aura' });
+  const auraDecimals = auraInfos?.decimals;
+  const cvxInfos = useOrFetchTokenInfos({ token: 'cvx' });
+  const cvxDecimals = cvxInfos?.decimals;
   const auraDepositInputAmount = useStore((state) => state.getDepositInputTokenAmount('aura'));
   const cvxDepositInputAmount = useStore((state) => state.getDepositInputTokenAmount('cvx'));
   const [setDepositInputTokenAmount, setMaxDepositInputTokenAmount] = useStore((state) => [

@@ -10,7 +10,8 @@ import convertFormattedToBigInt from '../../../utils/convertFormattedToBigInt';
 export interface WarDepositPanelProps {}
 
 export const WarDepositPanel: FC<WarDepositPanelProps> = () => {
-  const warDecimals = useOrFetchTokenInfos({token: 'war'});
+  const warInfos = useOrFetchTokenInfos({ token: 'war' });
+  const warDecimals = warInfos?.decimals;
   const warDepositInputAmount = useStore((state) => state.getDepositInputTokenAmount('war'));
   const [setDepositInputTokenAmount, setMaxDepositInputTokenAmount] = useStore((state) => [
     state.setDepositInputTokenAmount,
@@ -22,11 +23,8 @@ export const WarDepositPanel: FC<WarDepositPanelProps> = () => {
   }, [warDepositInputAmount, warDecimals]);
   const setAmount = useCallback(
     (amount: string) => {
-      console.log('setAmount', amount);
-      console.log('warDecimals', warDecimals)
       if (!warDecimals) return;
       const amountInWei = convertFormattedToBigInt(amount, warDecimals);
-      console.log('amountInWei', amountInWei);
       setDepositInputTokenAmount('war', amountInWei);
     },
     [warDecimals, setDepositInputTokenAmount]
@@ -41,8 +39,7 @@ export const WarDepositPanel: FC<WarDepositPanelProps> = () => {
         value={warDepositInputAmountFormatted}
         onInputChange={setAmount}
         onMaxClick={() => {
-          console.log('onMaxClick');
-          setMaxDepositInputTokenAmount('war')
+          setMaxDepositInputTokenAmount('war');
         }}
       />
     </Flex>

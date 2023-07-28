@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-import {FC, JSX, useCallback, useMemo} from 'react';
+import { FC, JSX, useCallback, useMemo } from 'react';
 import { Button, Center, Flex, Grid, GridItem, useDisclosure } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
@@ -13,50 +13,44 @@ import { vaultAddress, warIconUrl } from '../../../config/blockchain';
 // import { useBalance, useToken } from 'wagmi';
 import convertFormattedToBigInt from 'utils/convertFormattedToBigInt';
 import convertBigintToFormatted from 'utils/convertBigintToFormatted';
-import {tokensSelection, useStore} from "../../../store";
-import useOrFetchTokenInfos from "../../../hooks/useOrFetchTokenInfos";
+import { tokensSelection, useStore } from '../../../store';
+import useOrFetchTokenInfos from '../../../hooks/useOrFetchTokenInfos';
 
 export interface WithdrawPanelProps {}
 
-const tokensOutputs = new Map<
-  string,
-  () => JSX.Element
->([
-  [
-    'war',
-    () => <WarWithdrawPanel key={1} />
-  ],
-  [
-    'aura/cvx',
-    () => <AuraCvxWithdrawPanel key={2} />
-  ]
+const tokensOutputs = new Map<string, () => JSX.Element>([
+  ['war', () => <WarWithdrawPanel key={1} />],
+  ['aura/cvx', () => <AuraCvxWithdrawPanel key={2} />]
 ]);
 
 const tokens = [{ id: 'war', name: 'WAR', iconUrl: warIconUrl }];
 
 export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
-  const wstkWARDecimals = useOrFetchTokenInfos({token: 'wstkWAR'});
+  const wstkWARInfos = useOrFetchTokenInfos({ token: 'wstkWAR' });
+  const wstkWARDecimals = wstkWARInfos?.decimals;
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const wstkWARWithdrawInputAmount = useStore((state) => state.getWithdrawInputTokenAmount('wstkWAR'));
+  const wstkWARWithdrawInputAmount = useStore((state) =>
+    state.getWithdrawInputTokenAmount('wstkWAR')
+  );
   const setWithdrawInputTokenAmount = useStore((state) => state.setWithdrawInputTokenAmount);
   const setMaxWithdrawInputTokenAmount = useStore((state) => state.setMaxWithdrawInputTokenAmount);
-  const [withdrawToken, setWithdrawToken] = useStore((state) => [state.withdrawToken, state.setWithdrawToken]);
+  const [withdrawToken, setWithdrawToken] = useStore((state) => [
+    state.withdrawToken,
+    state.setWithdrawToken
+  ]);
   const wstkWARWithdrawInputAmountFormatted = useMemo(() => {
     if (!wstkWARDecimals) return '0';
-    return convertBigintToFormatted(wstkWARWithdrawInputAmount, wstkWARDecimals)
-  }, [wstkWARWithdrawInputAmount, wstkWARDecimals])
-  const setWithdrawAmount = useCallback((amount: string) => {
-    if (!wstkWARDecimals) return;
-    const amountInWei = convertFormattedToBigInt(amount, wstkWARDecimals);
-    setWithdrawInputTokenAmount('wstkWAR', amountInWei);
-  }, [setWithdrawInputTokenAmount, wstkWARDecimals]);
+    return convertBigintToFormatted(wstkWARWithdrawInputAmount, wstkWARDecimals);
+  }, [wstkWARWithdrawInputAmount, wstkWARDecimals]);
+  const setWithdrawAmount = useCallback(
+    (amount: string) => {
+      if (!wstkWARDecimals) return;
+      const amountInWei = convertFormattedToBigInt(amount, wstkWARDecimals);
+      setWithdrawInputTokenAmount('wstkWAR', amountInWei);
+    },
+    [setWithdrawInputTokenAmount, wstkWARDecimals]
+  );
   const output = tokensOutputs.get(withdrawToken);
-
-
-
-
-
-
 
   /*const [withdrawAmount, setWithdrawAmount] = useState<string>('0');
   const [maxWithdrawAmount, setMaxWithdrawAmount] = useState<string>('0');
@@ -66,12 +60,7 @@ export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
   const [withdrawToken, setWithdrawToken] = useState<string>('war');
   const output = tokensOutputs.get(withdrawToken);*/
 
-
-
-
-
-
-/*
+  /*
 
   const { data: warBalance } = useBalance({
     address: vaultAddress,
@@ -114,7 +103,10 @@ export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
       {output && output()}
       <Grid templateColumns="repeat(2, 1fr)" mt={4} gap={6}>
         <GridItem>
-          <TokenSelector onTokenSelect={(token) => setWithdrawToken(token as tokensSelection)} tokens={tokens} />
+          <TokenSelector
+            onTokenSelect={(token) => setWithdrawToken(token as tokensSelection)}
+            tokens={tokens}
+          />
         </GridItem>
         <GridItem>
           <Button w={'full'} backgroundColor={'brand.primary'} onClick={onOpen}>
@@ -122,11 +114,7 @@ export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
           </Button>
         </GridItem>
       </Grid>
-      <WithdrawPanelModal
-
-        open={isOpen}
-        onClose={onClose}
-      />
+      <WithdrawPanelModal open={isOpen} onClose={onClose} />
     </>
   );
 };

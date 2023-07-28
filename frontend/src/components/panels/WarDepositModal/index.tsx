@@ -48,14 +48,12 @@ const Step1: FC<StepProps> = ({ validateStep, address }) => {
 
   useEffect(() => {
     if (isSuccess) {
-      console.log(data);
       validateStep();
     }
   }, [isSuccess]);
 
   useEffect(() => {
     if (allowanceResData && allowanceResData >= warDepositInputAmount && !validated) {
-      console.log('validated');
       setValidated.on();
       validateStep();
     }
@@ -101,7 +99,6 @@ const Step2: FC<StepProps> = ({ validateStep, address }) => {
 
   useEffect(() => {
     if (isSuccess) {
-      console.log(data);
       validateStep();
     }
   }, [isSuccess]);

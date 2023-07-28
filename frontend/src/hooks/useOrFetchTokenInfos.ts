@@ -1,11 +1,24 @@
 import { useStore } from '../store';
 import { useEffect } from 'react';
 import { useToken } from 'wagmi';
-import {Token} from "types/Token";
+import { Token } from 'types/Token';
 
-export default function useOrFetchTokenInfos({token, address}: {token?: Token, address?: `0x${string}`}): number | undefined {
+type TokenInfo = {
+  decimals?: number;
+  totalSupply?: bigint;
+  symbol?: string;
+  address: `0x${string}`;
+};
+
+export default function useOrFetchTokenInfos({
+  token,
+  address
+}: {
+  token?: Token;
+  address?: `0x${string}`;
+}): TokenInfo | undefined {
   if (!token && !address) {
-    console.warn('useOrFetchTokenInfos: token and address are undefined')
+    console.warn('useOrFetchTokenInfos: token and address are undefined');
     return undefined;
   }
 
@@ -20,14 +33,13 @@ export default function useOrFetchTokenInfos({token, address}: {token?: Token, a
   }
 
   const { data } = useToken({
-    address: tokenInfos?.decimals ? undefined : addressToUse
+    address: tokenInfos?.decimals || tokenInfos?.totalSupply ? undefined : addressToUse
   });
 
   useEffect(() => {
-    if (tokenInfos?.decimals === undefined && data?.decimals !== undefined && tokenInfos) {
-      useStore.getState().setTokenInfos(tokenInfos?.id, data.decimals);
+    if (tokenInfos && data) {
+      useStore.getState().setTokenInfos(tokenInfos?.id, data);
     }
   }, [token, data]);
-  return tokenInfos?.decimals;
+  return tokenInfos;
 }
-

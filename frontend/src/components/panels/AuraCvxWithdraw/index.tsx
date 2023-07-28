@@ -1,21 +1,25 @@
-import {FC, useEffect, useMemo} from 'react';
+import { FC, useEffect, useMemo } from 'react';
 import { Flex } from '@chakra-ui/react';
 import { TokenNumberOutput } from '../../ui/TokenNumberOutput';
-import {auraAddress, auraIconUrl, cvxAddress, cvxIconUrl} from 'config/blockchain';
-import useOrFetchTokenInfos from "../../../hooks/useOrFetchTokenInfos";
-import {useStore} from "../../../store";
-import convertBigintToFormatted from "../../../utils/convertBigintToFormatted";
-import useTokenRatio from "../../../hooks/useTokenRatio";
+import { auraAddress, auraIconUrl, cvxAddress, cvxIconUrl } from 'config/blockchain';
+import useOrFetchTokenInfos from '../../../hooks/useOrFetchTokenInfos';
+import { useStore } from '../../../store';
+import convertBigintToFormatted from '../../../utils/convertBigintToFormatted';
+import useTokenRatio from '../../../hooks/useTokenRatio';
 
 export interface AuraCvxWithdrawPanelProps {}
 
 export const AuraCvxWithdrawPanel: FC<AuraCvxWithdrawPanelProps> = () => {
-  const auraDecimals = useOrFetchTokenInfos({token: 'aura'});
-  const cvxDecimals = useOrFetchTokenInfos({token: 'cvx'});
-  const wstWARWithdrawInputAmount = useStore(state => state.getWithdrawInputTokenAmount('wstkWAR'));
-  const auraWithdrawOutputAmount = useStore(state => state.getWithdrawOutputTokenAmount('aura'));
-  const cvxWithdrawOutputAmount = useStore(state => state.getWithdrawOutputTokenAmount('cvx'));
-  const setWithdrawOutputAmount = useStore(state => state.setWithdrawOutputTokenAmount);
+  const auraInfos = useOrFetchTokenInfos({ token: 'aura' });
+  const auraDecimals = auraInfos?.decimals;
+  const cvxInfos = useOrFetchTokenInfos({ token: 'cvx' });
+  const cvxDecimals = cvxInfos?.decimals;
+  const wstWARWithdrawInputAmount = useStore((state) =>
+    state.getWithdrawInputTokenAmount('wstkWAR')
+  );
+  const auraWithdrawOutputAmount = useStore((state) => state.getWithdrawOutputTokenAmount('aura'));
+  const cvxWithdrawOutputAmount = useStore((state) => state.getWithdrawOutputTokenAmount('cvx'));
+  const setWithdrawOutputAmount = useStore((state) => state.setWithdrawOutputTokenAmount);
   const auraWithdrawOutputAmountFormatted = useMemo(() => {
     if (!auraDecimals) return '0';
     return convertBigintToFormatted(auraWithdrawOutputAmount, auraDecimals);
@@ -26,10 +30,10 @@ export const AuraCvxWithdrawPanel: FC<AuraCvxWithdrawPanelProps> = () => {
   }, [cvxWithdrawOutputAmount, cvxDecimals]);
   const auraRatio = useTokenRatio(auraAddress);
   const cvxRatio = useTokenRatio(cvxAddress);
-  
+
   /*const auraAmount = amounts.find((am) => am.token == 'aura')?.amount || '0';
   const cvxAmount = amounts.find((am) => am.token == 'cvx')?.amount || '0';*/
-  
+
   useEffect(() => {
     if (!auraRatio) return;
     const auraAmount = (wstWARWithdrawInputAmount * BigInt(1e18)) / auraRatio;
@@ -53,8 +57,16 @@ export const AuraCvxWithdrawPanel: FC<AuraCvxWithdrawPanelProps> = () => {
 
   return (
     <Flex direction={'column'} gap={4}>
-      <TokenNumberOutput ticker={'AURA'} iconUrl={auraIconUrl} value={auraWithdrawOutputAmountFormatted} />
-      <TokenNumberOutput ticker={'CVX'} iconUrl={cvxIconUrl} value={cvxWithdrawOutputAmountFormatted} />
+      <TokenNumberOutput
+        ticker={'AURA'}
+        iconUrl={auraIconUrl}
+        value={auraWithdrawOutputAmountFormatted}
+      />
+      <TokenNumberOutput
+        ticker={'CVX'}
+        iconUrl={cvxIconUrl}
+        value={cvxWithdrawOutputAmountFormatted}
+      />
     </Flex>
   );
 };

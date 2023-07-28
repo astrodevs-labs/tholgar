@@ -1,15 +1,25 @@
 import { useStore } from '../store';
 import { useEffect } from 'react';
 import { Token } from 'types/Token';
-import {useBalance} from "wagmi";
-import useConnectedAccount from "./useConnectedAccount";
+import { useBalance } from 'wagmi';
+import useConnectedAccount from './useConnectedAccount';
 
-export default function useOrFetchTokenBalance({token, address}: {token?: Token, address?: `0x${string}`}): bigint | undefined {
+export default function useOrFetchTokenBalance({
+  token,
+  address,
+  account
+}: {
+  token?: Token;
+  address?: `0x${string}`;
+  account?: `0x${string}`;
+}): bigint | undefined {
   if (token === undefined && address === undefined) {
-    console.warn('useOrFetchTokenBalance: token and address are undefined')
+    console.warn('useOrFetchTokenBalance: token and address are undefined');
     return undefined;
   }
-  const balance = useStore((state) => token ? state.getTokenBalance(token) : state.getAddressBalance(address!));
+  const balance = useStore((state) =>
+    token ? state.getTokenBalance(token) : state.getAddressBalance(address!)
+  );
 
   let tokenAddress: `0x${string}` | undefined;
   if (token) {
@@ -19,11 +29,11 @@ export default function useOrFetchTokenBalance({token, address}: {token?: Token,
     tokenAddress = address;
   }
 
-  const {address: accountAddress} = useConnectedAccount();
+  const { address: accountAddress } = useConnectedAccount();
   const newBalance = useBalance({
     token: tokenAddress,
-    address: balance != undefined ? undefined : accountAddress
-  })
+    address: balance != undefined ? undefined : account != undefined ? account : accountAddress
+  });
 
   useEffect(() => {
     if (balance === undefined) {
@@ -34,7 +44,7 @@ export default function useOrFetchTokenBalance({token, address}: {token?: Token,
   }, [token, address, balance, newBalance]);
 
   useEffect(() => {
-    if (balance !== undefined) {
+    if (balance !== undefined && accountAddress == undefined) {
       if (token) useStore.getState().setTokenBalance(token, undefined);
       if (address) useStore.getState().setAddressBalance(address, undefined);
     }

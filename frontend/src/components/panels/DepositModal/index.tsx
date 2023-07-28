@@ -1,11 +1,9 @@
-import {FC, useEffect, useMemo} from 'react';
+import { FC, useEffect, useMemo } from 'react';
 import {
-  // Button,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  // ModalFooter,
   ModalHeader,
   ModalOverlay,
   useSteps
@@ -25,7 +23,6 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({ open, onClose })
   const depositTokens = useStore((state) => state.depositToken);
   const resetBalances = useStore((state) => state.resetBalances);
   const steps = useMemo(() => {
-    console.log('depositTokens', depositTokens);
     if (depositTokens == 'war')
       return [
         {
@@ -64,8 +61,6 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({ open, onClose })
       onClose();
     }
   }, [activeStep, steps]);
-
-  console.log('step: ', activeStep);
 
   return (
     <Modal size={'xl'} variant={'brand'} isOpen={open} onClose={onClose} isCentered>

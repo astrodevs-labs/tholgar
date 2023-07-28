@@ -1,30 +1,45 @@
-import {FC, useEffect, useMemo} from 'react';
+import { FC, useEffect, useMemo } from 'react';
 import { Flex } from '@chakra-ui/react';
 import { TokenNumberOutput } from '../../ui/TokenNumberOutput';
 import { warIconUrl } from 'config/blockchain';
-import {useStore} from "../../../store";
-import useOrFetchTokenInfos from "../../../hooks/useOrFetchTokenInfos";
-import convertBigintToFormatted from "../../../utils/convertBigintToFormatted";
+import { useStore } from '../../../store';
+import useOrFetchTokenInfos from '../../../hooks/useOrFetchTokenInfos';
+import convertBigintToFormatted from '../../../utils/convertBigintToFormatted';
+import useOrFetchTokenBalance from 'hooks/useOrFetchTokenBalance';
 
 export interface WarWithdrawPanelProps {}
 
 export const WarWithdrawPanel: FC<WarWithdrawPanelProps> = () => {
-  const warDecimals = useOrFetchTokenInfos({token: 'war'})
-  const wstkWARWithdrawInputAmount = useStore(state => state.getWithdrawInputTokenAmount('wstkWAR'))
-  const warWithdrawOutputAmount = useStore(state => state.getWithdrawOutputTokenAmount('war'))
-  const setWithdrawOutputAmount = useStore(state => state.setWithdrawOutputTokenAmount);
+  const war = useOrFetchTokenInfos({ token: 'war' });
+  const vault = useOrFetchTokenInfos({ token: 'wstkWAR' });
+  const stakerBalance = useOrFetchTokenBalance({
+    token: 'stkWAR'
+  });
+  const wstkWARWithdrawInputAmount = useStore((state) =>
+    state.getWithdrawInputTokenAmount('wstkWAR')
+  );
+  const warWithdrawOutputAmount = useStore((state) => state.getWithdrawOutputTokenAmount('war'));
+  const setWithdrawOutputAmount = useStore((state) => state.setWithdrawOutputTokenAmount);
   const warWithdrawOutputAmountFormatted = useMemo(() => {
-    if (!warDecimals) return '0';
-    return convertBigintToFormatted(warWithdrawOutputAmount, warDecimals)
-  }, [warWithdrawOutputAmount, warDecimals])
+    if (!war || !war?.decimals) return '0';
+    return convertBigintToFormatted(warWithdrawOutputAmount, war.decimals);
+  }, [warWithdrawOutputAmount, war]);
 
   useEffect(() => {
-    setWithdrawOutputAmount('war', wstkWARWithdrawInputAmount)
-  }, [wstkWARWithdrawInputAmount, setWithdrawOutputAmount]);
+    if (!vault || !stakerBalance || !vault?.totalSupply) return;
+    setWithdrawOutputAmount(
+      'war',
+      wstkWARWithdrawInputAmount * (stakerBalance / vault?.totalSupply)
+    );
+  }, [wstkWARWithdrawInputAmount, vault, stakerBalance]);
 
   return (
     <Flex direction={'column'}>
-      <TokenNumberOutput ticker={'WAR'} iconUrl={warIconUrl} value={warWithdrawOutputAmountFormatted} />
+      <TokenNumberOutput
+        ticker={'WAR'}
+        iconUrl={warIconUrl}
+        value={warWithdrawOutputAmountFormatted}
+      />
     </Flex>
   );
 };

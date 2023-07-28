@@ -1,5 +1,5 @@
-import {useContractRead} from "wagmi";
-import { ratioAddress, warRatioABI} from "../config/blockchain";
+import { useContractRead } from 'wagmi';
+import { ratioAddress, warRatioABI } from '../config/blockchain';
 
 export default function useTokenRatio(tokenAddress: `0x${string}`): bigint | undefined {
   return useContractRead({

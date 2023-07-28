@@ -70,8 +70,6 @@ export const createInputTokensAmountsStore: StateCreator<Store, [], [], InputTok
     set((state: Store) => ({
       ...state,
       depositInputTokensAmounts: state.depositInputTokensAmounts.map((tokenAmount: TokenAmount) => {
-        console.log("balances", state.tokensBalances)
-        console.log("balance", state.tokensBalances.find((tokenBalance) => tokenBalance.id === tokenId)?.balance);
         if (tokenAmount.id === tokenId) {
           return {
             ...tokenAmount,

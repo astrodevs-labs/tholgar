@@ -1,4 +1,4 @@
-import {FC, useEffect, useState} from 'react';
+import { FC, useEffect, useState } from 'react';
 import { Container } from 'components/ui/Container';
 import { Flex, HStack, Input, VStack, Text } from '@chakra-ui/react';
 import { BalanceDisplay } from '../../blockchain/BalanceDisplay';
@@ -39,17 +39,13 @@ export const TokenNumberInput: FC<TokenNumberInputProps> = ({
             colorScheme={'whiteAlpha'}
             value={inputValue}
             onChange={(e) => {
-              setInputValue(e.target.value)
+              setInputValue(e.target.value);
               if (e.target.value.length === 0 || e.target.value.match(/[^0-9.]/g)) return;
-                onInputChange(e.target.value)
+              onInputChange(e.target.value);
             }}
           />
           <HStack>
-            <BalanceDisplay
-              description={'Balance :'}
-              token={token}
-              inline={true}
-            />
+            <BalanceDisplay description={'Balance :'} token={token} inline={true} />
             <Text fontSize={'l'} onClick={() => onMaxClick()}>
               Max
             </Text>
@@ -60,7 +56,6 @@ export const TokenNumberInput: FC<TokenNumberInputProps> = ({
         </VStack>
       </Flex>
     </Container>
-
   );
 };
 

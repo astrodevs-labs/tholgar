@@ -1,8 +1,13 @@
 import { StateCreator } from 'zustand';
 import { Store } from './index';
-import { auraAddress, cvxAddress, vaultAddress, warAddress } from 'config/blockchain';
+import {
+  auraAddress,
+  cvxAddress,
+  stakerAddress,
+  vaultAddress,
+  warAddress
+} from 'config/blockchain';
 import { Token } from 'types/Token';
-
 
 interface TokenBalance {
   id: Token;
@@ -35,6 +40,10 @@ const defaultTokenBalances: TokenBalance[] = [
   {
     id: 'wstkWAR',
     address: vaultAddress
+  },
+  {
+    id: 'stkWAR',
+    address: stakerAddress
   }
 ];
 
@@ -53,7 +62,6 @@ export const createTokensBalancesStore: StateCreator<Store, [], [], TokensBalanc
       ...state,
       tokensBalances: state.tokensBalances.map((tokenBalance: TokenBalance) => {
         if (tokenBalance.id === token) {
-          console.log('setTokenBalance', tokenBalance.id, balance);
           return {
             ...tokenBalance,
             balance

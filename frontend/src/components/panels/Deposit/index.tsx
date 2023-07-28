@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable */
 
 import { FC, JSX, useEffect, useMemo } from 'react';
 import { Button, Center, Flex, Grid, GridItem, useDisclosure } from '@chakra-ui/react';
@@ -9,13 +9,21 @@ import { WarDepositPanel } from '../WarDeposit';
 import { AuraCvxDepositPanel } from '../AuraCvxDeposit';
 import { DepositPanelModal } from '../DepositModal';
 import { TokenSelector } from '../../ui/TokenSelector';
-import { auraAddress, auraCvxIconUrl, cvxAddress, warIconUrl } from 'config/blockchain';
+import {
+  auraAddress,
+  auraCvxIconUrl,
+  cvxAddress,
+  stakerAddress,
+  vaultAddress,
+  warIconUrl
+} from 'config/blockchain';
 import convertBigintToFormatted from 'utils/convertBigintToFormatted';
 import { WalletConnectButton } from 'components/blockchain/WalletConnectButton';
 import useConnectedAccount from '../../../hooks/useConnectedAccount';
 import { tokensSelection, useStore } from '../../../store';
 import useOrFetchTokenInfos from '../../../hooks/useOrFetchTokenInfos';
 import useTokenRatio from '../../../hooks/useTokenRatio';
+import useOrFetchTokenBalance from 'hooks/useOrFetchTokenBalance';
 
 export interface DepositPanelProps {}
 
@@ -45,7 +53,9 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
     state.setDepositToken
   ]);
   const setDepositOutputTokenAmounts = useStore((state) => state.setDepositOutputTokenAmount);
-  const wstkWarDecimals = useOrFetchTokenInfos({ token: 'wstkWAR' });
+  const stakerBalance = useOrFetchTokenBalance({ address: stakerAddress, account: vaultAddress });
+  const wstkWarInfos = useOrFetchTokenInfos({ token: 'wstkWAR' });
+  const wstkWarDecimals = wstkWarInfos?.decimals;
   const wstkWAROutputAmountFormatted = useMemo(
     () =>
       wstkWAROutputAmount && wstkWarDecimals
@@ -73,9 +83,20 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
   }, [depositAmount, war]);*/
 
   useEffect(() => {
-    if (depositToken !== 'war') return;
-    setDepositOutputTokenAmounts('wstkWAR', warDepositAmount);
-  }, [warDepositAmount, depositToken === 'war']);
+    if (
+      depositToken !== 'war' ||
+      wstkWarInfos?.totalSupply === undefined ||
+      stakerBalance === undefined
+    )
+      return;
+
+    const amount =
+      wstkWarInfos?.totalSupply == 0n
+        ? warDepositAmount
+        : (warDepositAmount * wstkWarInfos?.totalSupply) / stakerBalance;
+
+    setDepositOutputTokenAmounts('wstkWAR', amount);
+  }, [warDepositAmount, depositToken, wstkWarInfos, stakerBalance]);
 
   useEffect(() => {
     if (!auraRatio || !cvxRatio || depositToken !== 'aura/cvx') return;
@@ -84,7 +105,7 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
     const cvxAmountInWar = (cvxDepositAmount * (cvxRatio as bigint)) / BigInt(1e18);
 
     setDepositOutputTokenAmounts('wstkWAR', auraAmountInWar + cvxAmountInWar);
-  }, [auraRatio, cvxRatio, auraDepositAmount, cvxDepositAmount, depositToken === 'aura/cvx']);
+  }, [auraRatio, cvxRatio, auraDepositAmount, cvxDepositAmount, depositToken]);
 
   /*
   useEffect(() => {
