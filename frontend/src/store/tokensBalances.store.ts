@@ -14,8 +14,8 @@ export interface TokensBalancesStore {
   getTokenBalance: (tokenId: Token) => bigint | undefined;
   getAddressBalance: (address: string) => bigint | undefined;
   setBalances: (balances: TokenBalance[]) => void;
-  setTokenBalance: (token: Token, balance: bigint) => void;
-  setAddressBalance: (address: string, balance: bigint) => void;
+  setTokenBalance: (token: Token, balance?: bigint) => void;
+  setAddressBalance: (address: string, balance?: bigint) => void;
 }
 
 const defaultTokenBalances: TokenBalance[] = [
@@ -47,7 +47,7 @@ export const createTokensBalancesStore: StateCreator<Store, [], [], TokensBalanc
   getAddressBalance: (address: string) =>
     get().tokensBalances.find((tokenBalance) => tokenBalance.address === address)?.balance,
   setBalances: (balances: TokenBalance[]) => set((state: Store) => ({ ...state, balances })),
-  setTokenBalance: (token: Token, balance: bigint) =>
+  setTokenBalance: (token: Token, balance?: bigint) =>
     set((state: Store) => ({
       ...state,
       tokensBalances: state.tokensBalances.map((tokenBalance: TokenBalance) => {
@@ -61,7 +61,7 @@ export const createTokensBalancesStore: StateCreator<Store, [], [], TokensBalanc
         return tokenBalance;
       })
     })),
-  setAddressBalance: (address: string, balance: bigint) =>
+  setAddressBalance: (address: string, balance?: bigint) =>
     set((state: Store) => ({
       ...state,
       tokensBalances: state.tokensBalances.map((tokenBalance: TokenBalance) => {

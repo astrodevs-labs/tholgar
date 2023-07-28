@@ -22,7 +22,7 @@ export default function useOrFetchTokenBalance({token, address}: {token?: Token,
   const {address: accountAddress} = useConnectedAccount();
   const newBalance = useBalance({
     token: tokenAddress,
-    address: balance ? undefined : accountAddress
+    address: balance != undefined ? undefined : accountAddress
   })
 
   useEffect(() => {
@@ -32,5 +32,12 @@ export default function useOrFetchTokenBalance({token, address}: {token?: Token,
       if (address) useStore.getState().setAddressBalance(address, newBalance.data?.value);
     }
   }, [token, address, balance, newBalance]);
+
+  useEffect(() => {
+    if (balance !== undefined) {
+      if (token) useStore.getState().setTokenBalance(token, undefined);
+      if (address) useStore.getState().setAddressBalance(address, undefined);
+    }
+  }, [accountAddress]);
   return balance;
 }
