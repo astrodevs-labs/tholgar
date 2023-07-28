@@ -25,7 +25,7 @@ export const BalanceDisplay: FC<BalanceDisplayProps> = ({
   const decimals = useOrFetchTokenInfos({address: token});
   const { data } = useBalance({ address: account ?? address ?? '0x0', token: token });
   const balanceFormatted = isConnected
-    ? balance && decimals
+    ? balance !== undefined && decimals !== undefined
       ? convertBigintToFormatted(balance, decimals)
       : '...'
     : '?';
