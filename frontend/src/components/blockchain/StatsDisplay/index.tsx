@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react';
-import { Text, VStack, GridItem, Grid } from '@chakra-ui/react';
+import { Text, VStack, GridItem, Grid, useColorModeValue } from '@chakra-ui/react';
 import { Container } from 'components/ui/Container';
 import { useBalance, useContractRead, useToken } from 'wagmi';
 import formatNumber from 'utils/formatNumber';
@@ -27,6 +27,8 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
     token: stakerAddress
   });
 
+  const infoColor = useColorModeValue('black', 'white');
+
   const CirculatingSupply: FC = () => {
     const { data, isLoading, isError } = useToken({
       address: vaultAddress
@@ -34,10 +36,16 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
 
     return (
       <VStack>
-        <Text whiteSpace={'nowrap'} fontSize={'1.125em'} color={'gray.500'}>
+        <Text whiteSpace={'nowrap'} fontSize={'1.125em'} color={infoColor} opacity={'.7'}>
           {'Circulating Supply'}
         </Text>
-        <Text whiteSpace={'nowrap'} fontSize={'1.5em'} fontWeight={'bold'}>
+        <Text
+          whiteSpace={'nowrap'}
+          fontSize={'1.5em'}
+          fontWeight={'bold'}
+          bgClip="text"
+          bgGradient={'linear(to-r, brand.primary, white)'}
+        >
           {isLoading ? '0' : isError ? '0' : formatNumber(data!.totalSupply.formatted)}
         </Text>
       </VStack>
@@ -47,10 +55,16 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
   const APY: FC = () => {
     return (
       <VStack>
-        <Text whiteSpace={'nowrap'} fontSize={'1.125em'} color={'gray.500'}>
+        <Text whiteSpace={'nowrap'} fontSize={'1.125em'} color={infoColor} opacity={'.7'}>
           {'APY'}
         </Text>
-        <Text whiteSpace={'nowrap'} fontSize={'1.5em'} fontWeight={'bold'}>
+        <Text
+          whiteSpace={'nowrap'}
+          fontSize={'1.5em'}
+          fontWeight={'bold'}
+          bgClip="text"
+          bgGradient={'linear(to-r, brand.primary, white)'}
+        >
           {'??%'}
         </Text>
       </VStack>
@@ -60,10 +74,16 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
   const WARLocked: FC = () => {
     return (
       <VStack>
-        <Text whiteSpace={'nowrap'} fontSize={'1.125em'} color={'gray.500'}>
+        <Text whiteSpace={'nowrap'} fontSize={'1.125em'} color={infoColor} opacity={'.7'}>
           {'WAR Locked'}
         </Text>
-        <Text whiteSpace={'nowrap'} fontSize={'1.5em'} fontWeight={'bold'}>
+        <Text
+          whiteSpace={'nowrap'}
+          fontSize={'1.5em'}
+          fontWeight={'bold'}
+          bgClip={'text'}
+          bgGradient={'linear(to-r, brand.primary, white)'}
+        >
           {isWarBalanceLoading
             ? '0'
             : isWarBalanceError
@@ -124,10 +144,16 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
 
     return (
       <VStack>
-        <Text whiteSpace={'nowrap'} fontSize={'1.125em'} color={'gray.500'}>
+        <Text whiteSpace={'nowrap'} fontSize={'1.125em'} color={infoColor} opacity={'.7'}>
           {'Total Volume Locked'}
         </Text>
-        <Text whiteSpace={'nowrap'} fontSize={'1.5em'} fontWeight={'bold'}>
+        <Text
+          whiteSpace={'nowrap'}
+          fontSize={'1.5em'}
+          fontWeight={'bold'}
+          bgClip={'text'}
+          bgGradient={'linear(to-r, brand.primary, white)'}
+        >
           {tvl}
         </Text>
       </VStack>
@@ -135,7 +161,7 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
   };
 
   return (
-    <Container>
+    <Container mx={'4em'}>
       <Grid gap={'2em'} templateColumns={'repeat(4, 1fr)'}>
         <GridItem minW={'22%'}>
           <CirculatingSupply />

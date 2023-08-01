@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { Container } from 'components/ui/Container';
-import { Flex, HStack, Input, VStack, Text } from '@chakra-ui/react';
+import { Flex, HStack, Input, VStack, Text, useColorModeValue } from '@chakra-ui/react';
 import { BalanceDisplay } from '../../blockchain/BalanceDisplay';
 import { TokenDisplay } from '../../ui/TokenDisplay';
 
@@ -29,7 +29,10 @@ export const TokenNumberInput: FC<TokenNumberInputProps> = ({
   }, [value]);
 
   return (
-    <Container p={2}>
+    <Container
+      p={2}
+      backgroundColor={useColorModeValue('background.200.light', 'background.200.dark')}
+    >
       <Flex justify={'space-between'}>
         <VStack align={'start'}>
           <Input

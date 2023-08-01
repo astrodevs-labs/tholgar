@@ -11,14 +11,30 @@ const config: ThemeConfig = {
 const colors: Colors = {
   brand: {
     primary: '#02b261',
-    secondary: '#F46036'
+    secondary: '#13ff01'
   },
   background: {
     dark: '#112e2f',
-    light: '#F8F8F8'
+    light: '#F8F8F8',
+    100: {
+      dark: '#1f5253',
+      light: '#F8F8F8'
+    },
+    200: {
+      dark: '#163b3c',
+      light: '#F8F8F8'
+    },
+    300: {
+      dark: '#112e2f',
+      light: '#F8F8F8'
+    },
+    500: {
+      dark: '#0e2526',
+      light: '#F8F8F8'
+    }
   },
   border: {
-    dark: '#2D3748',
+    dark: '#5c5c5c',
     light: '#E2E8F0'
   }
 };

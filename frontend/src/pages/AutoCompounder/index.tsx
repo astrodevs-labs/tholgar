@@ -9,7 +9,7 @@ const AutoCompounder: FC = () => {
   return (
     <>
       <StatsDisplay />
-      <Container p={4} my={4}>
+      <Container p={4} my={4} mx="4em">
         <Tabs>
           <TabList>
             <Tab>Deposit</Tab>

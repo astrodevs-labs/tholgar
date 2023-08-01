@@ -8,7 +8,7 @@ export interface NavigablePageProps {}
 
 export const NavigablePage: FC<PropsWithChildren<NavigablePageProps>> = ({ children }) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
-/*
+  /*
   return (
     <Box as="section" minH="100vh">
       <SideBar onClose={onClose} isOpen={isOpen} />
@@ -23,7 +23,7 @@ export const NavigablePage: FC<PropsWithChildren<NavigablePageProps>> = ({ child
   );
   */
   return (
-    <Flex flexDirection="row" className='tarace'>
+    <Flex flexDirection="row" className="tarace">
       <SideBar onClose={onClose} isOpen={isOpen} />
       <Flex flexDirection="column" w={'100%'}>
         <Header onOpen={onOpen} />

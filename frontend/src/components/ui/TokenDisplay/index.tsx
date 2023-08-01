@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { HStack, Image, Text } from '@chakra-ui/react';
+import { HStack, Image, Text, useColorModeValue } from '@chakra-ui/react';
 import { Container } from '../Container';
 
 export interface TokenDisplayProps {
@@ -14,15 +14,21 @@ export interface TokenDisplayProps {
   ticker: string;
 }
 
-export const TokenDisplay: FC<TokenDisplayProps> = ({ tokenIconUrl, ticker }) => (
-  <Container p={2} backgroundColor={'brand.secondary'}>
-    <HStack>
-      <Image src={tokenIconUrl} alt={ticker} w={'24px'} />
-      <Text fontSize={'l'} fontWeight={'medium'}>
-        {ticker}
-      </Text>
-    </HStack>
-  </Container>
-);
+export const TokenDisplay: FC<TokenDisplayProps> = ({ tokenIconUrl, ticker }) => {
+  return (
+    <Container
+      p={2}
+      backgroundColor={useColorModeValue('background.100.light', 'background.100.dark')}
+      border="0"
+    >
+      <HStack>
+        <Image src={tokenIconUrl} alt={ticker} w={'24px'} />
+        <Text fontSize={'l'} fontWeight={'medium'}>
+          {ticker}
+        </Text>
+      </HStack>
+    </Container>
+  );
+};
 
 TokenDisplay.defaultProps = {};

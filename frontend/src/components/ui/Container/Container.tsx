@@ -51,7 +51,7 @@ export const Container: FC<PropsWithChildren<ContainerProps>> = (props) => {
 };
 
 Container.defaultProps = {
-  lightColor: '#FFFFFF',
-  darkColor: '#333333',
+  lightColor: 'background.500.light',
+  darkColor: 'background.500.dark',
   ...defaultBorderedComponentProps
 };

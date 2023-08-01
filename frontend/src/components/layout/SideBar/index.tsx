@@ -9,7 +9,7 @@ export interface SideBarProps {
 
 export const SideBar: FC<PropsWithChildren<SideBarProps>> = ({ isOpen, onClose }) => {
   return (
-    <Flex minHeight={'100vh'} >
+    <Flex minHeight={'100vh'}>
       <SideBarBody display={{ base: 'none', md: 'unset' }} />
       <Drawer isOpen={isOpen} onClose={onClose} placement="left">
         <DrawerOverlay />

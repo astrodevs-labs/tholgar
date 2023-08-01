@@ -107,29 +107,6 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
     setDepositOutputTokenAmounts('wstkWAR', auraAmountInWar + cvxAmountInWar);
   }, [auraRatio, cvxRatio, auraDepositAmount, cvxDepositAmount, depositToken]);
 
-  /*
-  useEffect(() => {
-    if (depositToken === 'war') {
-      const warAmount = inputAmounts.find((amount) => amount.token === 'war')?.amount;
-      if (!warAmount) return;
-      setDepositOutputTokenAmounts('wstkWAR', warAmount);
-    } else {
-      if (!auraRatio || !cvxRatio || !cvxDecimals || !auraDecimals) return;
-      const auraAmount = inputAmounts.find((amount) => amount.token === 'cvx')?.amount;
-      if (!auraAmount) return;
-      const auraAmountBigInt = convertFormattedToBigInt(auraAmount, auraDecimals);
-      const cvxAmount = inputAmounts.find((amount) => amount.token === 'aura')?.amount;
-      if (!cvxAmount) return;
-      const cvxAmountBigInt = convertFormattedToBigInt(cvxAmount, cvxDecimals);
-
-      const auraAmountInWar = (auraAmountBigInt * (auraRatio as bigint)) / BigInt(1e18);
-      const cvxAmountInWar = (cvxAmountBigInt * (cvxRatio as bigint)) / BigInt(1e18);
-
-      setInputAmount(auraAmountInWar + cvxAmountInWar);
-    }
-  }, [inputAmounts, depositToken, auraRatio, cvxRatio]);
- */
-
   return (
     <>
       {input && input()}
