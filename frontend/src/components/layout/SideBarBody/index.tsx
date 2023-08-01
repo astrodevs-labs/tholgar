@@ -21,18 +21,15 @@ export const SideBarBody: FC<PropsWithChildren<SideBarBodyProps>> = (props) => {
   return (
     <Flex
       as="nav"
-      pos="fixed"
       className={'sidebar'}
       top="0"
       left="0"
       direction={'column'}
       zIndex="sticky"
-      h="100vh"
       overflowX="hidden"
       overflowY="auto"
       borderColor={useColorModeValue('inherit', 'gray.700')}
       borderRightWidth="1px"
-      w="100"
       {...(display === 'none' ? props : '')}
     >
       <Flex px="4" py="5" align="center">
@@ -56,7 +53,7 @@ export const SideBarBody: FC<PropsWithChildren<SideBarBodyProps>> = (props) => {
       </Flex>
       <Spacer />
       <Box px="4" py="5">
-        <Text fontSize="sm" fontWeight="semibold">
+        <Text fontSize="sm" fontWeight="semibold" align={'center'}>
           A product for the <a href={'https://paladin.vote'}>Paladin</a> ecosystem
         </Text>
       </Box>
