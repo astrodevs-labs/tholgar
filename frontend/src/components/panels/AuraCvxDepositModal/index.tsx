@@ -1,100 +1,37 @@
-import { FC, useCallback, useEffect } from 'react';
-import { Button, Center, Flex, HStack, Spinner, Switch, Text, useBoolean } from '@chakra-ui/react';
+import {FC, useCallback, useEffect, useMemo} from 'react';
+import { Button, Flex, Spinner } from '@chakra-ui/react';
 import {
-  erc20ABI,
-  useAccount,
   useContractWrite,
-  useContractRead,
   useWaitForTransaction
 } from 'wagmi';
 import {
-  maxAllowance,
   auraAddress,
   cvxAddress,
   zapAddress,
   zapABI
 } from '../../../config/blockchain';
-import { inputTokenIds, useStore } from '../../../store';
+import { useStore } from '../../../store';
+import {ApproveAllowance} from "../../blockchain/ApproveAllowance/Index";
+import useConnectedAccount from "../../../hooks/useConnectedAccount";
 
 export interface AuraCvxDepositModalProps {
   step: number;
   validateStep: () => void;
 }
 
-interface StepProps {
+interface DepositStepProps {
   validateStep: () => void;
   address: `0x${string}`;
+  multiToken: boolean;
+  tokenAddresses: (`0x${string}`)[];
+  depositAmounts: bigint[];
 }
 
-const Step1: FC<StepProps & { tokenAddress: `0x${string}`; token: inputTokenIds }> = ({
-  validateStep,
-  address,
-  tokenAddress,
-  token
-}) => {
-  const tokenDepositInputAmount = useStore((state) => state.getDepositInputTokenAmount(token));
-  const [allowTotal, setAllowTotal] = useBoolean(false);
-  const { data, write } = useContractWrite({
-    address: tokenAddress,
-    abi: erc20ABI,
-    functionName: 'approve'
-  });
-  const { isLoading, isSuccess } = useWaitForTransaction({
-    hash: data?.hash
-  });
-  const allowanceRes = useContractRead({
-    address: tokenAddress,
-    abi: erc20ABI,
-    functionName: 'allowance',
-    args: [address, zapAddress]
-  });
-  const allow = useCallback(() => {
-    if (!isLoading && !isSuccess) {
-      write({
-        args: [zapAddress, allowTotal ? maxAllowance : tokenDepositInputAmount]
-      });
-    }
-  }, [tokenDepositInputAmount, allowTotal, token]);
-
-  useEffect(() => {
-    if (isSuccess) {
-      validateStep();
-    }
-  }, [isSuccess]);
-
-  useEffect(() => {
-    if (allowanceRes.data && allowanceRes.data > tokenDepositInputAmount) validateStep();
-  }, [allowanceRes]);
-
-  return (
-    <Flex direction={'column'}>
-      <HStack>
-        <Text>Allowance type : </Text>
-        <Center>
-          <HStack>
-            <Text>Deposit amount</Text>
-            <Switch onChange={setAllowTotal.toggle} />
-            <Text>Max allowance</Text>
-          </HStack>
-        </Center>
-      </HStack>
-      <Button my={5} onClick={allow} disabled={isLoading}>
-        {isLoading ? <Spinner /> : 'Approve'}
-      </Button>
-      <Button my={5} onClick={validateStep}>
-        Next
-      </Button>
-    </Flex>
-  );
-};
-
-const Step2: FC<StepProps> = ({ validateStep, address }) => {
-  const auraDepositInputAmount = useStore((state) => state.getDepositInputTokenAmount('aura'));
-  const cvxDepositInputAmount = useStore((state) => state.getDepositInputTokenAmount('cvx'));
+const DepositStep: FC<DepositStepProps> = ({ validateStep, address, multiToken, tokenAddresses, depositAmounts }) => {
   const { data, write } = useContractWrite({
     address: zapAddress,
     abi: zapABI,
-    functionName: 'zapMultiple'
+    functionName: multiToken ? 'zapMultiple' : 'zap',
   });
   const { isLoading, isSuccess } = useWaitForTransaction({
     hash: data?.hash
@@ -102,10 +39,14 @@ const Step2: FC<StepProps> = ({ validateStep, address }) => {
   const deposit = useCallback(() => {
     if (!isLoading && !isSuccess) {
       write({
-        args: [[auraAddress, cvxAddress], [auraDepositInputAmount, cvxDepositInputAmount], address]
+        args: [
+          multiToken ? tokenAddresses : tokenAddresses[0],
+          multiToken ? depositAmounts : depositAmounts[0],
+          address
+        ]
       });
     }
-  }, [auraDepositInputAmount, cvxDepositInputAmount]);
+  }, [isLoading, isSuccess, multiToken, tokenAddresses, depositAmounts, address]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -123,29 +64,41 @@ const Step2: FC<StepProps> = ({ validateStep, address }) => {
 };
 
 export const AuraCvxDepositModal: FC<AuraCvxDepositModalProps> = ({ step, validateStep }) => {
-  const { address } = useAccount();
+  const { address } = useConnectedAccount();
+  const auraDepositInputAmount = useStore((state) => state.getDepositInputTokenAmount('aura'));
+  const cvxDepositInputAmount = useStore((state) => state.getDepositInputTokenAmount('cvx'));
+  const stepsComponents = useMemo(() => {
+    let components = [];
+    let tokenAddresses: `0x${string}`[] = [];
+    let depositAmounts = [];
 
-  if (step == 0) {
-    return (
-      <Step1
+    if (auraDepositInputAmount > 0) {
+      tokenAddresses.push(auraAddress);
+      depositAmounts.push(auraDepositInputAmount);
+      components.push(
+        <ApproveAllowance token={"aura"} tokenAddress={auraAddress} step={step} validateStep={validateStep} address={address!} />
+      );
+    }
+    if (cvxDepositInputAmount > 0) {
+      tokenAddresses.push(cvxAddress);
+      depositAmounts.push(cvxDepositInputAmount);
+      components.push(
+        <ApproveAllowance token={"cvx"} tokenAddress={cvxAddress} step={step} validateStep={validateStep} address={address!} />
+      );
+    }
+    components.push(
+      <DepositStep
         validateStep={validateStep}
         address={address!}
-        tokenAddress={auraAddress}
-        token={'aura'}
+        multiToken={auraDepositInputAmount > 0n && cvxDepositInputAmount > 0n}
+        tokenAddresses={tokenAddresses}
+        depositAmounts={depositAmounts}
       />
-    );
-  } else if (step == 1) {
-    return (
-      <Step1
-        validateStep={validateStep}
-        address={address!}
-        tokenAddress={cvxAddress}
-        token={'cvx'}
-      />
-    );
-  } else if (step == 2) {
-    return <Step2 validateStep={validateStep} address={address!} />;
-  }
+  );
+    return components;
+  }, [auraDepositInputAmount, cvxDepositInputAmount, step, validateStep]);
+
+  return stepsComponents[step];
 };
 
 AuraCvxDepositModal.defaultProps = {};

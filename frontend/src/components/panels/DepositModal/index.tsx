@@ -21,6 +21,9 @@ export interface DepositPanelModalProps {
 
 export const DepositPanelModal: FC<DepositPanelModalProps> = ({ open, onClose }) => {
   const depositTokens = useStore((state) => state.depositToken);
+  const auraDepositAmount = useStore((state) => state.getDepositInputTokenAmount('aura'));
+  const cvxDepositAmount = useStore((state) => state.getDepositInputTokenAmount('cvx'));
+  const warDepositAmount = useStore((state) => state.getDepositInputTokenAmount('war'));
   const resetBalances = useStore((state) => state.resetBalances);
   const steps = useMemo(() => {
     if (depositTokens == 'war')
@@ -34,22 +37,32 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({ open, onClose })
           description: 'Deposit token'
         }
       ];
-    else
-      return [
-        {
+    else {
+      let steps = [];
+
+      if (auraDepositAmount > 0) {
+        steps.push({
           label: 'Approve AURA',
           description: 'Token swap'
-        },
-        {
+        });
+      }
+
+      if (cvxDepositAmount > 0) {
+        steps.push({
           label: 'Approve CVX',
           description: 'Token swap'
-        },
+        });
+      }
+
+      return [
+        ...steps,
         {
           label: 'Deposit',
           description: 'Deposit tokens'
         }
       ];
-  }, [depositTokens]);
+    }
+  }, [depositTokens, auraDepositAmount, cvxDepositAmount]);
   const { activeStep, goToNext } = useSteps({
     index: 0,
     count: steps.length
@@ -61,6 +74,14 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({ open, onClose })
       onClose();
     }
   }, [activeStep, steps]);
+
+  useEffect(() => {
+    if (depositTokens == 'war' && warDepositAmount === 0n) {
+      onClose();
+    } else if (depositTokens != 'war' && auraDepositAmount === 0n && cvxDepositAmount === 0n) {
+      onClose();
+    }
+  }, [depositTokens, auraDepositAmount, cvxDepositAmount, warDepositAmount]);
 
   return (
     <Modal size={'xl'} variant={'brand'} isOpen={open} onClose={onClose} isCentered>
