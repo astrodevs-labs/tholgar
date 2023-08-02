@@ -7,7 +7,8 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Text
+  Text,
+  useColorModeValue
 } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 
@@ -32,15 +33,16 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ onTokenSelect, tokens })
     setIdSelected(token);
     onTokenSelect(token);
   };
+  const bgColor = useColorModeValue('background.200.light', 'background.200.dark');
 
   return (
-    <Menu>
-      <MenuButton as={Button} rightIcon={<ChevronDownIcon />} w={'100%'}>
+    <Menu matchWidth={true}>
+      <MenuButton as={Button} bgColor={bgColor} _hover={{}} _active={{}} rightIcon={<ChevronDownIcon />} w={'100%'}>
         <Item {...selected!} />
       </MenuButton>
       <MenuList w={'100%'}>
         {tokens.map((t) => (
-          <MenuItem key={t.id} minH="48px" w={'full'} onClick={() => select(t.id)}>
+          <MenuItem key={t.id} h={'3rem'} w={'full'} onClick={() => select(t.id)} _hover={{color: 'brand.secondary'}}>
             <Item {...t} />
           </MenuItem>
         ))}

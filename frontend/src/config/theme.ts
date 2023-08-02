@@ -29,7 +29,7 @@ const colors: Colors = {
       light: '#F8F8F8'
     },
     500: {
-      dark: '#0e2526',
+      dark: '#102a2b',
       light: '#F8F8F8'
     }
   },
