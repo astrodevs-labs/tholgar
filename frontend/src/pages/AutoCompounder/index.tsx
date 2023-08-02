@@ -9,13 +9,23 @@ const AutoCompounder: FC = () => {
   return (
     <>
       <StatsDisplay />
-      <Container p={4} my={4} mx="4em">
-        <Tabs>
-          <TabList>
+      <Tabs colorScheme="green" size="lg">
+        <Container
+          p={0}
+          pt={1}
+          my={0}
+          mx="4em"
+          borderBottomRadius={'0'}
+          borderBottom={'0'}
+          borderRadius={'1.5em'}
+        >
+          <TabList borderBottom={'none'}>
             <Tab>Deposit</Tab>
             <Tab>Withdraw</Tab>
           </TabList>
+        </Container>
 
+        <Container p={4} my={0} mx="4em" borderTopRadius={'0'} borderRadius={'1.5em'}>
           <TabPanels>
             <TabPanel>
               <DepositPanel />
@@ -24,8 +34,8 @@ const AutoCompounder: FC = () => {
               <WithdrawPanel />
             </TabPanel>
           </TabPanels>
-        </Tabs>
-      </Container>
+        </Container>
+      </Tabs>
     </>
   );
 };

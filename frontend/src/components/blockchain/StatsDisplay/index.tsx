@@ -161,7 +161,7 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
   };
 
   return (
-    <Container mx={'4em'}>
+    <Container mx={'4em'} borderRadius={'1.5em'}>
       <Grid gap={'2em'} templateColumns={'repeat(4, 1fr)'}>
         <GridItem minW={'22%'}>
           <CirculatingSupply />
