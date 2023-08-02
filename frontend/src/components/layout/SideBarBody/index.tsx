@@ -43,11 +43,11 @@ export const SideBarBody: FC<PropsWithChildren<SideBarBodyProps>> = (props) => {
           Thalgar
         </Text>
       </Flex>
-      <Flex direction="column" as="nav" fontSize="md" color="gray.600" aria-label="Main Navigation">
-        <Link href={'/'} _hover={{ fontWeight: 'bold' }}>
+      <Flex direction="column" as="nav" fontSize="md" aria-label="Main Navigation">
+        <Link href={'/'} _hover={{}}>
           <NavItem icon={BiHome}>Home</NavItem>
         </Link>
-        <Link href={'faq'} _hover={{ fontWeight: 'bold' }}>
+        <Link href={'faq'}  _hover={{}}>
           <NavItem icon={BiQuestionMark}>FAQ</NavItem>
         </Link>
       </Flex>

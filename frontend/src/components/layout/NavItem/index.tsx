@@ -20,7 +20,6 @@ export const NavItem: FC<PropsWithChildren<NavItemProps>> = (props: any) => {
       transition=".15s ease"
       color={useColorModeValue('inherit', 'gray.400')}
       _hover={{
-        bg: useColorModeValue('gray.100', 'gray.900'),
         color: useColorModeValue('gray.900', 'gray.200')
       }}
     >
