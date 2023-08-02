@@ -16,6 +16,6 @@ export const defaultBorderedComponentProps: BorderedComponentProps = {
   borderType: 'solid',
   borderThickness: '1px',
   bordersRadius: '5px',
-  borderslightColor: 'gray.200',
-  bordersdarkColor: 'gray.700'
+  borderslightColor: 'border.light',
+  bordersdarkColor: 'border.dark'
 };

@@ -28,7 +28,7 @@ export const SideBarBody: FC<PropsWithChildren<SideBarBodyProps>> = (props) => {
       zIndex="sticky"
       overflowX="hidden"
       overflowY="auto"
-      borderColor={useColorModeValue('inherit', 'gray.700')}
+      borderColor={useColorModeValue('border.light', 'border.dark')}
       borderRightWidth="1px"
       {...(display === 'none' ? props : '')}
     >
