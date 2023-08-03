@@ -1,8 +1,8 @@
-import {FC, useCallback, useEffect} from "react";
-import {inputTokenIds, useStore} from "../../../store";
-import {Button, Center, Flex, HStack, Spinner, Switch, Text, useBoolean} from "@chakra-ui/react";
-import {erc20ABI, useContractRead, useContractWrite, useWaitForTransaction} from "wagmi";
-import {maxAllowance, zapAddress} from "../../../config/blockchain";
+import { FC, useCallback, useEffect } from 'react';
+import { inputTokenIds, useStore } from '../../../store';
+import { Button, Center, Flex, HStack, Spinner, Switch, Text, useBoolean } from '@chakra-ui/react';
+import { erc20ABI, useContractRead, useContractWrite, useWaitForTransaction } from 'wagmi';
+import { maxAllowance, zapAddress } from '../../../config/blockchain';
 
 export interface ApproveAllowanceProps {
   token: inputTokenIds;
@@ -12,7 +12,12 @@ export interface ApproveAllowanceProps {
   address: `0x${string}`;
 }
 
-export const ApproveAllowance: FC<ApproveAllowanceProps> = ({ validateStep, address, tokenAddress, token}) => {
+export const ApproveAllowance: FC<ApproveAllowanceProps> = ({
+  validateStep,
+  address,
+  tokenAddress,
+  token
+}) => {
   const tokenDepositInputAmount = useStore((state) => state.getDepositInputTokenAmount(token));
   const [allowTotal, setAllowTotal] = useBoolean(false);
   const { data, write } = useContractWrite({

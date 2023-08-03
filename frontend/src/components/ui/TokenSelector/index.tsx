@@ -37,12 +37,25 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ onTokenSelect, tokens })
 
   return (
     <Menu matchWidth={true}>
-      <MenuButton as={Button} bgColor={bgColor} _hover={{}} _active={{}} rightIcon={<ChevronDownIcon />} w={'100%'}>
+      <MenuButton
+        as={Button}
+        bgColor={bgColor}
+        _hover={{}}
+        _active={{}}
+        rightIcon={<ChevronDownIcon />}
+        w={'100%'}
+      >
         <Item {...selected!} />
       </MenuButton>
       <MenuList w={'100%'}>
         {tokens.map((t) => (
-          <MenuItem key={t.id} h={'3rem'} w={'full'} onClick={() => select(t.id)} _hover={{color: 'brand.secondary'}}>
+          <MenuItem
+            key={t.id}
+            h={'3rem'}
+            w={'full'}
+            onClick={() => select(t.id)}
+            _hover={{ color: 'brand.secondary' }}
+          >
             <Item {...t} />
           </MenuItem>
         ))}

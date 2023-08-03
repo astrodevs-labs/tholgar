@@ -1,18 +1,10 @@
-import {FC, useCallback, useEffect, useMemo} from 'react';
+import { FC, useCallback, useEffect, useMemo } from 'react';
 import { Button, Flex, Spinner } from '@chakra-ui/react';
-import {
-  useContractWrite,
-  useWaitForTransaction
-} from 'wagmi';
-import {
-  auraAddress,
-  cvxAddress,
-  zapAddress,
-  zapABI
-} from '../../../config/blockchain';
+import { useContractWrite, useWaitForTransaction } from 'wagmi';
+import { auraAddress, cvxAddress, zapAddress, zapABI } from '../../../config/blockchain';
 import { useStore } from '../../../store';
-import {ApproveAllowance} from "../../blockchain/ApproveAllowance/Index";
-import useConnectedAccount from "../../../hooks/useConnectedAccount";
+import { ApproveAllowance } from '../../blockchain/ApproveAllowance/Index';
+import useConnectedAccount from '../../../hooks/useConnectedAccount';
 
 export interface AuraCvxDepositModalProps {
   step: number;
@@ -23,15 +15,21 @@ interface DepositStepProps {
   validateStep: () => void;
   address: `0x${string}`;
   multiToken: boolean;
-  tokenAddresses: (`0x${string}`)[];
+  tokenAddresses: `0x${string}`[];
   depositAmounts: bigint[];
 }
 
-const DepositStep: FC<DepositStepProps> = ({ validateStep, address, multiToken, tokenAddresses, depositAmounts }) => {
+const DepositStep: FC<DepositStepProps> = ({
+  validateStep,
+  address,
+  multiToken,
+  tokenAddresses,
+  depositAmounts
+}) => {
   const { data, write } = useContractWrite({
     address: zapAddress,
     abi: zapABI,
-    functionName: multiToken ? 'zapMultiple' : 'zap',
+    functionName: multiToken ? 'zapMultiple' : 'zap'
   });
   const { isLoading, isSuccess } = useWaitForTransaction({
     hash: data?.hash
@@ -76,14 +74,26 @@ export const AuraCvxDepositModal: FC<AuraCvxDepositModalProps> = ({ step, valida
       tokenAddresses.push(auraAddress);
       depositAmounts.push(auraDepositInputAmount);
       components.push(
-        <ApproveAllowance token={"aura"} tokenAddress={auraAddress} step={step} validateStep={validateStep} address={address!} />
+        <ApproveAllowance
+          token={'aura'}
+          tokenAddress={auraAddress}
+          step={step}
+          validateStep={validateStep}
+          address={address!}
+        />
       );
     }
     if (cvxDepositInputAmount > 0) {
       tokenAddresses.push(cvxAddress);
       depositAmounts.push(cvxDepositInputAmount);
       components.push(
-        <ApproveAllowance token={"cvx"} tokenAddress={cvxAddress} step={step} validateStep={validateStep} address={address!} />
+        <ApproveAllowance
+          token={'cvx'}
+          tokenAddress={cvxAddress}
+          step={step}
+          validateStep={validateStep}
+          address={address!}
+        />
       );
     }
     components.push(
@@ -94,7 +104,7 @@ export const AuraCvxDepositModal: FC<AuraCvxDepositModalProps> = ({ step, valida
         tokenAddresses={tokenAddresses}
         depositAmounts={depositAmounts}
       />
-  );
+    );
     return components;
   }, [auraDepositInputAmount, cvxDepositInputAmount, step, validateStep]);
 

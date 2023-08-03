@@ -3,13 +3,12 @@ import {
   Box,
   BoxProps,
   Flex,
-  Icon,
+  Image,
   Spacer,
   Text,
   useBreakpointValue,
   useColorModeValue
 } from '@chakra-ui/react';
-import { DragHandleIcon } from '@chakra-ui/icons';
 import { BiQuestionMark, BiHome } from 'react-icons/bi';
 import { NavItem } from '../NavItem';
 import { Link } from '@chakra-ui/react';
@@ -33,21 +32,16 @@ export const SideBarBody: FC<PropsWithChildren<SideBarBodyProps>> = (props) => {
       {...(display === 'none' ? props : '')}
     >
       <Flex px="4" py="5" align="center">
-        <Icon as={DragHandleIcon} h={8} w={8} />
-        <Text
-          fontSize="2xl"
-          ml="2"
-          color={useColorModeValue('brand.500', 'white')}
-          fontWeight="semibold"
-        >
-          Thalgar
-        </Text>
+        <Image
+          src={useColorModeValue('/images/logoFull.png', '/images/logoFullWhite.png')}
+          h={'40px'}
+        />
       </Flex>
       <Flex direction="column" as="nav" fontSize="md" aria-label="Main Navigation">
         <Link href={'/'} _hover={{}}>
           <NavItem icon={BiHome}>Home</NavItem>
         </Link>
-        <Link href={'faq'}  _hover={{}}>
+        <Link href={'faq'} _hover={{}}>
           <NavItem icon={BiQuestionMark}>FAQ</NavItem>
         </Link>
       </Flex>
