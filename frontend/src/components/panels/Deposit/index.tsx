@@ -15,7 +15,8 @@ import {
   cvxAddress,
   stakerAddress,
   vaultAddress,
-  warIconUrl
+  warIconUrl,
+  wstkWarIconUrl
 } from 'config/blockchain';
 import convertBigintToFormatted from 'utils/convertBigintToFormatted';
 import { WalletConnectButton } from 'components/blockchain/WalletConnectButton';
@@ -116,7 +117,7 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
       <Flex direction={'column'}>
         <TokenNumberOutput
           ticker={'wstkWAR'}
-          iconUrl={'https://www.convexfinance.com/static/icons/svg/vlcvx.svg'}
+          iconUrl={wstkWarIconUrl}
           value={wstkWAROutputAmountFormatted}
         />
       </Flex>

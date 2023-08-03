@@ -14,7 +14,7 @@ export const auraIconUrl =
   'https://raw.githubusercontent.com/balancer-labs/assets/master/assets/0xc0c293ce456ff0ed870add98a0828dd4d2903dbf.png';
 export const cvxIconUrl = 'https://www.convexfinance.com/static/icons/svg/vlcvx.svg';
 export const auraCvxIconUrl = '/images/aura-cvx.svg';
-export const wstkWethIconUrl = '/images/wstkWAR.png';
+export const wstkWarIconUrl = '/images/wstkWAR.png';
 
 export const maxAllowance = BigInt(2) ** BigInt(256) - BigInt(1);
 
