@@ -49,8 +49,8 @@ export const TokenNumberInput: FC<TokenNumberInputProps> = ({
           />
           <HStack>
             <BalanceDisplay description={'Balance :'} token={token} inline={true} />
-            <Text fontSize={'l'} onClick={() => onMaxClick()}>
-              Max
+            <Text cursor={'pointer'} textShadow={'0px 0px 5px var(--chakra-colors-brand-primary-300)'} textColor={"brand.primary.300"}  onClick={() => onMaxClick()}>
+              MAX
             </Text>
           </HStack>
         </VStack>
