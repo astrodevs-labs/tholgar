@@ -10,6 +10,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Spinner,
+  useColorModeValue,
   useSteps
 } from '@chakra-ui/react';
 import { ProgressStepper } from '../../ui/ProgressStepper';
@@ -88,8 +89,9 @@ export const WithdrawPanelModal: FC<WithdrawPanelModalProps> = ({ open, onClose 
               my={5}
               onClick={withdraw}
               disabled={isLoading}
-              bgColor={'brand.primary.300'}
-              _hover={{ bgColor: '#007f45' }}
+              backgroundColor={useColorModeValue('brand.primary.200', 'brand.primary.300')}
+              _hover={{ bgColor: useColorModeValue('brand.primary.300', 'brand.primary.100') }}
+              color={useColorModeValue('#00cf6f', 'inherit')}
             >
               {isLoading ? <Spinner /> : 'Withdraw'}
             </Button>

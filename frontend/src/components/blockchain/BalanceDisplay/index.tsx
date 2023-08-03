@@ -21,16 +21,18 @@ export const BalanceDisplay: FC<BalanceDisplayProps> = ({
   displaySymbol,
   inline
 }) => {
-  const {isConnected} = useConnectedAccount();
+  const { isConnected } = useConnectedAccount();
   const balance = useOrFetchTokenBalance({ address: token, account });
   const infos = useOrFetchTokenInfos({ address: token });
   const decimals = infos?.decimals;
   const balanceFormatted =
-    balance !== undefined && decimals !== undefined
-      ? convertBigintToFormatted(balance, decimals)
-      : isConnected ?
-        <Spinner/>
-        : '?';
+    balance !== undefined && decimals !== undefined ? (
+      convertBigintToFormatted(balance, decimals)
+    ) : isConnected ? (
+      <Spinner />
+    ) : (
+      '?'
+    );
   const symbol = displaySymbol ? infos?.symbol || '' : '';
 
   return (

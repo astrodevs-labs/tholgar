@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Box, BoxProps, Button, Flex } from '@chakra-ui/react';
+import { Box, BoxProps, Button, Flex, useColorModeValue } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 export interface WalletConnectButtonProps extends BoxProps {}
@@ -23,10 +23,13 @@ export const WalletConnectButton: FC<WalletConnectButtonProps> = (props) => {
               if (!connected) {
                 return (
                   <Button
-                    bg={'brand.primary.300'}
                     onClick={openConnectModal}
                     w={'100%'}
-                    _hover={{ bgColor: 'brand.primary.100' }}
+                    backgroundColor={useColorModeValue('brand.primary.200', 'brand.primary.300')}
+                    _hover={{
+                      bgColor: useColorModeValue('brand.primary.300', 'brand.primary.100')
+                    }}
+                    color={useColorModeValue('#00cf6f', 'inherit')}
                   >
                     Connect Wallet
                   </Button>
@@ -34,15 +37,29 @@ export const WalletConnectButton: FC<WalletConnectButtonProps> = (props) => {
               }
 
               if (chain.unsupported) {
-                return <Button onClick={openChainModal}>Wrong network</Button>;
+                return (
+                  <Button
+                    backgroundColor={useColorModeValue('brand.primary.200', 'brand.primary.300')}
+                    _hover={{
+                      bgColor: useColorModeValue('brand.primary.300', 'brand.primary.100')
+                    }}
+                    color={useColorModeValue('#00cf6f', 'inherit')}
+                    onClick={openChainModal}
+                  >
+                    Wrong network
+                  </Button>
+                );
               }
 
               return (
                 <Flex gap={12}>
                   <Button
-                    bg={'brand.primary.300'}
+                    backgroundColor={useColorModeValue('brand.primary.200', 'brand.primary.300')}
+                    _hover={{
+                      bgColor: useColorModeValue('brand.primary.300', 'brand.primary.100')
+                    }}
+                    color={useColorModeValue('#00cf6f', 'inherit')}
                     onClick={openAccountModal}
-                    _hover={{ bgColor: 'brand.primary.100' }}
                   >
                     {account.displayName}
                   </Button>

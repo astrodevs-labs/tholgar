@@ -12,28 +12,30 @@ const colors: Colors = {
   brand: {
     primary: {
       100: '#007f45',
-      300: '#02b261'
+      200: '#b1ead0',
+      300: '#02b261',
+      400: '#00cf6f'
     },
     secondary: '#13ff01'
   },
   background: {
     dark: '#112e2f',
-    light: '#F8F8F8',
+    light: '#f8f8f8',
     100: {
       dark: '#1f5253',
-      light: '#F8F8F8'
+      light: '#fefefe'
     },
     200: {
       dark: '#163b3c',
-      light: '#F8F8F8'
+      light: '#fcfcfd'
     },
     300: {
       dark: '#112e2f',
-      light: '#F8F8F8'
+      light: '#f8f8f8'
     },
     500: {
       dark: '#102a2b',
-      light: '#F8F8F8'
+      light: '#fefefe'
     }
   },
   border: {

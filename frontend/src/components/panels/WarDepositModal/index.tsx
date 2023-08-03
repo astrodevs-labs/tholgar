@@ -1,5 +1,15 @@
 import { FC, useCallback, useEffect } from 'react';
-import { Button, Center, Flex, HStack, Spinner, Switch, Text, useBoolean } from '@chakra-ui/react';
+import {
+  Button,
+  Center,
+  Flex,
+  HStack,
+  Spinner,
+  Switch,
+  Text,
+  useBoolean,
+  useColorModeValue
+} from '@chakra-ui/react';
 import {
   erc20ABI,
   useAccount,
@@ -75,8 +85,9 @@ const Step1: FC<StepProps> = ({ validateStep, address }) => {
         my={5}
         onClick={allow}
         disabled={isLoading}
-        bgColor={'brand.primary.300'}
-        _hover={{ bgColor: 'brand.primary.100' }}
+        backgroundColor={useColorModeValue('brand.primary.200', 'brand.primary.300')}
+        _hover={{ bgColor: useColorModeValue('brand.primary.300', 'brand.primary.100') }}
+        color={useColorModeValue('#00cf6f', 'inherit')}
       >
         {isLoading ? <Spinner /> : 'Approve'}
       </Button>
@@ -115,8 +126,9 @@ const Step2: FC<StepProps> = ({ validateStep, address }) => {
         my={5}
         onClick={deposit}
         disabled={isLoading}
-        bgColor={'brand.primary.300'}
-        _hover={{ bgColor: 'brand.primary.100' }}
+        backgroundColor={useColorModeValue('brand.primary.200', 'brand.primary.300')}
+        _hover={{ bgColor: useColorModeValue('brand.primary.300', 'brand.primary.100') }}
+        color={useColorModeValue('#00cf6f', 'inherit')}
       >
         {isLoading ? <Spinner /> : 'Deposit'}
       </Button>

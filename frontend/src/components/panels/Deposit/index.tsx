@@ -1,7 +1,15 @@
 /* eslint-disable */
 
 import { FC, JSX, useEffect, useMemo } from 'react';
-import { Button, Center, Flex, Grid, GridItem, useDisclosure } from '@chakra-ui/react';
+import {
+  Button,
+  Center,
+  Flex,
+  Grid,
+  GridItem,
+  useColorModeValue,
+  useDisclosure
+} from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { TokenNumberOutput } from '../../ui/TokenNumberOutput';
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
@@ -104,7 +112,7 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
     <>
       {input && input()}
       <Center my={4}>
-        <FontAwesomeIcon icon={faArrowDown} size={'2x'} />
+        <FontAwesomeIcon icon={faArrowDown} size={'2x'} opacity={useColorModeValue(0.4, 1)} />
       </Center>
       <Flex direction={'column'}>
         <TokenNumberOutput
@@ -124,10 +132,11 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
           {isConnected ? (
             <Button
               w={'full'}
-              backgroundColor={'brand.primary.300'}
+              backgroundColor={useColorModeValue('brand.primary.200', 'brand.primary.300')}
               onClick={onOpen}
-              _hover={{ bgColor: 'brand.primary.100' }}
               isDisabled={isDepositDisabled}
+              _hover={{ bgColor: useColorModeValue('brand.primary.300', 'brand.primary.100') }}
+              color={useColorModeValue('#00cf6f', 'inherit')}
             >
               Deposit
             </Button>

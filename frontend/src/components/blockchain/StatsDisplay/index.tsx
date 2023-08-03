@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react';
-import { Text, VStack, GridItem, Grid, useColorModeValue } from '@chakra-ui/react';
+import { Text, VStack, GridItem, Grid, useColorModeValue, useColorMode } from '@chakra-ui/react';
 import { Container } from 'components/ui/Container';
 import { useBalance, useContractRead, useToken } from 'wagmi';
 import formatNumber from 'utils/formatNumber';
@@ -27,6 +27,10 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
     token: stakerAddress
   });
 
+  const textProps =
+    useColorMode().colorMode === 'light'
+      ? { color: 'brand.primary.300' }
+      : { bgGradient: 'linear(to-r, brand.primary.300, white)' };
   const infoColor = useColorModeValue('black', 'white');
 
   const CirculatingSupply: FC = () => {
@@ -44,7 +48,7 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
           fontSize={'1.5em'}
           fontWeight={'bold'}
           bgClip="text"
-          bgGradient={'linear(to-r, brand.primary.300, white)'}
+          {...textProps}
         >
           {isLoading ? '0' : isError ? '0' : formatNumber(data!.totalSupply.formatted)}
         </Text>
@@ -63,7 +67,7 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
           fontSize={'1.5em'}
           fontWeight={'bold'}
           bgClip="text"
-          bgGradient={'linear(to-r, brand.primary.300, white)'}
+          {...textProps}
         >
           {'??%'}
         </Text>
@@ -82,7 +86,7 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
           fontSize={'1.5em'}
           fontWeight={'bold'}
           bgClip={'text'}
-          bgGradient={'linear(to-r, brand.primary.300, white)'}
+          {...textProps}
         >
           {isWarBalanceLoading
             ? '0'
@@ -152,7 +156,7 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
           fontSize={'1.5em'}
           fontWeight={'bold'}
           bgClip={'text'}
-          bgGradient={'linear(to-r, brand.primary.300, white)'}
+          {...textProps}
         >
           {tvl}
         </Text>

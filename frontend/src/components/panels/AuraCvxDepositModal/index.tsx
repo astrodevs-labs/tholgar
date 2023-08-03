@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect, useMemo } from 'react';
-import { Button, Flex, Spinner } from '@chakra-ui/react';
+import { Button, Flex, Spinner, useColorModeValue } from '@chakra-ui/react';
 import { useContractWrite, useWaitForTransaction } from 'wagmi';
 import { auraAddress, cvxAddress, zapAddress, zapABI } from '../../../config/blockchain';
 import { useStore } from '../../../store';
@@ -58,7 +58,9 @@ const DepositStep: FC<DepositStepProps> = ({
         my={5}
         onClick={deposit}
         disabled={isLoading}
-        _hover={{ bgColor: 'brand.primary.100' }}
+        backgroundColor={useColorModeValue('brand.primary.200', 'brand.primary.300')}
+        _hover={{ bgColor: useColorModeValue('brand.primary.300', 'brand.primary.100') }}
+        color={useColorModeValue('#00cf6f', 'inherit')}
       >
         {isLoading ? <Spinner /> : 'Deposit'}
       </Button>

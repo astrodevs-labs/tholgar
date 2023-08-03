@@ -25,7 +25,11 @@ export const CaptionedNumber: FC<CaptionedNumberProps> = ({ caption, number, sym
     <>
       <Text size={'l'}>{caption}</Text>
       <HStack>
-        { typeof number === 'string' || typeof number === 'number' ? <Text size={'l'}>{number}</Text> : number }
+        {typeof number === 'string' || typeof number === 'number' ? (
+          <Text size={'l'}>{number}</Text>
+        ) : (
+          number
+        )}
         {symbol && <Text size={'l'}>{symbol}</Text>}
       </HStack>
     </>

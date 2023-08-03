@@ -33,13 +33,12 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ onTokenSelect, tokens })
     setIdSelected(token);
     onTokenSelect(token);
   };
-  const bgColor = useColorModeValue('background.200.light', 'background.200.dark');
 
   return (
     <Menu matchWidth={true}>
       <MenuButton
         as={Button}
-        bgColor={bgColor}
+        backgroundColor={useColorModeValue('background.300.light', 'background.200.dark')}
         _hover={{}}
         _active={{}}
         rightIcon={<ChevronDownIcon />}
@@ -54,7 +53,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ onTokenSelect, tokens })
             h={'3rem'}
             w={'full'}
             onClick={() => select(t.id)}
-            _hover={{ color: 'brand.secondary' }}
+            _hover={{ color: 'brand.primary.400' }}
           >
             <Item {...t} />
           </MenuItem>
