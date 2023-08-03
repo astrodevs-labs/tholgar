@@ -3,6 +3,8 @@ import { CaptionedNumber } from 'components/ui/CaptionedNumber';
 import useOrFetchTokenBalance from 'hooks/useOrFetchTokenBalance';
 import convertBigintToFormatted from 'utils/convertBigintToFormatted';
 import useOrFetchTokenInfos from 'hooks/useOrFetchTokenInfos';
+import useConnectedAccount from 'hooks/useConnectedAccount';
+import { Spinner } from '@chakra-ui/spinner';
 
 export interface BalanceDisplayProps {
   token: `0x${string}`;
@@ -19,13 +21,16 @@ export const BalanceDisplay: FC<BalanceDisplayProps> = ({
   displaySymbol,
   inline
 }) => {
+  const {isConnected} = useConnectedAccount();
   const balance = useOrFetchTokenBalance({ address: token, account });
   const infos = useOrFetchTokenInfos({ address: token });
   const decimals = infos?.decimals;
   const balanceFormatted =
     balance !== undefined && decimals !== undefined
       ? convertBigintToFormatted(balance, decimals)
-      : '...';
+      : isConnected ?
+        <Spinner/>
+        : '?';
   const symbol = displaySymbol ? infos?.symbol || '' : '';
 
   return (

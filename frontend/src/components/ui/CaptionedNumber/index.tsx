@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, JSX } from 'react';
 import { HStack, Text, VStack } from '@chakra-ui/react';
 
 export interface CaptionedNumberProps {
@@ -10,7 +10,7 @@ export interface CaptionedNumberProps {
   /**
    * @property number The number to display
    */
-  number: number | string;
+  number: number | string | JSX.Element;
 
   /**
    * @property symbol The number symbol
@@ -25,7 +25,7 @@ export const CaptionedNumber: FC<CaptionedNumberProps> = ({ caption, number, sym
     <>
       <Text size={'l'}>{caption}</Text>
       <HStack>
-        <Text size={'l'}>{number}</Text>
+        { typeof number === 'string' || typeof number === 'number' ? <Text size={'l'}>{number}</Text> : number }
         {symbol && <Text size={'l'}>{symbol}</Text>}
       </HStack>
     </>
