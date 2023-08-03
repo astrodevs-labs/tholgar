@@ -9,7 +9,7 @@ import { AuraCvxWithdrawPanel } from '../AuraCvxWithdraw';
 import { WithdrawPanelModal } from '../WithdrawModal';
 import { TokenSelector } from '../../ui/TokenSelector';
 import { TokenNumberInput } from '../../inputs/TokenNumberInput';
-import { vaultAddress, warIconUrl } from '../../../config/blockchain';
+import { vaultAddress, warIconUrl, wstkWethIconUrl } from '../../../config/blockchain';
 // import { useBalance, useToken } from 'wagmi';
 import convertFormattedToBigInt from 'utils/convertFormattedToBigInt';
 import convertBigintToFormatted from 'utils/convertBigintToFormatted';
@@ -92,7 +92,7 @@ export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
           token={vaultAddress}
           ticker={'wstkWAR'}
           value={wstkWARWithdrawInputAmountFormatted}
-          iconUrl={'https://www.convexfinance.com/static/icons/svg/vlcvx.svg'}
+          iconUrl={wstkWethIconUrl}
           onInputChange={setWithdrawAmount}
           onMaxClick={() => setMaxWithdrawInputTokenAmount('wstkWAR')}
         />
