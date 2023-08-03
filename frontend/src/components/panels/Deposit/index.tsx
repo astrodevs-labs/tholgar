@@ -73,7 +73,6 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
     [wstkWAROutputAmount]
   );
   const isDepositDisabled = useMemo(() => {
-    console.log('depositDisabled : ', depositToken === 'war' ? warDepositAmount === 0n : auraDepositAmount === 0n && cvxDepositAmount === 0n)
     if (depositToken === 'war') return warDepositAmount === 0n;
     if (depositToken === 'aura/cvx') return auraDepositAmount === 0n && cvxDepositAmount === 0n;
     return true;

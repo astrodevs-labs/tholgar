@@ -2,12 +2,17 @@
 export const vaultAddress = '0xc1EeD9232A0A44c2463ACB83698c162966FBc78d';
 export const zapAddress = '0xce830DA8667097BB491A70da268b76a081211814';
 
+export const warAuraLocker = '0x7B90e043aaC79AdeA0Dbb0690E3c832757207a3B';
+export const warCvxLocker = '0x700d6d24A55512c6AEC08820B49da4e4193105B3';
 export const stakerAddress = '0xA86c53AF3aadF20bE5d7a8136ACfdbC4B074758A';
 export const auraAddress = '0xC0c293ce456fF0ED870ADd98a0828Dd4d2903DBF';
 export const cvxAddress = '0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B';
 export const redeemerAddress = '0x4787Ef084c1d57ED87D58a716d991F8A9CD3828C';
 export const ratioAddress = '0xE40004395384455326c7a27A85204801C7f85F94';
 export const warAddress = '0xa8258deE2a677874a48F5320670A869D74f0cbC1';
+export const wethAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
+export const cvxCrvAddress = '0xc1EeD9232A0A44c2463ACB83698c162966FBc78d';
+export const auraBalAddress = '0x616e8BfA43F920657B3497DBf40D6b1A02D4608d';
 
 export const warIconUrl = 'https://warlord.paladin.vote/images/icons/war_token.svg';
 export const auraIconUrl =
