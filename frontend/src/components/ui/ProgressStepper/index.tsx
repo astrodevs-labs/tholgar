@@ -18,7 +18,7 @@ export interface ProgressStepperProps {
 }
 
 export const ProgressStepper: FC<ProgressStepperProps> = ({ stepIdx, steps }) => (
-  <Stepper index={stepIdx}>
+  <Stepper index={stepIdx} colorScheme="green">
     {steps.map((step, index) => (
       <Step key={index}>
         <StepIndicator>

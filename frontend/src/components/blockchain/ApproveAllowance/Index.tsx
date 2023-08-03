@@ -59,15 +59,26 @@ export const ApproveAllowance: FC<ApproveAllowanceProps> = ({
         <Center>
           <HStack>
             <Text>Deposit amount</Text>
-            <Switch onChange={setAllowTotal.toggle} />
+            <Switch onChange={setAllowTotal.toggle} colorScheme="green" />
             <Text>Max allowance</Text>
           </HStack>
         </Center>
       </HStack>
-      <Button my={5} onClick={allow} disabled={isLoading}>
+      <Button
+        my={5}
+        onClick={allow}
+        disabled={isLoading}
+        bgColor={'brand.primary.300'}
+        _hover={{ bgColor: 'brand.primary.100' }}
+      >
         {isLoading ? <Spinner /> : 'Approve'}
       </Button>
-      <Button my={5} onClick={validateStep}>
+      <Button
+        my={5}
+        onClick={validateStep}
+        bgColor={'brand.primary.300'}
+        _hover={{ bgColor: 'brand.primary.100' }}
+      >
         Next
       </Button>
     </Flex>

@@ -66,12 +66,18 @@ const Step1: FC<StepProps> = ({ validateStep, address }) => {
         <Center>
           <HStack>
             <Text>Deposit amount</Text>
-            <Switch onChange={setAllowTotal.toggle} />
+            <Switch onChange={setAllowTotal.toggle} colorScheme="green" />
             <Text>Max allowance</Text>
           </HStack>
         </Center>
       </HStack>
-      <Button my={5} onClick={allow} disabled={isLoading}>
+      <Button
+        my={5}
+        onClick={allow}
+        disabled={isLoading}
+        bgColor={'brand.primary.300'}
+        _hover={{ bgColor: 'brand.primary.100' }}
+      >
         {isLoading ? <Spinner /> : 'Approve'}
       </Button>
     </Flex>
@@ -105,7 +111,13 @@ const Step2: FC<StepProps> = ({ validateStep, address }) => {
 
   return (
     <Flex direction={'column'}>
-      <Button my={5} onClick={deposit} disabled={isLoading}>
+      <Button
+        my={5}
+        onClick={deposit}
+        disabled={isLoading}
+        bgColor={'brand.primary.300'}
+        _hover={{ bgColor: 'brand.primary.100' }}
+      >
         {isLoading ? <Spinner /> : 'Deposit'}
       </Button>
     </Flex>

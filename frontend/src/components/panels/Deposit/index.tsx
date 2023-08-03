@@ -130,7 +130,12 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
         </GridItem>
         <GridItem>
           {isConnected ? (
-            <Button w={'full'} backgroundColor={'brand.primary'} onClick={onOpen}>
+            <Button
+              w={'full'}
+              backgroundColor={'brand.primary.300'}
+              onClick={onOpen}
+              _hover={{ bgColor: 'brand.primary.100' }}
+            >
               Deposit
             </Button>
           ) : (

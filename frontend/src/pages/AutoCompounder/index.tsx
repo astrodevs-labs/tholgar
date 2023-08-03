@@ -9,7 +9,7 @@ const AutoCompounder: FC = () => {
   return (
     <>
       <StatsDisplay />
-      <Tabs colorScheme="green" size="lg">
+      <Tabs colorScheme="green" size="lg" _selected={{}}>
         <Container
           p={0}
           pt={1}

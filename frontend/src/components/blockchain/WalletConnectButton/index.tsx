@@ -22,7 +22,12 @@ export const WalletConnectButton: FC<WalletConnectButtonProps> = (props) => {
             {(() => {
               if (!connected) {
                 return (
-                  <Button bg={'brand.primary'} onClick={openConnectModal} w={'100%'}>
+                  <Button
+                    bg={'brand.primary.300'}
+                    onClick={openConnectModal}
+                    w={'100%'}
+                    _hover={{ bgColor: 'brand.primary.100' }}
+                  >
                     Connect Wallet
                   </Button>
                 );
@@ -34,7 +39,11 @@ export const WalletConnectButton: FC<WalletConnectButtonProps> = (props) => {
 
               return (
                 <Flex gap={12}>
-                  <Button bg={'brand.primary'} onClick={openAccountModal}>
+                  <Button
+                    bg={'brand.primary.300'}
+                    onClick={openAccountModal}
+                    _hover={{ bgColor: 'brand.primary.100' }}
+                  >
                     {account.displayName}
                   </Button>
                 </Flex>

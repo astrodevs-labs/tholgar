@@ -44,7 +44,7 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
           fontSize={'1.5em'}
           fontWeight={'bold'}
           bgClip="text"
-          bgGradient={'linear(to-r, brand.primary, white)'}
+          bgGradient={'linear(to-r, brand.primary.300, white)'}
         >
           {isLoading ? '0' : isError ? '0' : formatNumber(data!.totalSupply.formatted)}
         </Text>
@@ -63,7 +63,7 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
           fontSize={'1.5em'}
           fontWeight={'bold'}
           bgClip="text"
-          bgGradient={'linear(to-r, brand.primary, white)'}
+          bgGradient={'linear(to-r, brand.primary.300, white)'}
         >
           {'??%'}
         </Text>
@@ -82,7 +82,7 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
           fontSize={'1.5em'}
           fontWeight={'bold'}
           bgClip={'text'}
-          bgGradient={'linear(to-r, brand.primary, white)'}
+          bgGradient={'linear(to-r, brand.primary.300, white)'}
         >
           {isWarBalanceLoading
             ? '0'
@@ -152,7 +152,7 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
           fontSize={'1.5em'}
           fontWeight={'bold'}
           bgClip={'text'}
-          bgGradient={'linear(to-r, brand.primary, white)'}
+          bgGradient={'linear(to-r, brand.primary.300, white)'}
         >
           {tvl}
         </Text>

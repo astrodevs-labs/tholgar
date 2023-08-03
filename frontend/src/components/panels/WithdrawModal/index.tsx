@@ -84,7 +84,13 @@ export const WithdrawPanelModal: FC<WithdrawPanelModalProps> = ({ open, onClose 
         <ModalCloseButton />
         <ModalBody>
           <Flex direction={'column'}>
-            <Button my={5} onClick={withdraw} disabled={isLoading}>
+            <Button
+              my={5}
+              onClick={withdraw}
+              disabled={isLoading}
+              bgColor={'brand.primary.300'}
+              _hover={{ bgColor: '#007f45' }}
+            >
               {isLoading ? <Spinner /> : 'Withdraw'}
             </Button>
           </Flex>

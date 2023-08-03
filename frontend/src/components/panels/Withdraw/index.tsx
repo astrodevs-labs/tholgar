@@ -109,7 +109,12 @@ export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
           />
         </GridItem>
         <GridItem>
-          <Button w={'full'} backgroundColor={'brand.primary'} onClick={onOpen}>
+          <Button
+            w={'full'}
+            backgroundColor={'brand.primary.300'}
+            onClick={onOpen}
+            _hover={{ bgColor: 'brand.primary.100' }}
+          >
             Withdraw
           </Button>
         </GridItem>

@@ -6,7 +6,7 @@ export interface NavItemProps {
 }
 
 export const NavItem: FC<PropsWithChildren<NavItemProps>> = (props: any) => {
-  const color = useColorModeValue('gray.600', 'gray.300');
+  const color = useColorModeValue('gray.900', 'gray.200');
 
   const { icon, children } = props;
   return (
@@ -20,7 +20,7 @@ export const NavItem: FC<PropsWithChildren<NavItemProps>> = (props: any) => {
       transition=".15s ease"
       color={useColorModeValue('inherit', 'gray.400')}
       _hover={{
-        color: useColorModeValue('gray.900', 'gray.200')
+        color
       }}
     >
       {icon && (
@@ -28,8 +28,9 @@ export const NavItem: FC<PropsWithChildren<NavItemProps>> = (props: any) => {
           mx="2"
           boxSize="4"
           _groupHover={{
-            color: color
+            color
           }}
+          color={useColorModeValue('inherit', 'gray.400')}
           as={icon}
         />
       )}

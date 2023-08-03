@@ -54,7 +54,12 @@ const DepositStep: FC<DepositStepProps> = ({
 
   return (
     <Flex direction={'column'}>
-      <Button my={5} onClick={deposit} disabled={isLoading}>
+      <Button
+        my={5}
+        onClick={deposit}
+        disabled={isLoading}
+        _hover={{ bgColor: 'brand.primary.100' }}
+      >
         {isLoading ? <Spinner /> : 'Deposit'}
       </Button>
     </Flex>
