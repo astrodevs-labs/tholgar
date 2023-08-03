@@ -64,24 +64,16 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
         : '0',
     [wstkWAROutputAmount]
   );
+  const isDepositDisabled = useMemo(() => {
+    console.log('depositDisabled : ', depositToken === 'war' ? warDepositAmount === 0n : auraDepositAmount === 0n && cvxDepositAmount === 0n)
+    if (depositToken === 'war') return warDepositAmount === 0n;
+    if (depositToken === 'aura/cvx') return auraDepositAmount === 0n && cvxDepositAmount === 0n;
+    return true;
+  }, [depositToken, warDepositAmount, auraDepositAmount, cvxDepositAmount]);
   const input = tokensInputs.get(depositToken);
 
   const auraRatio = useTokenRatio(auraAddress);
   const cvxRatio = useTokenRatio(cvxAddress);
-  /*  const {
-    data: depositAmount,
-  } = useContractRead({
-    address: vaultAddress,
-    abi: vaultABI,
-    functionName: 'previewDeposit',
-    args: [ws],
-    enabled: true
-  });
-
-  useEffect(() => {
-    if (!depositAmount || !war) return;
-    setOutputAmount(convertBigintToFormatted(depositAmount as bigint, war.decimals))
-  }, [depositAmount, war]);*/
 
   useEffect(() => {
     if (
@@ -135,6 +127,7 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
               backgroundColor={'brand.primary.300'}
               onClick={onOpen}
               _hover={{ bgColor: 'brand.primary.100' }}
+              isDisabled={isDepositDisabled}
             >
               Deposit
             </Button>

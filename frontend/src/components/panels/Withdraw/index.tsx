@@ -50,6 +50,9 @@ export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
     },
     [setWithdrawInputTokenAmount, wstkWARDecimals]
   );
+  const isWithdrawDisabled = useMemo(() => {
+    return wstkWARWithdrawInputAmount === 0n;
+  }, [wstkWARWithdrawInputAmount]);
   const output = tokensOutputs.get(withdrawToken);
 
   /*const [withdrawAmount, setWithdrawAmount] = useState<string>('0');
@@ -114,6 +117,7 @@ export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
             backgroundColor={'brand.primary.300'}
             onClick={onOpen}
             _hover={{ bgColor: 'brand.primary.100' }}
+            isDisabled={isWithdrawDisabled}
           >
             Withdraw
           </Button>
