@@ -46,7 +46,7 @@ export const AuraCvxDepositPanel: FC<AuraCvxDepositPanelProps> = () => {
   );
 
   return (
-    <Flex direction={'column'} gap={4}>
+    <Flex direction={'column'} gap={2}>
       <TokenNumberInput
         token={auraAddress}
         ticker={'AURA'}

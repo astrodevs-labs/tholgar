@@ -56,7 +56,7 @@ export const AuraCvxWithdrawPanel: FC<AuraCvxWithdrawPanelProps> = () => {
   }, [amounts, setAmount]);*/
 
   return (
-    <Flex direction={'column'} gap={4}>
+    <Flex direction={'column'} gap={2}>
       <TokenNumberOutput
         ticker={'AURA'}
         iconUrl={auraIconUrl}
