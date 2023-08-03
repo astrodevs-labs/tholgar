@@ -27,7 +27,7 @@ export default function useConnectedAccount(): {
     if (address !== newAddress) setAddress(newAddress);
     if (isConnecting !== newIsConnecting) setIsConnecting(newIsConnecting);
     if (isConnected !== newIsConnected) setIsConnected(newIsConnected);
-  }, []);
+  }, [newAddress, newIsConnecting, newIsConnected]);
 
   return { address, isConnecting, isConnected };
 }
