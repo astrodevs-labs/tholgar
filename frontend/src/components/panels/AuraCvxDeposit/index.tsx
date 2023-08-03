@@ -20,6 +20,7 @@ export const AuraCvxDepositPanel: FC<AuraCvxDepositPanelProps> = () => {
     state.setDepositInputTokenAmount,
     state.setMaxDepositInputTokenAmount
   ]);
+  const setDepositOutputTokenAmount = useStore((state) => state.setDepositOutputTokenAmount);
   const auraDepositInputAmountFormatted = useMemo(() => {
     if (!auraDecimals) return '0';
     return convertBigintToFormatted(auraDepositInputAmount, auraDecimals);
@@ -53,6 +54,7 @@ export const AuraCvxDepositPanel: FC<AuraCvxDepositPanelProps> = () => {
         iconUrl={auraIconUrl}
         value={auraDepositInputAmountFormatted}
         onInputChange={setAuraAmount}
+        onInputClear={() => setDepositOutputTokenAmount('wstkWAR', 0n)}
         onMaxClick={() => setMaxDepositInputTokenAmount('aura')}
       />
       <TokenNumberInput
@@ -61,6 +63,7 @@ export const AuraCvxDepositPanel: FC<AuraCvxDepositPanelProps> = () => {
         iconUrl={cvxIconUrl}
         value={cvxDepositInputAmountFormatted}
         onInputChange={setCvxAmount}
+        onInputClear={() => setDepositOutputTokenAmount('wstkWAR', 0n)}
         onMaxClick={() => setMaxDepositInputTokenAmount('cvx')}
       />
     </Flex>

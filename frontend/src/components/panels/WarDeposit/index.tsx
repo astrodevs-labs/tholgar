@@ -17,6 +17,7 @@ export const WarDepositPanel: FC<WarDepositPanelProps> = () => {
     state.setDepositInputTokenAmount,
     state.setMaxDepositInputTokenAmount
   ]);
+  const setDepositOutputTokenAmount = useStore((state) => state.setDepositOutputTokenAmount);
   const warDepositInputAmountFormatted = useMemo(() => {
     if (!warDecimals) return '0';
     return convertBigintToFormatted(warDepositInputAmount, warDecimals);
@@ -38,6 +39,7 @@ export const WarDepositPanel: FC<WarDepositPanelProps> = () => {
         iconUrl={warIconUrl}
         value={warDepositInputAmountFormatted}
         onInputChange={setAmount}
+        onInputClear={() => setDepositOutputTokenAmount('wstkWAR', 0n)}
         onMaxClick={() => {
           setMaxDepositInputTokenAmount('war');
         }}

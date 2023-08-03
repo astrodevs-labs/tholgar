@@ -46,6 +46,7 @@ export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
     state.withdrawToken,
     state.setWithdrawToken
   ]);
+  const setWithdrawOutputTokenAmount = useStore((state) => state.setWithdrawOutputTokenAmount);
   const wstkWARWithdrawInputAmountFormatted = useMemo(() => {
     if (!wstkWARDecimals) return '0';
     return convertBigintToFormatted(wstkWARWithdrawInputAmount, wstkWARDecimals);
@@ -105,6 +106,11 @@ export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
           value={wstkWARWithdrawInputAmountFormatted}
           iconUrl={wstkWarIconUrl}
           onInputChange={setWithdrawAmount}
+          onInputClear={() => {
+            setWithdrawOutputTokenAmount('war', 0n);
+            setWithdrawOutputTokenAmount('aura', 0n);
+            setWithdrawOutputTokenAmount('cvx', 0n);
+          }}
           onMaxClick={() => setMaxWithdrawInputTokenAmount('wstkWAR')}
         />
       </Flex>

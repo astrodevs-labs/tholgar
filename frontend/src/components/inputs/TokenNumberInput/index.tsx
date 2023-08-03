@@ -11,6 +11,7 @@ export interface TokenNumberInputProps {
   value?: string;
   // eslint-disable-next-line no-unused-vars
   onInputChange: (value: string) => void;
+  onInputClear: () => void;
   onMaxClick: () => void;
 }
 
@@ -20,6 +21,7 @@ export const TokenNumberInput: FC<TokenNumberInputProps> = ({
   iconUrl,
   value,
   onInputChange,
+  onInputClear,
   onMaxClick
 }) => {
   const [inputValue, setInputValue] = useState<string | undefined>(value);
@@ -43,7 +45,11 @@ export const TokenNumberInput: FC<TokenNumberInputProps> = ({
             value={inputValue}
             onChange={(e) => {
               setInputValue(e.target.value);
-              if (e.target.value.length === 0 || e.target.value.match(/[^0-9.]/g)) return;
+              if (e.target.value.length === 0)  {
+                onInputClear();
+                return;
+              }
+              if (e.target.value.match(/[^0-9.]/g)) return;
               onInputChange(e.target.value);
             }}
           />
