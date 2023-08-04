@@ -45,7 +45,7 @@ export const TokenNumberInput: FC<TokenNumberInputProps> = ({
             value={inputValue}
             onChange={(e) => {
               setInputValue(e.target.value);
-              if (e.target.value.length === 0)  {
+              if (e.target.value.length === 0) {
                 onInputClear();
                 return;
               }
@@ -55,7 +55,12 @@ export const TokenNumberInput: FC<TokenNumberInputProps> = ({
           />
           <HStack>
             <BalanceDisplay description={'Balance :'} token={token} inline={true} />
-            <Text cursor={'pointer'} textShadow={'0px 0px 5px var(--chakra-colors-brand-primary-300)'} textColor={"brand.primary.300"}  onClick={() => onMaxClick()}>
+            <Text
+              cursor={'pointer'}
+              textShadow={'0px 0px 5px var(--chakra-colors-brand-primary-300)'}
+              textColor={'brand.primary.300'}
+              onClick={() => onMaxClick()}
+            >
               MAX
             </Text>
           </HStack>

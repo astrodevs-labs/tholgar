@@ -8,13 +8,15 @@ import {
   OutputTokensAmountsStore
 } from './outputTokensAmounts.store';
 import { createTokensInformationStore, TokensInformationStore } from './tokensInformation.store';
+import { StatsStore, createStatsStore } from './stats.store';
 
 export type Store = AccountStore &
   SelectedTokenStore &
   InputTokensAmountsStore &
   TokensBalancesStore &
   OutputTokensAmountsStore &
-  TokensInformationStore;
+  TokensInformationStore &
+  StatsStore;
 
 export const useStore = create<Store>((...a) => ({
   ...createAccountStore(...a),
@@ -22,7 +24,8 @@ export const useStore = create<Store>((...a) => ({
   ...createInputTokensAmountsStore(...a),
   ...createTokensBalancesStore(...a),
   ...createOutputTokensAmountsStore(...a),
-  ...createTokensInformationStore(...a)
+  ...createTokensInformationStore(...a),
+  ...createStatsStore(...a)
 }));
 
 export {

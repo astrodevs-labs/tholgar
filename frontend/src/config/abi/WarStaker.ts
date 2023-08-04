@@ -481,4 +481,4 @@ const warStakerABI = [
     type: 'function'
   }
 ];
-export { warStakerABI }
+export { warStakerABI };

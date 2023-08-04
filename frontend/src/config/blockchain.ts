@@ -12,8 +12,9 @@ export const ratioAddress = '0xE40004395384455326c7a27A85204801C7f85F94';
 export const warAddress = '0xa8258deE2a677874a48F5320670A869D74f0cbC1';
 export const wethAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
 export const palAddress = '0xAB846Fb6C81370327e784Ae7CbB6d6a6af6Ff4BF';
-export const cvxCrvAddress = '0xc1EeD9232A0A44c2463ACB83698c162966FBc78d';
+export const cvxCrvAddress = '0x62B9c7356A2Dc64a1969e19C23e4f579F9810Aa7';
 export const auraBalAddress = '0x616e8BfA43F920657B3497DBf40D6b1A02D4608d';
+export const cvxLockerAddress = '0x72a19342e8F1838460eBFCCEf09F6585e32db86E';
 
 export const warIconUrl = 'https://warlord.paladin.vote/images/icons/war_token.svg';
 export const auraIconUrl =
