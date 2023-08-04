@@ -15,9 +15,15 @@ import {
   wethAddress,
   warCvxLocker,
   warLockerAbi,
-  warAuraLocker
+  warAuraLocker,
+  redeemerAddress,
+  warRedeemerABI,
+  ratioAddress,
+  warRatioABI,
+  palAddress
 } from 'config/blockchain';
 import getTotalPricePerToken from 'utils/getTotalPricePerToken';
+import axios from 'axios';
 
 export interface StatsDisplayProps {}
 
@@ -30,6 +36,10 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
     address: vaultAddress,
     token: stakerAddress
   });
+  const { data: totalWarLocked } = useBalance({
+    address: stakerAddress,
+    token: warAddress,
+  })
   const { data: cvxLocked } = useContractRead({
     address: warCvxLocker,
     abi: warLockerAbi,
@@ -39,6 +49,14 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
     address: warAuraLocker,
     abi: warLockerAbi,
     functionName: 'getCurrentLockedTokens',
+  });
+  const { data: weights } = useContractRead({
+    address: redeemerAddress,
+    abi: warRedeemerABI,
+    functionName: 'getTokenWeights',
+  });
+  const { data: staker } = useToken({
+    address: stakerAddress
   });
 
 
@@ -98,37 +116,130 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
       functionName: 'rewardStates',
       args: [wethAddress]
     });
+    const { data: palRates } = useContractRead({
+      address: stakerAddress,
+      abi: warStakerABI,
+      functionName: 'rewardStates',
+      args: [palAddress]
+    });
+    const { data: auraRatio } = useContractRead({
+      address: ratioAddress,
+      abi: warRatioABI,
+      functionName: 'getTokenRatio',
+      args: [auraAddress]
+    });
+    const { data: cvxRatio } = useContractRead({
+      address: ratioAddress,
+      abi: warRatioABI,
+      functionName: 'getTokenRatio',
+      args: [cvxAddress]
+    });
 
-    async function computeAPY() {
-      if (cvxCrvRates === undefined || auraBalRates === undefined || warRates === undefined || wethRates === undefined) return;
+    async function computeActiveTvl(): Promise<number | undefined> {
+      if (totalWarLocked === undefined || weights == undefined) return;
+
+      const auraWeight = (weights as any).find((weight: any) => weight.token === auraAddress).weight;
+      const cvxWeight = (weights as any).find((weight: any) => weight.token === cvxAddress).weight;
+
+      if (auraWeight === undefined || cvxWeight === undefined) return;
+
+      const auraAmount = totalWarLocked.value * auraWeight / (auraRatio as bigint) / BigInt(1e18);
+      const cvxAmount = totalWarLocked.value * cvxWeight / (cvxRatio as bigint) / BigInt(1e18);
+
+      const warlordTVL = await getTotalPricePerToken(auraAmount, auraAddress) + await getTotalPricePerToken(cvxAmount, cvxAddress);
+      return warlordTVL;
+    }
+
+    async function computeCrvCvxApr(): Promise<number | undefined> {
+      if (staker === undefined) return;
+      // TODO Compute APR
+      return 0;
+    }
+
+    async function computeAuraBalApr(): Promise<number | undefined> {
+      if (totalWarLocked === undefined || weights === undefined || auraLocked === undefined) return;
+      const response = await axios.post(
+        'https://data.aura.finance/graphql',
+        {
+          'query': '{\n  locker {\n    aprs {\n      breakdown {\n        value      },\n    }\n  }\n  \n}\n  \n  '
+        },
+      );
+      let amount = 0;
+      for (const apr of response.data.data.locker.aprs.breakdown) {
+        amount += apr.value;
+      }
+      const auraWeight = (weights as any).find((weight: any) => weight.token === auraAddress).weight;
+      return amount * ( Number(auraWeight) / 1e18) / 100 * Number((auraLocked as bigint)) / Number(totalWarLocked.value * auraWeight / (auraRatio as bigint));
+    }
+
+    async function computeWarApr(tvl: number): Promise<number | undefined> {
+      if (warRates === undefined || weights === undefined) return;
+      if (((warRates) as bigint[])[2] * 1000n <= new Date().valueOf()) return 0;
+
+      const warAmount = ((warRates) as bigint[])[3] * 604800n * 4n * 12n;
+
+      const auraWeight = (weights as any).find((weight: any) => weight.token === auraAddress).weight;
+      const cvxWeight = (weights as any).find((weight: any) => weight.token === cvxAddress).weight;
+
+      const cvxAmount = warAmount * auraWeight / (auraRatio as bigint) / BigInt(1e18);
+      const auraAmount = warAmount * cvxWeight / (cvxRatio as bigint) / BigInt(1e18);
+
+      const cvxDollar = await getTotalPricePerToken(cvxAmount, cvxAddress);
+      const auraDollar = await getTotalPricePerToken(auraAmount, auraAddress);
+
+      const warDollar = cvxDollar + auraDollar;
+      const warApr = warDollar / tvl;
+      return warApr;
+    }
+
+    async function computeWethApr(tvl: number): Promise<number | undefined> {
+      if (wethRates === undefined) return;
+      if (((wethRates) as bigint[])[2] * 1000n <= new Date().valueOf()) return 0;
 
       const wethAmount = ((wethRates) as bigint[])[3] * 604800n * 4n * 12n;
-      const warAmount = ((warRates) as bigint[])[3] * 604800n * 4n * 12n;
-      const auraAmount = ((auraBalRates) as bigint[])[3] * 604800n * 4n * 12n;
-      const cvxCrvAmount = ((cvxCrvRates) as bigint[])[3] * 604800n * 4n * 12n;
 
       const wethDollar = await getTotalPricePerToken(wethAmount / BigInt(1e18), wethAddress);
-      const warDollar = await getTotalPricePerToken(warAmount / BigInt(1e18), warAddress);
-      const auraDollar = await getTotalPricePerToken(auraAmount / BigInt(1e18), auraAddress);
-      const cvxCrvDollar = await getTotalPricePerToken(cvxCrvAmount / BigInt(1e18), cvxCrvAddress);
+      const wethApr = wethDollar / tvl;
+      return wethApr;
+    }
 
-      const dollarValue = wethDollar + auraDollar + cvxCrvDollar + warDollar;
+    async function computePalApr(tvl: number): Promise<number | undefined> {
+      if (palRates === undefined) return;
+      if (((palRates) as bigint[])[2] * 1000n <= new Date().valueOf()) return 0;
 
-      const warlordTVL = await getTotalPricePerToken(cvxLocked as bigint / BigInt(1e18), cvxAddress) + await getTotalPricePerToken(auraLocked as bigint / BigInt(1e18), auraAddress);
+      const palAmount = ((palRates) as bigint[])[3] * 604800n * 4n * 12n;
 
-      const apr = dollarValue / warlordTVL;
+      const palDollar = await getTotalPricePerToken(palAmount / BigInt(1e18), palAddress);
+      const palApr = palDollar / tvl;
+      return palApr;
+    }
+
+    async function computeAPY() {
+      const warlordTVL = await computeActiveTvl();
+      if (warlordTVL === undefined) return;
+
+      const auraBalApr = await computeAuraBalApr();
+      const warApr = await computeWarApr(warlordTVL);
+      const wethApr = await computeWethApr(warlordTVL);
+      const palApr = await computePalApr(warlordTVL);
+      const cvxCrvApr = await computeCrvCvxApr();
+      if (auraBalApr === undefined || warApr === undefined || wethApr === undefined || palApr === undefined || cvxCrvApr === undefined) return;
+
+      console.log(auraBalApr, warApr, wethApr, palApr, cvxCrvApr)
+
+      const apr = auraBalApr + warApr + wethApr + palApr + cvxCrvApr;
       const apy = (1 + apr / 48) ** 48 - 1;
       setApy((apy * 100).toFixed(2) + '%');
     }
 
     useEffect(() => {
       computeAPY();
-    }, [cvxCrvRates, auraBalRates, warRates, wethRates])
-  
+    }, [cvxCrvRates, palRates, auraBalRates, warRates, wethRates, totalWarLocked, weights])
+
     return (
       <VStack>
         <Text whiteSpace={'nowrap'} fontSize={'1.125em'} color={infoColor} opacity={'.7'}>
-          {'APY'}
+          {'vAPY'}
         </Text>
         <Text
           whiteSpace={'nowrap'}
@@ -168,10 +279,6 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
 
   const TVL: FC = () => {
     const [tvl, setTvl] = React.useState<string>('0$');
-
-    const { data: staker } = useToken({
-      address: stakerAddress
-    });
 
     async function computeTVL() {
       if (
