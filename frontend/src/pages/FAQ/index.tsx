@@ -1,8 +1,6 @@
-import { Heading, useColorModeValue } from '@chakra-ui/react';
-import { FC } from 'react';
-import { questions } from '../../config/questions';
-
 import {
+  Heading,
+  useColorModeValue,
   Accordion,
   AccordionItem,
   AccordionButton,
@@ -13,6 +11,8 @@ import {
   CardBody,
   Divider
 } from '@chakra-ui/react';
+import { FC } from 'react';
+import { questions } from '../../config/questions';
 
 const FAQ: FC = () => (
   <>
