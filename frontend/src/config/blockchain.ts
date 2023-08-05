@@ -23,6 +23,6 @@ export const cvxIconUrl = 'https://www.convexfinance.com/static/icons/svg/vlcvx.
 export const auraCvxIconUrl = '/images/aura-cvx.svg';
 export const wstkWarIconUrl = '/images/wstkWAR.png';
 
-export const maxAllowance = BigInt("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+export const maxAllowance = 2n ** 256n - 1n;
 
 export * from './abi';
