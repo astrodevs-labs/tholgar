@@ -41,7 +41,7 @@ export const SideBarBody: FC<PropsWithChildren<SideBarBodyProps>> = (props) => {
         <Link href={'/'} _hover={{}}>
           <NavItem icon={BiHome}>Home</NavItem>
         </Link>
-        <Link href={'faq'} _hover={{}}>
+        <Link href={'/#/faq'} _hover={{}}>
           <NavItem icon={BiQuestionMark}>FAQ</NavItem>
         </Link>
       </Flex>
