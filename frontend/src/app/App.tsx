@@ -1,5 +1,5 @@
 import React from 'react';
-import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
+import { RouterProvider, Navigate, createHashRouter } from 'react-router-dom';
 import { WagmiConfig } from 'wagmi';
 import { ChakraProvider } from '@chakra-ui/react';
 import { AutoCompounder, FAQ, Pounder } from 'pages';
@@ -13,7 +13,7 @@ import {
   lightTheme
 } from '@rainbow-me/rainbowkit';
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: '/',
     element: <AutoCompounder />
