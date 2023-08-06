@@ -23,6 +23,8 @@ import convertFormattedToBigInt from 'utils/convertFormattedToBigInt';
 import convertBigintToFormatted from 'utils/convertBigintToFormatted';
 import { tokensSelection, useStore } from '../../../store';
 import useOrFetchTokenInfos from '../../../hooks/useOrFetchTokenInfos';
+import { WalletConnectButton } from 'components/blockchain/WalletConnectButton';
+import useConnectedAccount from 'hooks/useConnectedAccount';
 
 export interface WithdrawPanelProps {}
 
@@ -37,6 +39,7 @@ export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
   const wstkWARInfos = useOrFetchTokenInfos({ token: 'wstkWAR' });
   const wstkWARDecimals = wstkWARInfos?.decimals;
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isConnected } = useConnectedAccount();
   const wstkWARWithdrawInputAmount = useStore((state) =>
     state.getWithdrawInputTokenAmount('wstkWAR')
   );
@@ -64,39 +67,6 @@ export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
   }, [wstkWARWithdrawInputAmount]);
   const output = tokensOutputs.get(withdrawToken);
 
-  /*const [withdrawAmount, setWithdrawAmount] = useState<string>('0');
-  const [maxWithdrawAmount, setMaxWithdrawAmount] = useState<string>('0');
-  const [amounts, setAmounts] = useState<{ token: string; amount: string }[]>([
-    { token: 'war', amount: '0' }
-  ]);
-  const [withdrawToken, setWithdrawToken] = useState<string>('war');
-  const output = tokensOutputs.get(withdrawToken);*/
-
-  /*
-
-  const { data: warBalance } = useBalance({
-    address: vaultAddress,
-    token: stakerAddress
-  });
-
-  const { data: vault } = useToken({
-    address: vaultAddress
-  });
-
-  useEffect(() => {
-    if (!warBalance || !vault) return;
-    if (
-      vault.totalSupply.value === 0n ||
-      convertFormattedToBigInt(withdrawAmount, vault.decimals) === 0n
-    )
-      return;
-    const amount =
-      (warBalance.value / vault.totalSupply.value) *
-      convertFormattedToBigInt(withdrawAmount, vault.decimals);
-
-    setMaxWithdrawAmount(convertBigintToFormatted(amount, warBalance.decimals));
-  }, [warBalance, vault]);
-*/
   return (
     <>
       <Flex direction={'column'}>
@@ -126,6 +96,7 @@ export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
           />
         </GridItem>
         <GridItem>
+        {isConnected ? (
           <Button
             w={'full'}
             backgroundColor={useColorModeValue('brand.primary.200', 'brand.primary.300')}
@@ -136,6 +107,9 @@ export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
           >
             Withdraw
           </Button>
+        ) : (
+          <WalletConnectButton />
+        )}
         </GridItem>
       </Grid>
       <WithdrawPanelModal open={isOpen} onClose={onClose} />
