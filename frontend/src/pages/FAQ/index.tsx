@@ -6,10 +6,10 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
-  Card,
   CardHeader,
   CardBody,
-  Divider
+  Divider,
+  Card
 } from '@chakra-ui/react';
 import { FC } from 'react';
 import { questions } from '../../config/questions';
@@ -18,10 +18,14 @@ const FAQ: FC = () => (
   <>
     <Card
       backgroundColor={useColorModeValue('background.500.light', 'background.500.dark')}
-      borderRadius="lg"
+      borderRadius="1.5em"
       borderColor={useColorModeValue('border.light', 'border.dark')}
-      margin={'2rem'}
-      borderWidth="1px">
+      borderWidth="1px"
+      p={'1.25em'}
+      mt={'1.25em'}
+      mb={'1.25em'}
+      mx={'4em'}
+      boxSizing="border-box">
       <CardHeader>
         <Heading as="h1" size="lg">
           Frequently Asked Questions

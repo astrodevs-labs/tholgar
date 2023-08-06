@@ -96,20 +96,20 @@ export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
           />
         </GridItem>
         <GridItem>
-        {isConnected ? (
-          <Button
-            w={'full'}
-            backgroundColor={useColorModeValue('brand.primary.200', 'brand.primary.300')}
-            _hover={{ bgColor: useColorModeValue('brand.primary.300', 'brand.primary.100') }}
-            color={useColorModeValue('#00cf6f', 'inherit')}
-            onClick={onOpen}
-            isDisabled={isWithdrawDisabled}
-          >
-            Withdraw
-          </Button>
-        ) : (
-          <WalletConnectButton />
-        )}
+          {isConnected ? (
+            <Button
+              w={'full'}
+              backgroundColor={useColorModeValue('brand.primary.200', 'brand.primary.300')}
+              _hover={{ bgColor: useColorModeValue('brand.primary.300', 'brand.primary.100') }}
+              color={useColorModeValue('#00cf6f', 'inherit')}
+              onClick={onOpen}
+              isDisabled={isWithdrawDisabled}
+            >
+              Withdraw
+            </Button>
+          ) : (
+            <WalletConnectButton />
+          )}
         </GridItem>
       </Grid>
       <WithdrawPanelModal open={isOpen} onClose={onClose} />
