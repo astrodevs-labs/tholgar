@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react';
-import { Text, VStack, GridItem, Grid, useColorModeValue, useColorMode } from '@chakra-ui/react';
+import { Text, VStack, GridItem, Grid, useColorModeValue, useColorMode, Spinner } from '@chakra-ui/react';
 import { Container } from 'components/ui/Container';
 import { useBalance, useContractRead, useToken } from 'wagmi';
 import formatNumber from 'utils/formatNumber';
@@ -31,8 +31,6 @@ export interface StatsDisplayProps {}
 export const StatsDisplay: FC<StatsDisplayProps> = () => {
   const {
     data: warBalance,
-    isLoading: isWarBalanceLoading,
-    isError: isWarBalanceError
   } = useBalance({
     address: vaultAddress,
     token: stakerAddress
@@ -67,7 +65,7 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
   const infoColor = useColorModeValue('black', 'white');
 
   const CirculatingSupply: FC = () => {
-    const { data, isLoading, isError } = useToken({
+    const { data: vault } = useToken({
       address: vaultAddress
     });
 
@@ -76,21 +74,27 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
         <Text whiteSpace={'nowrap'} fontSize={'1.125em'} color={infoColor} opacity={'.7'}>
           {'Circulating Supply'}
         </Text>
-        <Text
-          whiteSpace={'nowrap'}
-          fontSize={'1.5em'}
-          fontWeight={'bold'}
-          bgClip="text"
-          {...textProps}
-        >
-          {isLoading ? '0' : isError ? '0' : formatNumber(data!.totalSupply.formatted)}
-        </Text>
+        {
+          vault === undefined ? (
+            <Spinner />
+          ) : (
+            <Text
+              whiteSpace={'nowrap'}
+              fontSize={'1.5em'}
+              fontWeight={'bold'}
+              bgClip="text"
+              {...textProps}
+            >
+              {formatNumber(vault!.totalSupply.formatted)}
+            </Text>
+          )
+        }
       </VStack>
     );
   };
 
   const APY: FC = () => {
-    const [apy, setApy] = React.useState<string>('0.00%');
+    const [apy, setApy] = React.useState<string | undefined>(undefined);
 
     const warRates = useFetchRewardStates(warAddress);
     const wethRates = useFetchRewardStates(wethAddress);
@@ -256,15 +260,21 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
         <Text whiteSpace={'nowrap'} fontSize={'1.125em'} color={infoColor} opacity={'.7'}>
           {'vAPY'}
         </Text>
-        <Text
-          whiteSpace={'nowrap'}
-          fontSize={'1.5em'}
-          fontWeight={'bold'}
-          bgClip="text"
-          {...textProps}
-        >
-          {apy}
-        </Text>
+        {
+          apy === undefined ? (
+            <Spinner />
+          ) : (
+            <Text
+              whiteSpace={'nowrap'}
+              fontSize={'1.5em'}
+              fontWeight={'bold'}
+              bgClip="text"
+              {...textProps}
+            >
+              {apy}
+            </Text>
+          )
+        }
       </VStack>
     );
   };
@@ -275,25 +285,27 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
         <Text whiteSpace={'nowrap'} fontSize={'1.125em'} color={infoColor} opacity={'.7'}>
           {'WAR Locked'}
         </Text>
-        <Text
-          whiteSpace={'nowrap'}
-          fontSize={'1.5em'}
-          fontWeight={'bold'}
-          bgClip={'text'}
-          {...textProps}
-        >
-          {isWarBalanceLoading
-            ? '0'
-            : isWarBalanceError
-            ? '0'
-            : formatNumber(warBalance!.formatted)}
-        </Text>
+        {
+          warBalance === undefined ? (
+            <Spinner />
+          ) : (
+            <Text
+              whiteSpace={'nowrap'}
+              fontSize={'1.5em'}
+              fontWeight={'bold'}
+              bgClip="text"
+              {...textProps}
+            >
+              {formatNumber(warBalance!.formatted)}
+            </Text>
+          )
+        }
       </VStack>
     );
   };
 
   const TVL: FC = () => {
-    const [tvl, setTvl] = React.useState<string>('0$');
+    const [tvl, setTvl] = React.useState<string | undefined>(undefined);
 
     async function computeTVL() {
       if (
@@ -324,15 +336,21 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
         <Text whiteSpace={'nowrap'} fontSize={'1.125em'} color={infoColor} opacity={'.7'}>
           {'Total Volume Locked'}
         </Text>
-        <Text
-          whiteSpace={'nowrap'}
-          fontSize={'1.5em'}
-          fontWeight={'bold'}
-          bgClip={'text'}
-          {...textProps}
-        >
-          {tvl}
-        </Text>
+        {
+          tvl === undefined ? (
+            <Spinner />
+          ) : (
+            <Text
+              whiteSpace={'nowrap'}
+              fontSize={'1.5em'}
+              fontWeight={'bold'}
+              bgClip={'text'}
+              {...textProps}
+            >
+              {tvl}
+            </Text>
+          )
+        }
       </VStack>
     );
   };
