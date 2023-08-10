@@ -25,7 +25,8 @@ const FAQ: FC = () => (
       mt={'1.25em'}
       mb={'1.25em'}
       mx={'4em'}
-      boxSizing="border-box">
+      boxSizing="border-box"
+    >
       <CardHeader>
         <Heading as="h1" size="lg">
           Frequently Asked Questions

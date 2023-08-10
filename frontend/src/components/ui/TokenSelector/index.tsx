@@ -38,6 +38,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ onTokenSelect, tokens })
     <Menu matchWidth={true}>
       <MenuButton
         as={Button}
+        opacity={1}
         backgroundColor={useColorModeValue('background.300.light', 'background.200.dark')}
         _hover={{}}
         _active={{}}
