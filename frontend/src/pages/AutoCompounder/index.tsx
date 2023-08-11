@@ -17,8 +17,7 @@ const AutoCompounder: FC = () => {
           mx="4em"
           borderBottomRadius={'0'}
           borderBottom={'0'}
-          borderRadius={'1.5em'}
-        >
+          borderRadius={'1.5em'}>
           <TabList borderBottom={'none'}>
             <Tab>Deposit</Tab>
             <Tab>Withdraw</Tab>

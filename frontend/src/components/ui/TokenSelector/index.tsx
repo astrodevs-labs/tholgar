@@ -43,8 +43,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ onTokenSelect, tokens })
         _hover={{}}
         _active={{}}
         rightIcon={<ChevronDownIcon />}
-        w={'100%'}
-      >
+        w={'100%'}>
         <Item {...selected!} />
       </MenuButton>
       <MenuList w={'100%'}>
@@ -54,8 +53,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ onTokenSelect, tokens })
             h={'3rem'}
             w={'full'}
             onClick={() => select(t.id)}
-            _hover={{ color: 'brand.primary.400' }}
-          >
+            _hover={{ color: 'brand.primary.400', transition: 'color 0.25s ease' }}>
             <Item {...t} />
           </MenuItem>
         ))}

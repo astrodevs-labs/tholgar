@@ -103,8 +103,7 @@ export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
               _hover={{ bgColor: useColorModeValue('brand.primary.300', 'brand.primary.100') }}
               color={useColorModeValue('#00cf6f', 'inherit')}
               onClick={onOpen}
-              isDisabled={isWithdrawDisabled}
-            >
+              isDisabled={isWithdrawDisabled}>
               Withdraw
             </Button>
           ) : (

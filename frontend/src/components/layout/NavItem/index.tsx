@@ -22,8 +22,7 @@ export const NavItem: FC<PropsWithChildren<NavItemProps>> = (props: any) => {
       _hover={{
         color,
         transition: 'color 0.25s ease'
-      }}
-    >
+      }}>
       {icon && (
         <Icon
           mx="2"

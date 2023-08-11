@@ -80,8 +80,7 @@ export const ApproveAllowance: FC<ApproveAllowanceProps> = ({
         disabled={isLoading}
         backgroundColor={useColorModeValue('brand.primary.200', 'brand.primary.300')}
         _hover={{ bgColor: useColorModeValue('brand.primary.300', 'brand.primary.100') }}
-        color={useColorModeValue('#00cf6f', 'inherit')}
-      >
+        color={useColorModeValue('#00cf6f', 'inherit')}>
         {isLoading ? <Spinner /> : 'Approve'}
       </Button>
       <Button
@@ -89,8 +88,7 @@ export const ApproveAllowance: FC<ApproveAllowanceProps> = ({
         onClick={validateStep}
         backgroundColor={useColorModeValue('brand.primary.200', 'brand.primary.300')}
         _hover={{ bgColor: useColorModeValue('brand.primary.300', 'brand.primary.100') }}
-        color={useColorModeValue('#00cf6f', 'inherit')}
-      >
+        color={useColorModeValue('#00cf6f', 'inherit')}>
         Next
       </Button>
     </Flex>

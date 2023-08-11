@@ -43,8 +43,7 @@ export const Container: FC<PropsWithChildren<ContainerProps>> = (props) => {
       boxSizing="border-box"
       backgroundColor={backgroundColor}
       {...borderProps}
-      {...boxProps}
-    >
+      {...boxProps}>
       {props.children}
     </Box>
   );

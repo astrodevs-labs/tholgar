@@ -135,8 +135,7 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
               onClick={onOpen}
               isDisabled={isDepositDisabled}
               _hover={{ bgColor: useColorModeValue('brand.primary.300', 'brand.primary.100') }}
-              color={useColorModeValue('#00cf6f', 'inherit')}
-            >
+              color={useColorModeValue('#00cf6f', 'inherit')}>
               Deposit
             </Button>
           ) : (

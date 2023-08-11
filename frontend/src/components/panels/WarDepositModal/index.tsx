@@ -87,8 +87,7 @@ const Step1: FC<StepProps> = ({ validateStep, address }) => {
         disabled={isLoading}
         backgroundColor={useColorModeValue('brand.primary.200', 'brand.primary.300')}
         _hover={{ bgColor: useColorModeValue('brand.primary.300', 'brand.primary.100') }}
-        color={useColorModeValue('#00cf6f', 'inherit')}
-      >
+        color={useColorModeValue('#00cf6f', 'inherit')}>
         {isLoading ? <Spinner /> : 'Approve'}
       </Button>
     </Flex>
@@ -128,8 +127,7 @@ const Step2: FC<StepProps> = ({ validateStep, address }) => {
         disabled={isLoading}
         backgroundColor={useColorModeValue('brand.primary.200', 'brand.primary.300')}
         _hover={{ bgColor: useColorModeValue('brand.primary.300', 'brand.primary.100') }}
-        color={useColorModeValue('#00cf6f', 'inherit')}
-      >
+        color={useColorModeValue('#00cf6f', 'inherit')}>
         {isLoading ? <Spinner /> : 'Deposit'}
       </Button>
     </Flex>

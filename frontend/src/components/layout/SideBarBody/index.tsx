@@ -33,8 +33,7 @@ export const SideBarBody: FC<PropsWithChildren<SideBarBodyProps>> = (props) => {
       overflowY="auto"
       borderColor={useColorModeValue('border.light', 'border.dark')}
       borderRightWidth="1px"
-      {...(display === 'none' ? props : '')}
-    >
+      {...(display === 'none' ? props : '')}>
       <Flex px="4" py="5" align="center">
         <Image
           src={useColorModeValue('/images/logoFull.png', '/images/logoFullWhite.png')}

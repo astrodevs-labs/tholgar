@@ -18,8 +18,7 @@ export const Header: FC<HeaderProps> = ({ onOpen }) => (
     py={'1.25em'}
     borderBottomWidth="1px"
     borderColor={useColorModeValue('border.light', 'border.dark')}
-    boxShadow="sm"
-  >
+    boxShadow="sm">
     <IconButton
       aria-label="Menu"
       display={{ base: 'inline-flex', md: 'none' }}

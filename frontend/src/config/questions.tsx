@@ -58,8 +58,7 @@ export const questions: { question: string; answer: string | (() => JSX.Element)
           <Text>Vault:</Text>
           <Link
             href="https://etherscan.io/address/0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5"
-            isExternal
-          >
+            isExternal>
             0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5
           </Link>
         </HStack>
@@ -67,8 +66,7 @@ export const questions: { question: string; answer: string | (() => JSX.Element)
           <Text>Zap:</Text>
           <Link
             href="https://etherscan.io/address/0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5"
-            isExternal
-          >
+            isExternal>
             0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5
           </Link>
         </HStack>
@@ -76,8 +74,7 @@ export const questions: { question: string; answer: string | (() => JSX.Element)
           <Text>Swapper:</Text>
           <Link
             href="https://etherscan.io/address/0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5"
-            isExternal
-          >
+            isExternal>
             0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5
           </Link>
         </HStack>

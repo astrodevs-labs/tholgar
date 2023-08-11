@@ -19,8 +19,7 @@ export const TokenDisplay: FC<TokenDisplayProps> = ({ tokenIconUrl, ticker }) =>
     <Container
       p={2}
       backgroundColor={useColorModeValue('background.100.light', 'background.100.dark')}
-      border="0"
-    >
+      border="0">
       <HStack>
         <Image src={tokenIconUrl} alt={ticker} w={'24px'} />
         <Text fontSize={'l'} fontWeight={'medium'}>

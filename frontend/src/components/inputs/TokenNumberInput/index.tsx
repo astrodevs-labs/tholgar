@@ -33,8 +33,7 @@ export const TokenNumberInput: FC<TokenNumberInputProps> = ({
   return (
     <Container
       p={2}
-      backgroundColor={useColorModeValue('background.200.light', 'background.200.dark')}
-    >
+      backgroundColor={useColorModeValue('background.200.light', 'background.200.dark')}>
       <Flex justify={'space-between'}>
         <VStack align={'start'}>
           <Input
@@ -59,8 +58,7 @@ export const TokenNumberInput: FC<TokenNumberInputProps> = ({
               cursor={'pointer'}
               textShadow={'0px 0px 5px var(--chakra-colors-brand-primary-300)'}
               textColor={'brand.primary.300'}
-              onClick={() => onMaxClick()}
-            >
+              onClick={() => onMaxClick()}>
               MAX
             </Text>
           </HStack>

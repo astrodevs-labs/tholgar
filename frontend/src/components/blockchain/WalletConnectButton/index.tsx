@@ -17,8 +17,7 @@ export const WalletConnectButton: FC<WalletConnectButtonProps> = (props) => {
             pointerEvents={ready ? 'auto' : 'none'}
             userSelect={ready ? 'auto' : 'none'}
             aria-hidden={ready ? undefined : true}
-            {...props}
-          >
+            {...props}>
             {(() => {
               if (!connected) {
                 return (
@@ -29,8 +28,7 @@ export const WalletConnectButton: FC<WalletConnectButtonProps> = (props) => {
                     _hover={{
                       bgColor: useColorModeValue('brand.primary.300', 'brand.primary.100')
                     }}
-                    color={useColorModeValue('#00cf6f', 'inherit')}
-                  >
+                    color={useColorModeValue('#00cf6f', 'inherit')}>
                     Connect Wallet
                   </Button>
                 );
@@ -44,8 +42,7 @@ export const WalletConnectButton: FC<WalletConnectButtonProps> = (props) => {
                       bgColor: useColorModeValue('brand.primary.300', 'brand.primary.100')
                     }}
                     color={useColorModeValue('#00cf6f', 'inherit')}
-                    onClick={openChainModal}
-                  >
+                    onClick={openChainModal}>
                     Wrong network
                   </Button>
                 );
@@ -59,8 +56,7 @@ export const WalletConnectButton: FC<WalletConnectButtonProps> = (props) => {
                       bgColor: useColorModeValue('brand.primary.300', 'brand.primary.100')
                     }}
                     color={useColorModeValue('#00cf6f', 'inherit')}
-                    onClick={openAccountModal}
-                  >
+                    onClick={openAccountModal}>
                     {account.displayName}
                   </Button>
                 </Flex>

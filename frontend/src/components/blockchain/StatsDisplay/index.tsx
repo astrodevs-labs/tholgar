@@ -88,8 +88,7 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
             fontSize={'1.5em'}
             fontWeight={'bold'}
             bgClip="text"
-            {...textProps}
-          >
+            {...textProps}>
             {formatNumber(vault!.totalSupply.formatted)}
           </Text>
         )}
@@ -272,8 +271,7 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
             fontSize={'1.5em'}
             fontWeight={'bold'}
             bgClip="text"
-            {...textProps}
-          >
+            {...textProps}>
             {apy}
           </Text>
         )}
@@ -295,8 +293,7 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
             fontSize={'1.5em'}
             fontWeight={'bold'}
             bgClip="text"
-            {...textProps}
-          >
+            {...textProps}>
             {formatNumber(warBalance!.formatted)}
           </Text>
         )}
@@ -344,8 +341,7 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
             fontSize={'1.5em'}
             fontWeight={'bold'}
             bgClip={'text'}
-            {...textProps}
-          >
+            {...textProps}>
             {tvl}
           </Text>
         )}
