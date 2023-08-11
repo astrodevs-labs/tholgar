@@ -2,11 +2,13 @@
 
 import { FC, JSX, useCallback, useMemo } from 'react';
 import {
+  Box,
   Button,
   Center,
-  Flex,
   Grid,
   GridItem,
+  Text,
+  VStack,
   useColorModeValue,
   useDisclosure
 } from '@chakra-ui/react';
@@ -18,7 +20,6 @@ import { WithdrawPanelModal } from '../WithdrawModal';
 import { TokenSelector } from '../../ui/TokenSelector';
 import { TokenNumberInput } from '../../inputs/TokenNumberInput';
 import { vaultAddress, warIconUrl, wstkWarIconUrl } from '../../../config/blockchain';
-// import { useBalance, useToken } from 'wagmi';
 import convertFormattedToBigInt from 'utils/convertFormattedToBigInt';
 import convertBigintToFormatted from 'utils/convertBigintToFormatted';
 import { tokensSelection, useStore } from '../../../store';
@@ -67,50 +68,86 @@ export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
   }, [wstkWARWithdrawInputAmount]);
   const output = tokensOutputs.get(withdrawToken);
 
+  const info = useMemo(() => {
+    switch (withdrawToken) {
+      case 'war':
+        return 'Redeem wstkWAR for WAR';
+    }
+  }, [withdrawToken]);
+  const infoDesc = useMemo(() => {
+    switch (withdrawToken) {
+      case 'war':
+        return 'Redeem your wstkWAR for WAR. You can then redeem the WAR for CVX or AURA on Warlord frontend.';
+    }
+  }, [withdrawToken]);
+
   return (
     <>
-      <Flex direction={'column'}>
-        <TokenNumberInput
-          token={vaultAddress}
-          ticker={'wstkWAR'}
-          value={wstkWARWithdrawInputAmountFormatted}
-          iconUrl={wstkWarIconUrl}
-          onInputChange={setWithdrawAmount}
-          onInputClear={() => {
-            setWithdrawOutputTokenAmount('war', 0n);
-            setWithdrawOutputTokenAmount('aura', 0n);
-            setWithdrawOutputTokenAmount('cvx', 0n);
-          }}
-          onMaxClick={() => setMaxWithdrawInputTokenAmount('wstkWAR')}
-        />
-      </Flex>
-      <Center my={4}>
-        <FontAwesomeIcon icon={faArrowDown} size={'2x'} opacity={useColorModeValue(0.4, 1)} />
-      </Center>
-      {output && output()}
-      <Grid templateColumns="repeat(2, 1fr)" mt={4} gap={6}>
-        <GridItem>
-          <TokenSelector
-            onTokenSelect={(token) => setWithdrawToken(token as tokensSelection)}
-            tokens={tokens}
-          />
-        </GridItem>
-        <GridItem>
-          {isConnected ? (
-            <Button
-              w={'full'}
-              backgroundColor={useColorModeValue('brand.primary.200', 'brand.primary.300')}
-              _hover={{ bgColor: useColorModeValue('brand.primary.300', 'brand.primary.100') }}
-              color={useColorModeValue('#00cf6f', 'inherit')}
-              onClick={onOpen}
-              isDisabled={isWithdrawDisabled}>
-              Withdraw
-            </Button>
-          ) : (
-            <WalletConnectButton />
-          )}
-        </GridItem>
-      </Grid>
+      <VStack gap={5}>
+        <Box w="100%">
+          <Text fontSize={'1.125em'} fontWeight={'semibold'}>
+            {info}
+          </Text>
+          <Text opacity={0.7}>{infoDesc}</Text>
+        </Box>
+        <Box w="100%">
+          <VStack gap={2}>
+            <Box w="100%">
+              <Text fontWeight={'semibold'}>Amount to withdraw</Text>
+            </Box>
+            <Box w="100%">
+              <TokenNumberInput
+                token={vaultAddress}
+                ticker={'wstkWAR'}
+                value={wstkWARWithdrawInputAmountFormatted}
+                iconUrl={wstkWarIconUrl}
+                onInputChange={setWithdrawAmount}
+                onInputClear={() => {
+                  setWithdrawOutputTokenAmount('war', 0n);
+                  setWithdrawOutputTokenAmount('aura', 0n);
+                  setWithdrawOutputTokenAmount('cvx', 0n);
+                }}
+                onMaxClick={() => setMaxWithdrawInputTokenAmount('wstkWAR')}
+              />
+            </Box>
+            <Box w="100%">
+              <Center>
+                <FontAwesomeIcon
+                  icon={faArrowDown}
+                  size={'2x'}
+                  opacity={useColorModeValue(0.4, 1)}
+                />
+              </Center>
+            </Box>
+            <Box w="100%">{output && output()}</Box>
+          </VStack>
+        </Box>
+        <Box w="100%">
+          <Grid templateColumns="repeat(2, 1fr)" gap={6} mt={5}>
+            <GridItem>
+              <TokenSelector
+                onTokenSelect={(token) => setWithdrawToken(token as tokensSelection)}
+                tokens={tokens}
+              />
+            </GridItem>
+            <GridItem>
+              {isConnected ? (
+                <Button
+                  w={'full'}
+                  backgroundColor={useColorModeValue('brand.primary.200', 'brand.primary.300')}
+                  _hover={{ bgColor: useColorModeValue('brand.primary.300', 'brand.primary.100') }}
+                  color={useColorModeValue('#00cf6f', 'inherit')}
+                  onClick={onOpen}
+                  isDisabled={isWithdrawDisabled}>
+                  Withdraw
+                </Button>
+              ) : (
+                <WalletConnectButton />
+              )}
+            </GridItem>
+          </Grid>
+        </Box>
+      </VStack>
       <WithdrawPanelModal open={isOpen} onClose={onClose} />
     </>
   );

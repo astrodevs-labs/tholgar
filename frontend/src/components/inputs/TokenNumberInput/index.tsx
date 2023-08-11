@@ -32,7 +32,9 @@ export const TokenNumberInput: FC<TokenNumberInputProps> = ({
 
   return (
     <Container
-      p={2}
+      px={4}
+      py={2}
+      m={0}
       backgroundColor={useColorModeValue('background.200.light', 'background.200.dark')}>
       <Flex justify={'space-between'}>
         <VStack align={'start'}>

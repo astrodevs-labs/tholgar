@@ -1,5 +1,4 @@
 import { FC, useCallback, useMemo } from 'react';
-import { Flex } from '@chakra-ui/react';
 import { TokenNumberInput } from '../../inputs/TokenNumberInput';
 import { warAddress, warIconUrl } from 'config/blockchain';
 import { useStore } from '../../../store';
@@ -32,19 +31,17 @@ export const WarDepositPanel: FC<WarDepositPanelProps> = () => {
   );
 
   return (
-    <Flex direction={'column'}>
-      <TokenNumberInput
-        token={warAddress}
-        ticker={'WAR'}
-        iconUrl={warIconUrl}
-        value={warDepositInputAmountFormatted}
-        onInputChange={setAmount}
-        onInputClear={() => setDepositOutputTokenAmount('wstkWAR', 0n)}
-        onMaxClick={() => {
-          setMaxDepositInputTokenAmount('war');
-        }}
-      />
-    </Flex>
+    <TokenNumberInput
+      token={warAddress}
+      ticker={'WAR'}
+      iconUrl={warIconUrl}
+      value={warDepositInputAmountFormatted}
+      onInputChange={setAmount}
+      onInputClear={() => setDepositOutputTokenAmount('wstkWAR', 0n)}
+      onMaxClick={() => {
+        setMaxDepositInputTokenAmount('war');
+      }}
+    />
   );
 };
 

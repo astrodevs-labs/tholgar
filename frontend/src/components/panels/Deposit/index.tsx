@@ -4,11 +4,13 @@ import { FC, JSX, useEffect, useMemo } from 'react';
 import {
   Button,
   Center,
-  Flex,
   Grid,
   GridItem,
+  VStack,
+  Text,
   useColorModeValue,
-  useDisclosure
+  useDisclosure,
+  Box
 } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { TokenNumberOutput } from '../../ui/TokenNumberOutput';
@@ -79,6 +81,23 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
   }, [depositToken, warDepositAmount, auraDepositAmount, cvxDepositAmount]);
   const input = tokensInputs.get(depositToken);
 
+  const info = useMemo(() => {
+    switch (depositToken) {
+      case 'war':
+        return 'Mint wstkWAR with WAR';
+      case 'aura/cvx':
+        return 'Mint wstkWAR with CVX, AURA or both';
+    }
+  }, [depositToken]);
+  const infoDesc = useMemo(() => {
+    switch (depositToken) {
+      case 'war':
+        return 'Deposit WAR in the vault to mint wstkWAR. The value of wstkWAR will grow with time as rewards are harvested.';
+      case 'aura/cvx':
+        return 'Mint WAR and deposit into the vault in one transaction. The value of wstkWAR will grow with time as rewards are harvested.';
+    }
+  }, [depositToken]);
+
   const auraRatio = useTokenRatio(auraAddress);
   const cvxRatio = useTokenRatio(cvxAddress);
 
@@ -109,40 +128,58 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
 
   return (
     <>
-      {input && input()}
-      <Center my={4}>
-        <FontAwesomeIcon icon={faArrowDown} size={'2x'} opacity={useColorModeValue(0.4, 1)} />
-      </Center>
-      <Flex direction={'column'}>
-        <TokenNumberOutput
-          ticker={'wstkWAR'}
-          iconUrl={wstkWarIconUrl}
-          value={wstkWAROutputAmountFormatted}
-        />
-      </Flex>
-      <Grid templateColumns="repeat(2, 1fr)" mt={4} gap={6}>
-        <GridItem>
-          <TokenSelector
-            onTokenSelect={(token) => setDepositToken(token as tokensSelection)}
-            tokens={tokensDetails}
-          />
-        </GridItem>
-        <GridItem>
-          {isConnected ? (
-            <Button
-              w={'full'}
-              backgroundColor={useColorModeValue('brand.primary.200', 'brand.primary.300')}
-              onClick={onOpen}
-              isDisabled={isDepositDisabled}
-              _hover={{ bgColor: useColorModeValue('brand.primary.300', 'brand.primary.100') }}
-              color={useColorModeValue('#00cf6f', 'inherit')}>
-              Deposit
-            </Button>
-          ) : (
-            <WalletConnectButton />
-          )}
-        </GridItem>
-      </Grid>
+      <VStack gap={5}>
+        <Box w="100%">
+          <Text fontSize={'1.125em'} fontWeight={'semibold'}>
+            {info}
+          </Text>
+          <Text opacity={0.7}>{infoDesc}</Text>
+        </Box>
+        <Box w="100%">
+          <VStack gap={2}>
+            <Box w="100%">
+              <Text fontWeight={'semibold'}>Amount to deposit</Text>
+            </Box>
+
+            <Box w="100%">{input && input()}</Box>
+            <Center>
+              <FontAwesomeIcon icon={faArrowDown} size={'2x'} opacity={useColorModeValue(0.4, 1)} />
+            </Center>
+            <Box w="100%">
+              <TokenNumberOutput
+                ticker={'wstkWAR'}
+                iconUrl={wstkWarIconUrl}
+                value={wstkWAROutputAmountFormatted}
+              />
+            </Box>
+          </VStack>
+        </Box>
+        <Box w="100%">
+          <Grid templateColumns="repeat(2, 1fr)" gap={6} mt={5}>
+            <GridItem>
+              <TokenSelector
+                onTokenSelect={(token) => setDepositToken(token as tokensSelection)}
+                tokens={tokensDetails}
+              />
+            </GridItem>
+            <GridItem>
+              {isConnected ? (
+                <Button
+                  w={'full'}
+                  backgroundColor={useColorModeValue('brand.primary.200', 'brand.primary.300')}
+                  onClick={onOpen}
+                  isDisabled={isDepositDisabled}
+                  _hover={{ bgColor: useColorModeValue('brand.primary.300', 'brand.primary.100') }}
+                  color={useColorModeValue('#00cf6f', 'inherit')}>
+                  Deposit
+                </Button>
+              ) : (
+                <WalletConnectButton />
+              )}
+            </GridItem>
+          </Grid>
+        </Box>
+      </VStack>
       <DepositPanelModal depositTokens={depositToken} open={isOpen} onClose={onClose} />
     </>
   );

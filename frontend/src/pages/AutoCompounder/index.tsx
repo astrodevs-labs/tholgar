@@ -24,12 +24,12 @@ const AutoCompounder: FC = () => {
           </TabList>
         </Container>
 
-        <Container p={4} my={0} mx="4em" borderTopRadius={'0'} borderRadius={'1.5em'}>
+        <Container px={6} py={9} my={0} mx="4em" borderTopRadius={'0'} borderRadius={'1.5em'}>
           <TabPanels>
-            <TabPanel>
+            <TabPanel p={0}>
               <DepositPanel />
             </TabPanel>
-            <TabPanel>
+            <TabPanel p={0}>
               <WithdrawPanel />
             </TabPanel>
           </TabPanels>
