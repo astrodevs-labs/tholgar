@@ -5,7 +5,7 @@ export const questions: { question: string; answer: string | (() => JSX.Element)
   {
     question: 'What is Tholgar ?',
     answer:
-      'Thalgar is an auto-compounder vault of WAR index from Paladin Finance. Its aim is to maximize your yield by auto compounding rewards from governance tokens'
+      'Tholgar is an auto-compounder vault of WAR index from Paladin Finance. Its aim is to maximize your yield by auto compounding rewards from governance tokens'
   },
   {
     question: 'How to use Tholgar ?',
