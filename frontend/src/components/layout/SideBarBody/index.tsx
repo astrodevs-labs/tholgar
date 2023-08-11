@@ -5,6 +5,7 @@ import {
   Divider,
   Flex,
   HStack,
+  VStack,
   Icon,
   Image,
   Spacer,
@@ -51,47 +52,49 @@ export const SideBarBody: FC<PropsWithChildren<SideBarBodyProps>> = (props) => {
       </Flex>
       <Spacer />
       <Divider color={useColorModeValue('border.light', 'black')} opacity={'unset'} />
-      <HStack justify="center" gap="3">
-        <Link href={'https://discord.gg/xr4zcRxsuK'} isExternal>
-          <Icon
-            as={BiLogoDiscord}
-            _hover={{
-              color: useColorModeValue('black', 'gray.400'),
-              transition: 'color 0.25s ease'
-            }}
-            color={useColorModeValue('gray.600', 'white')}
-            boxSize={8}
-          />
-        </Link>
-        <Link href={'https://twitter.com/TholgarFi'} isExternal>
-          <Icon
-            as={BiLogoTwitter}
-            _hover={{
-              color: useColorModeValue('black', 'gray.400'),
-              transition: 'color 0.25s ease'
-            }}
-            color={useColorModeValue('gray.600', 'white')}
-            boxSize={8}
-          />
-        </Link>
-        <Link href={'https://github.com/0xtekgrinder/warlord-autocompounder'} isExternal>
-          <Icon
-            as={BiLogoGithub}
-            _hover={{
-              color: useColorModeValue('black', 'gray.400'),
-              transition: 'color 0.25s ease'
-            }}
-            color={useColorModeValue('gray.600', 'white')}
-            boxSize={8}
-          />
-        </Link>
-      </HStack>
+      <VStack mx="4" my={'5'}>
+        <HStack justify="center" gap="1.5em">
+          <Link href={'https://discord.gg/xr4zcRxsuK'} isExternal>
+            <Icon
+              as={BiLogoDiscord}
+              _hover={{
+                color: useColorModeValue('black', 'gray.400'),
+                transition: 'color 0.25s ease'
+              }}
+              color={useColorModeValue('gray.600', 'white')}
+              boxSize={8}
+            />
+          </Link>
+          <Link href={'https://twitter.com/TholgarFi'} isExternal>
+            <Icon
+              as={BiLogoTwitter}
+              _hover={{
+                color: useColorModeValue('black', 'gray.400'),
+                transition: 'color 0.25s ease'
+              }}
+              color={useColorModeValue('gray.600', 'white')}
+              boxSize={8}
+            />
+          </Link>
+          <Link href={'https://github.com/0xtekgrinder/warlord-autocompounder'} isExternal>
+            <Icon
+              as={BiLogoGithub}
+              _hover={{
+                color: useColorModeValue('black', 'gray.400'),
+                transition: 'color 0.25s ease'
+              }}
+              color={useColorModeValue('gray.600', 'white')}
+              boxSize={8}
+            />
+          </Link>
+        </HStack>
 
-      <Box px="4" py="5">
-        <Text fontSize="sm" fontWeight="semibold" align={'center'}>
-          A product for the <a href={'https://paladin.vote'}>Paladin</a> ecosystem
-        </Text>
-      </Box>
+        <Box>
+          <Text fontSize="sm" fontWeight="semibold" align={'center'}>
+            A product for the <a href={'https://paladin.vote'}>Paladin</a> ecosystem
+          </Text>
+        </Box>
+      </VStack>
     </Flex>
   );
 };
