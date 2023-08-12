@@ -1,8 +1,13 @@
 import React from 'react';
-import { RouterProvider, Navigate, createHashRouter } from 'react-router-dom';
+import {
+  /*RouterProvider, Navigate, createBrowserRouter */
+  BrowserRouter,
+  Route,
+  Routes
+} from 'react-router-dom';
 import { WagmiConfig } from 'wagmi';
 import { ChakraProvider } from '@chakra-ui/react';
-import { AutoCompounder, FAQ, Pounder } from 'pages';
+import { AutoCompounder, FAQ, /*Pounder*/ } from 'pages';
 import theme from 'config/theme';
 import { NavigablePage } from '../components/layout';
 import { config, chains } from 'config/wagmi';
@@ -13,7 +18,7 @@ import {
   lightTheme
 } from '@rainbow-me/rainbowkit';
 
-const router = createHashRouter([
+/*const router = createBrowserRouter([
   {
     path: '/',
     element: <AutoCompounder />
@@ -30,7 +35,14 @@ const router = createHashRouter([
     path: '*',
     element: <Navigate to="/" />
   }
-]);
+]);*/
+
+const Router = () => (
+  <Routes>
+    <Route path={'/'} element={<AutoCompounder/>}/>
+    <Route path={'/faq'} element={<FAQ/>}/>
+  </Routes>
+)
 
 export default function App() {
   return (
@@ -50,9 +62,11 @@ export default function App() {
           `
             }}
           />
-          <NavigablePage>
-            <RouterProvider router={router} />
-          </NavigablePage>
+          <BrowserRouter>
+            <NavigablePage>
+              <Router />
+            </NavigablePage>
+          </BrowserRouter>
         </RainbowKitProvider>
       </WagmiConfig>
     </ChakraProvider>

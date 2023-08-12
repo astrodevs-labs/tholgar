@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren } from 'react';
+import {FC, PropsWithChildren} from 'react';
 import {
   Box,
   BoxProps,
@@ -15,12 +15,14 @@ import {
 } from '@chakra-ui/react';
 import { BiQuestionMark, BiHome, BiLogoDiscord, BiLogoTwitter, BiLogoGithub } from 'react-icons/bi';
 import { NavItem } from '../NavItem';
-import { Link } from '@chakra-ui/react';
+import {Link as ChakraLink } from '@chakra-ui/react';
+import { Link } from 'react-router-dom';
 
 export interface SideBarBodyProps extends BoxProps {}
 
 export const SideBarBody: FC<PropsWithChildren<SideBarBodyProps>> = (props) => {
   const display = useBreakpointValue({ base: 'none', md: 'unset' });
+
   return (
     <Flex
       as="nav"
@@ -42,10 +44,10 @@ export const SideBarBody: FC<PropsWithChildren<SideBarBodyProps>> = (props) => {
       </Flex>
       <Divider color={useColorModeValue('border.light', 'border.dark')} opacity={'unset'} />
       <Flex direction="column" as="nav" fontSize="md" aria-label="Main Navigation">
-        <Link href={'/'} _hover={{}}>
+        <Link {...{}/*_hover={{}} onClick={gotoHome}*/} to={'/'}>
           <NavItem icon={BiHome}>Home</NavItem>
         </Link>
-        <Link href={'/#/faq'} _hover={{}}>
+        <Link {...{}/*_hover={{}} onClick={gotoFaq}*/} to={'/faq'}>
           <NavItem icon={BiQuestionMark}>FAQ</NavItem>
         </Link>
       </Flex>
@@ -53,7 +55,7 @@ export const SideBarBody: FC<PropsWithChildren<SideBarBodyProps>> = (props) => {
       <Divider color={useColorModeValue('border.light', 'black')} opacity={'unset'} />
       <VStack mx="4" my={'5'}>
         <HStack justify="center" gap="1.5em">
-          <Link href={'https://discord.gg/xr4zcRxsuK'} isExternal>
+          <ChakraLink href={'https://discord.gg/xr4zcRxsuK'} isExternal>
             <Icon
               as={BiLogoDiscord}
               _hover={{
@@ -63,8 +65,8 @@ export const SideBarBody: FC<PropsWithChildren<SideBarBodyProps>> = (props) => {
               color={useColorModeValue('gray.600', 'white')}
               boxSize={8}
             />
-          </Link>
-          <Link href={'https://twitter.com/TholgarFi'} isExternal>
+          </ChakraLink>
+          <ChakraLink href={'https://twitter.com/TholgarFi'} isExternal>
             <Icon
               as={BiLogoTwitter}
               _hover={{
@@ -74,8 +76,8 @@ export const SideBarBody: FC<PropsWithChildren<SideBarBodyProps>> = (props) => {
               color={useColorModeValue('gray.600', 'white')}
               boxSize={8}
             />
-          </Link>
-          <Link href={'https://github.com/0xtekgrinder/warlord-autocompounder'} isExternal>
+          </ChakraLink>
+          <ChakraLink href={'https://github.com/0xtekgrinder/warlord-autocompounder'} isExternal>
             <Icon
               as={BiLogoGithub}
               _hover={{
@@ -85,7 +87,7 @@ export const SideBarBody: FC<PropsWithChildren<SideBarBodyProps>> = (props) => {
               color={useColorModeValue('gray.600', 'white')}
               boxSize={8}
             />
-          </Link>
+          </ChakraLink>
         </HStack>
 
         <Box>
