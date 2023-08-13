@@ -10,7 +10,7 @@ export const questions: { question: string; answer: string | (() => JSX.Element)
   {
     question: 'How to use Tholgar ?',
     answer:
-      'When you deposit your tokens in Tholgar, you receive wstkWAR tokens, acting as a receipt and counting your shares in the auto-compounder. The value of each share increase every time the rewards are harvested. When you bring back your wstkWAR to withdraw, you receive your principal + your share ratio of the collected rewards.'
+      'When you deposit your tokens in Tholgar, you receive tWAR tokens, acting as a receipt and counting your shares in the auto-compounder. The value of each share increase every time the rewards are harvested. When you bring back your tWAR to withdraw, you receive your principal + your share ratio of the collected rewards.'
   },
   {
     question: 'Which tokens can I use to deposit ? ',
@@ -19,7 +19,7 @@ export const questions: { question: string; answer: string | (() => JSX.Element)
   {
     question: 'Which tokens can I withdraw ? ',
     answer:
-      'You can exchange your wstkWAR to withdraw your principal and rewards in WAR. You will soon be able to withdraw in AURA and CVX. In the meantime you can use official warlord frontend to withdraw in AURA and CVX.'
+      'You can exchange your tWAR to withdraw your principal and rewards in WAR. You will soon be able to withdraw in AURA and CVX. In the meantime you can use official warlord frontend to withdraw in AURA and CVX.'
   },
   {
     question: 'What are the fees',

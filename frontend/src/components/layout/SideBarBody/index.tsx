@@ -1,4 +1,4 @@
-import {FC, PropsWithChildren} from 'react';
+import { FC, PropsWithChildren } from 'react';
 import {
   Box,
   BoxProps,
@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { BiQuestionMark, BiHome, BiLogoDiscord, BiLogoTwitter, BiLogoGithub } from 'react-icons/bi';
 import { NavItem } from '../NavItem';
-import {Link as ChakraLink } from '@chakra-ui/react';
+import { Link as ChakraLink } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 
 export interface SideBarBodyProps extends BoxProps {}
@@ -44,10 +44,10 @@ export const SideBarBody: FC<PropsWithChildren<SideBarBodyProps>> = (props) => {
       </Flex>
       <Divider color={useColorModeValue('border.light', 'border.dark')} opacity={'unset'} />
       <Flex direction="column" as="nav" fontSize="md" aria-label="Main Navigation">
-        <Link {...{}/*_hover={{}} onClick={gotoHome}*/} to={'/'}>
+        <Link {...{} /*_hover={{}} onClick={gotoHome}*/} to={'/'}>
           <NavItem icon={BiHome}>Home</NavItem>
         </Link>
-        <Link {...{}/*_hover={{}} onClick={gotoFaq}*/} to={'/faq'}>
+        <Link {...{} /*_hover={{}} onClick={gotoFaq}*/} to={'/faq'}>
           <NavItem icon={BiQuestionMark}>FAQ</NavItem>
         </Link>
       </Flex>

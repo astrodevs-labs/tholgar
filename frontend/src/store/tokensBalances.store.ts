@@ -38,7 +38,7 @@ const defaultTokenBalances: TokenBalance[] = [
     address: cvxAddress
   },
   {
-    id: 'wstkWAR',
+    id: 'tWAR',
     address: vaultAddress
   },
   {

@@ -2,9 +2,8 @@ import { createConfig, configureChains } from 'wagmi';
 import '@rainbow-me/rainbowkit/styles.css';
 import { getDefaultWallets } from '@rainbow-me/rainbowkit';
 import { mainnet } from 'viem/chains';
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
-// import { alchemyProvider } from 'wagmi/providers/alchemy';
-// import {publicProvider} from "wagmi/providers/public";
+import { alchemyProvider } from 'wagmi/providers/alchemy';
+import { publicProvider } from 'wagmi/providers/public';
 
 if (
   !process.env.REACT_APP_ALCHEMY_KEY ||
@@ -17,17 +16,10 @@ if (
 const { chains, publicClient } = configureChains(
   [mainnet],
   [
-    jsonRpcProvider({
-      rpc: () => ({
-        http: `http://localhost:8545`
-      })
-    })
-    // publicProvider(),
-    /*
+    publicProvider(),
     alchemyProvider({
-
       apiKey: process.env.REACT_APP_ALCHEMY_KEY
-    })*/
+    })
   ]
 );
 

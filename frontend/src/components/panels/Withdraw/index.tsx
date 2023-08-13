@@ -37,13 +37,11 @@ const tokensOutputs = new Map<string, () => JSX.Element>([
 const tokens = [{ id: 'war', name: 'WAR', iconUrl: warIconUrl }];
 
 export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
-  const wstkWARInfos = useOrFetchTokenInfos({ token: 'wstkWAR' });
+  const wstkWARInfos = useOrFetchTokenInfos({ token: 'tWAR' });
   const wstkWARDecimals = wstkWARInfos?.decimals;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isConnected } = useConnectedAccount();
-  const wstkWARWithdrawInputAmount = useStore((state) =>
-    state.getWithdrawInputTokenAmount('wstkWAR')
-  );
+  const wstkWARWithdrawInputAmount = useStore((state) => state.getWithdrawInputTokenAmount('tWAR'));
   const setWithdrawInputTokenAmount = useStore((state) => state.setWithdrawInputTokenAmount);
   const setMaxWithdrawInputTokenAmount = useStore((state) => state.setMaxWithdrawInputTokenAmount);
   const [withdrawToken, setWithdrawToken] = useStore((state) => [
@@ -59,7 +57,7 @@ export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
     (amount: string) => {
       if (!wstkWARDecimals) return;
       const amountInWei = convertFormattedToBigInt(amount, wstkWARDecimals);
-      setWithdrawInputTokenAmount('wstkWAR', amountInWei);
+      setWithdrawInputTokenAmount('tWAR', amountInWei);
     },
     [setWithdrawInputTokenAmount, wstkWARDecimals]
   );
@@ -71,13 +69,13 @@ export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
   const info = useMemo(() => {
     switch (withdrawToken) {
       case 'war':
-        return 'Redeem wstkWAR for WAR';
+        return 'Redeem tWAR for WAR';
     }
   }, [withdrawToken]);
   const infoDesc = useMemo(() => {
     switch (withdrawToken) {
       case 'war':
-        return 'Redeem your wstkWAR for WAR. You can then redeem the WAR for CVX or AURA on Warlord frontend.';
+        return 'Redeem your tWAR for WAR. You can then redeem the WAR for CVX or AURA on Warlord frontend.';
     }
   }, [withdrawToken]);
 
@@ -98,7 +96,7 @@ export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
             <Box w="100%">
               <TokenNumberInput
                 token={vaultAddress}
-                ticker={'wstkWAR'}
+                ticker={'tWAR'}
                 value={wstkWARWithdrawInputAmountFormatted}
                 iconUrl={wstkWarIconUrl}
                 onInputChange={setWithdrawAmount}
@@ -107,7 +105,7 @@ export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
                   setWithdrawOutputTokenAmount('aura', 0n);
                   setWithdrawOutputTokenAmount('cvx', 0n);
                 }}
-                onMaxClick={() => setMaxWithdrawInputTokenAmount('wstkWAR')}
+                onMaxClick={() => setMaxWithdrawInputTokenAmount('tWAR')}
               />
             </Box>
             <Box w="100%">

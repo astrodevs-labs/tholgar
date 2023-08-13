@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom';
 import { WagmiConfig } from 'wagmi';
 import { ChakraProvider } from '@chakra-ui/react';
-import { AutoCompounder, FAQ, /*Pounder*/ } from 'pages';
+import { AutoCompounder, FAQ /*Pounder*/ } from 'pages';
 import theme from 'config/theme';
 import { NavigablePage } from '../components/layout';
 import { config, chains } from 'config/wagmi';
@@ -39,10 +39,10 @@ import {
 
 const Router = () => (
   <Routes>
-    <Route path={'/'} element={<AutoCompounder/>}/>
-    <Route path={'/faq'} element={<FAQ/>}/>
+    <Route path={'/'} element={<AutoCompounder />} />
+    <Route path={'/faq'} element={<FAQ />} />
   </Routes>
-)
+);
 
 export default function App() {
   return (

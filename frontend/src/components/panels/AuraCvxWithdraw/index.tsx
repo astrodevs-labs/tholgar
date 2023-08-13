@@ -14,9 +14,7 @@ export const AuraCvxWithdrawPanel: FC<AuraCvxWithdrawPanelProps> = () => {
   const auraDecimals = auraInfos?.decimals;
   const cvxInfos = useOrFetchTokenInfos({ token: 'cvx' });
   const cvxDecimals = cvxInfos?.decimals;
-  const wstWARWithdrawInputAmount = useStore((state) =>
-    state.getWithdrawInputTokenAmount('wstkWAR')
-  );
+  const wstWARWithdrawInputAmount = useStore((state) => state.getWithdrawInputTokenAmount('tWAR'));
   const auraWithdrawOutputAmount = useStore((state) => state.getWithdrawOutputTokenAmount('aura'));
   const cvxWithdrawOutputAmount = useStore((state) => state.getWithdrawOutputTokenAmount('cvx'));
   const setWithdrawOutputAmount = useStore((state) => state.setWithdrawOutputTokenAmount);

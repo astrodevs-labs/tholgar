@@ -36,7 +36,7 @@ const defaultTokenInfos: TokenInfo[] = [
     address: cvxAddress
   },
   {
-    id: 'wstkWAR',
+    id: 'tWAR',
     address: vaultAddress
   }
 ];

@@ -1,1 +1,1 @@
-export type Token = 'war' | 'aura' | 'cvx' | 'wstkWAR' | 'stkWAR';
+export type Token = 'war' | 'aura' | 'cvx' | 'tWAR' | 'stkWAR';

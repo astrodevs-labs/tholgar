@@ -26,9 +26,7 @@ export interface WithdrawPanelModalProps {
 
 export const WithdrawPanelModal: FC<WithdrawPanelModalProps> = ({ open, onClose }) => {
   const withdrawToken = useStore((state) => state.withdrawToken);
-  const wstkWARWithdrawInputAmount = useStore((state) =>
-    state.getWithdrawInputTokenAmount('wstkWAR')
-  );
+  const wstkWARWithdrawInputAmount = useStore((state) => state.getWithdrawInputTokenAmount('tWAR'));
   const resetBalances = useStore((state) => state.resetBalances);
   const { address } = useConnectedAccount();
   const { data, write } = useContractWrite({

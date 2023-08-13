@@ -1,7 +1,7 @@
 import { StateCreator } from 'zustand';
 import { Store } from './index';
 
-type tokenIds = 'war' | 'aura' | 'cvx' | 'wstkWAR';
+type tokenIds = 'war' | 'aura' | 'cvx' | 'tWAR';
 
 export interface TokenAmount {
   id: tokenIds;
@@ -34,7 +34,7 @@ const defaultTokenAmounts: TokenAmount[] = [
     amount: BigInt(0)
   },
   {
-    id: 'wstkWAR',
+    id: 'tWAR',
     amount: BigInt(0)
   }
 ];

@@ -1,4 +1,4 @@
-import React, {FC, useEffect} from 'react';
+import React, { FC, useEffect } from 'react';
 import {
   Text,
   VStack,
@@ -38,12 +38,16 @@ import { useFetchRewardStates } from 'hooks/useFetchRewardStates';
 export interface StatsDisplayProps {}
 
 export const StatsDisplay: FC<StatsDisplayProps> = () => {
-  const { circulatingSupply, warLocked, tvl, apy, allDefined} = useStore((state) => ({
+  const { circulatingSupply, warLocked, tvl, apy, allDefined } = useStore((state) => ({
     circulatingSupply: state.circulatingSupply,
     warLocked: state.warLocked,
     tvl: state.tvl,
     apy: state.apy,
-    allDefined: state.circulatingSupply !== undefined && state.warLocked !== undefined && state.tvl !== undefined && state.apy !== undefined
+    allDefined:
+      state.circulatingSupply !== undefined &&
+      state.warLocked !== undefined &&
+      state.tvl !== undefined &&
+      state.apy !== undefined
   }));
   const { data: warBalance } = useBalance({
     address: !allDefined ? vaultAddress : undefined,
