@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, {FC, useEffect} from 'react';
 import {
   Text,
   VStack,
@@ -8,6 +8,7 @@ import {
   useColorMode,
   Spinner
 } from '@chakra-ui/react';
+import { useStore } from 'store';
 import { Container } from 'components/ui/Container';
 import { useBalance, useContractRead, useToken } from 'wagmi';
 import formatNumber from 'utils/formatNumber';
@@ -37,31 +38,38 @@ import { useFetchRewardStates } from 'hooks/useFetchRewardStates';
 export interface StatsDisplayProps {}
 
 export const StatsDisplay: FC<StatsDisplayProps> = () => {
+  const { circulatingSupply, warLocked, tvl, apy, allDefined} = useStore((state) => ({
+    circulatingSupply: state.circulatingSupply,
+    warLocked: state.warLocked,
+    tvl: state.tvl,
+    apy: state.apy,
+    allDefined: state.circulatingSupply !== undefined && state.warLocked !== undefined && state.tvl !== undefined && state.apy !== undefined
+  }));
   const { data: warBalance } = useBalance({
-    address: vaultAddress,
+    address: !allDefined ? vaultAddress : undefined,
     token: stakerAddress
   });
   const { data: totalWarLocked } = useBalance({
-    address: stakerAddress,
+    address: !allDefined ? stakerAddress : undefined,
     token: warAddress
   });
   const { data: cvxLocked } = useContractRead({
-    address: warCvxLocker,
+    address: !allDefined ? warCvxLocker : undefined,
     abi: warLockerAbi,
     functionName: 'getCurrentLockedTokens'
   });
   const { data: auraLocked } = useContractRead({
-    address: warAuraLocker,
+    address: !allDefined ? warAuraLocker : undefined,
     abi: warLockerAbi,
     functionName: 'getCurrentLockedTokens'
   });
   const { data: weights } = useContractRead({
-    address: redeemerAddress,
+    address: !allDefined ? redeemerAddress : undefined,
     abi: warRedeemerABI,
     functionName: 'getTokenWeights'
   });
   const { data: staker } = useToken({
-    address: stakerAddress
+    address: !allDefined ? stakerAddress : undefined
   });
 
   const textProps =
@@ -72,15 +80,22 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
 
   const CirculatingSupply: FC = () => {
     const { data: vault } = useToken({
-      address: vaultAddress
+      address: !allDefined ? vaultAddress : undefined
     });
+    const setCirculatingSupply = useStore((state) => state.setCirculatingSupply);
+
+    useEffect(() => {
+      if (circulatingSupply === undefined && vault !== undefined) {
+        setCirculatingSupply(formatNumber(vault!.totalSupply.formatted));
+      }
+    }, [circulatingSupply, vault, setCirculatingSupply]);
 
     return (
       <VStack>
         <Text whiteSpace={'nowrap'} fontSize={'1.125em'} color={infoColor} opacity={'.7'}>
           {'Circulating Supply'}
         </Text>
-        {vault === undefined ? (
+        {circulatingSupply === undefined ? (
           <Spinner />
         ) : (
           <Text
@@ -89,7 +104,7 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
             fontWeight={'bold'}
             bgClip="text"
             {...textProps}>
-            {formatNumber(vault!.totalSupply.formatted)}
+            {circulatingSupply}
           </Text>
         )}
       </VStack>
@@ -97,31 +112,31 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
   };
 
   const APY: FC = () => {
-    const [apy, setApy] = React.useState<string | undefined>(undefined);
+    const setApy = useStore((state) => state.setApy);
 
-    const warRates = useFetchRewardStates(warAddress);
-    const wethRates = useFetchRewardStates(wethAddress);
-    const palRates = useFetchRewardStates(palAddress);
+    const warRates = useFetchRewardStates(warAddress, !allDefined);
+    const wethRates = useFetchRewardStates(wethAddress, !allDefined);
+    const palRates = useFetchRewardStates(palAddress, !allDefined);
     const { data: auraRatio } = useContractRead({
-      address: ratioAddress,
+      address: !allDefined ? ratioAddress : undefined,
       abi: warRatioABI,
       functionName: 'getTokenRatio',
       args: [auraAddress]
     });
     const { data: cvxRatio } = useContractRead({
-      address: ratioAddress,
+      address: !allDefined ? ratioAddress : undefined,
       abi: warRatioABI,
       functionName: 'getTokenRatio',
       args: [cvxAddress]
     });
     const { data: rewardData } = useContractRead({
-      address: cvxLockerAddress,
+      address: !allDefined ? cvxLockerAddress : undefined,
       abi: cvxLockerAbi,
       functionName: 'rewardData',
       args: [cvxCrvAddress]
     });
     const { data: lockedSupply } = useContractRead({
-      address: cvxLockerAddress,
+      address: !allDefined ? cvxLockerAddress : undefined,
       abi: cvxLockerAbi,
       functionName: 'lockedSupply'
     });
@@ -245,7 +260,7 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
     }
 
     useEffect(() => {
-      computeAPY();
+      if (apy === undefined) computeAPY();
     }, [
       palRates,
       warRates,
@@ -280,12 +295,19 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
   };
 
   const WARLocked: FC = () => {
+    const setWarLocked = useStore((actions) => actions.setWarLocked);
+
+    useEffect(() => {
+      if (warLocked === undefined && warBalance !== undefined)
+        setWarLocked(formatNumber(warBalance!.formatted));
+    }, [warLocked, warBalance, setWarLocked]);
+
     return (
       <VStack>
         <Text whiteSpace={'nowrap'} fontSize={'1.125em'} color={infoColor} opacity={'.7'}>
           {'WAR Locked'}
         </Text>
-        {warBalance === undefined ? (
+        {warLocked === undefined ? (
           <Spinner />
         ) : (
           <Text
@@ -294,7 +316,7 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
             fontWeight={'bold'}
             bgClip="text"
             {...textProps}>
-            {formatNumber(warBalance!.formatted)}
+            {warLocked}
           </Text>
         )}
       </VStack>
@@ -302,7 +324,7 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
   };
 
   const TVL: FC = () => {
-    const [tvl, setTvl] = React.useState<string | undefined>(undefined);
+    const setTvl = useStore((actions) => actions.setTvl);
 
     async function computeTVL() {
       if (
@@ -325,7 +347,7 @@ export const StatsDisplay: FC<StatsDisplayProps> = () => {
     }
 
     useEffect(() => {
-      computeTVL();
+      if (tvl === undefined) computeTVL();
     }, [cvxLocked, auraLocked, warBalance]);
 
     return (
