@@ -65,3 +65,5 @@ const theme = extendTheme({
 });
 
 export default theme;
+
+export const DESKTOP_BREAKPOINT = 768; // px
