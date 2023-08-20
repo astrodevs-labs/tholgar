@@ -89,7 +89,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, AOperator, AWeighte
         address initialOperator,
         address definitiveAsset
     )
-        ERC4626(ERC20(definitiveAsset), "tWARToken", "tWAR")
+        ERC4626(ERC20(definitiveAsset), "Tholgar Warlord Token", "tWAR")
         AFees(initialHarvestFee, initialFeeRecipient, initialFeeToken)
         AOperator(initialOperator)
     {
