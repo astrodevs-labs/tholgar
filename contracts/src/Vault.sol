@@ -35,10 +35,6 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, AOperator {
      */
     event MinterUpdated(address oldMinter, address newMinter);
     /**
-     * @notice Event emitted when a token is added to the list of tokens to harvest
-     */
-    event TokenNotToHarvestUpdated(address token, bool harvestOrNot);
-    /**
      * @notice Event emitted when a swapper is updated
      */
     event SwapperUpdated(address oldSwapper, address newSwapper);
