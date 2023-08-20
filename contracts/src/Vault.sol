@@ -238,14 +238,14 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, AOperator, AWeighte
     /**
      * @custom:notpaused when not paused
      */
-    function deposit(uint256 assets, address receiver) public virtual override whenNotPaused returns (uint256 shares) {
+    function deposit(uint256 assets, address receiver) public override whenNotPaused returns (uint256 shares) {
         return super.deposit(assets, receiver);
     }
 
     /**
      * @custom:notpaused when not paused
      */
-    function mint(uint256 shares, address receiver) public virtual override whenNotPaused returns (uint256 assets) {
+    function mint(uint256 shares, address receiver) public override whenNotPaused returns (uint256 assets) {
         return super.mint(shares, receiver);
     }
 
@@ -254,7 +254,6 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, AOperator, AWeighte
      */
     function withdraw(uint256 assets, address receiver, address owner)
         public
-        virtual
         override
         whenNotPaused
         returns (uint256 shares)
@@ -267,7 +266,6 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, AOperator, AWeighte
      */
     function redeem(uint256 shares, address receiver, address owner)
         public
-        virtual
         override
         whenNotPaused
         returns (uint256 assets)
