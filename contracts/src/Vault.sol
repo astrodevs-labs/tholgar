@@ -357,7 +357,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, AOperator, AWeighte
             }
         }
         IMinter(minter).mintMultiple(weightedTokensAddresses, amounts);
-        uint256 stakedAmount = IStaker(staker).stake(ERC20(address(asset)).balanceOf(address(this)), address(this));
+        uint256 stakedAmount = IStaker(staker).stake(asset.balanceOf(address(this)), address(this));
 
         emit Compounded(stakedAmount);
     }
