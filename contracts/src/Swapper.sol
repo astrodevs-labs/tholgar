@@ -23,6 +23,10 @@ contract Swapper is Ownable2Step {
      *  @notice Event emitted when the token proxy is updated
      */
     event TokenTransferAddressUpdated(address oldTokenTransferAddress, address newTokenTransferAddress);
+    /**
+     *  @notice Event emitted when the vault is updated
+     */
+    event VaultUpdated(address oldVault, address newVault);
 
     /*//////////////////////////////////////////////////////////////
                             MUTABLE VARIABLES
@@ -54,11 +58,10 @@ contract Swapper is Ownable2Step {
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor(address initialSwapRouter, address initialTokenTransferAddress, address initalVault) {
-        if (initialSwapRouter == address(0) || initialTokenTransferAddress == address(0) || initalVault == address(0)) revert Errors.ZeroAddress();
+    constructor(address initialSwapRouter, address initialTokenTransferAddress) {
+        if (initialSwapRouter == address(0) || initialTokenTransferAddress == address(0)) revert Errors.ZeroAddress();
 
         swapRouter = initialSwapRouter;
-        vault = initalVault;
         tokenTransferAddress = initialTokenTransferAddress;
     }
 
@@ -92,6 +95,20 @@ contract Swapper is Ownable2Step {
         tokenTransferAddress = newTokenTransferAddress;
 
         emit TokenTransferAddressUpdated(oldtokenTransferAddress, newTokenTransferAddress);
+    }
+
+    /**
+     * @notice Set the vault address
+     * @param newVault address of the vault
+     * @custom:requires owner
+     */
+    function setVault(address newVault) external onlyOwner {
+        if (newVault == address(0)) revert Errors.ZeroAddress();
+
+        address oldVault = vault;
+        vault = newVault;
+
+        emit VaultUpdated(oldVault, newVault);
     }
 
     /**

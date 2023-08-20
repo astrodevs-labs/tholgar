@@ -49,6 +49,9 @@ contract DeployScript is Script {
         Vault vault = new Vault(staker, minter, address(swapper), harvestFee, feeRecipient, weth, operator, war);
         console.log("Vault deployed at: %s", address(vault));
 
+        // Set vault in the swapper
+        swapper.setVault(address(vault));
+
         // set output tokens
         uint256 length = tokens.length;
         AWeightedTokens.WeightedToken[] memory outTokens = new AWeightedTokens.WeightedToken[](length);
