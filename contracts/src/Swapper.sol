@@ -118,6 +118,7 @@ contract Swapper is Ownable2Step {
 
     /**
      * @notice Swap tokens using the router/aggregator
+     * @dev The calldatas should set the recipient of the tokens to the vault
      * @param tokens array of tokens to swap
      * @param callDatas array of bytes to call the router/aggregator
      */
