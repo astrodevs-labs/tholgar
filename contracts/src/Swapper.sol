@@ -36,15 +36,29 @@ contract Swapper is Ownable2Step {
      * @notice Address to allow to swap tokens
      */
     address public tokenTransferAddress;
+    /**
+     * @notice Address of the ERC4626 vault
+     */
+    address public vault;
+
+     /*//////////////////////////////////////////////////////////////
+                               MODIFIERS
+    //////////////////////////////////////////////////////////////*/
+
+    modifier onlyVault() {
+        if (msg.sender != vault) revert Errors.NotVault();
+        _;
+    }
 
     /*//////////////////////////////////////////////////////////////
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor(address initialSwapRouter, address initialTokenTransferAddress) {
-        if (initialSwapRouter == address(0) || initialTokenTransferAddress == address(0)) revert Errors.ZeroAddress();
+    constructor(address initialSwapRouter, address initialTokenTransferAddress, address initalVault) {
+        if (initialSwapRouter == address(0) || initialTokenTransferAddress == address(0) || initalVault == address(0)) revert Errors.ZeroAddress();
 
         swapRouter = initialSwapRouter;
+        vault = initalVault;
         tokenTransferAddress = initialTokenTransferAddress;
     }
 
@@ -107,7 +121,7 @@ contract Swapper is Ownable2Step {
      * @param tokens array of tokens to swap
      * @param callDatas array of bytes to call the router/aggregator
      */
-    function swap(address[] calldata tokens, bytes[] calldata callDatas) external {
+    function swap(address[] calldata tokens, bytes[] calldata callDatas) external onlyVault {
         uint256 length = tokens.length;
 
         for (uint256 i; i < length;) {

@@ -18,7 +18,10 @@ library Errors {
     error RatioOverflow();
     error NoWeightedTokens();
 
-    // Gelato errors
+    // Operator errors
     error NotOperator();
     error NotOperatorOrOwner();
+
+    // Swapper errors
+    error NotVault();
 }
