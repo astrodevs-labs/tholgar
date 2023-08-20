@@ -314,7 +314,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, AOperator, AWeighte
             }
         }
 
-        // swap to fee token
+        // swap to harvested tokens to feeToken
         length = tokens.length;
         for (uint256 i; i < length;) {
             address token = tokens[i];
@@ -342,7 +342,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, AOperator, AWeighte
         nonReentrant
         onlyOperatorOrOwner
     {
-        // swap to WeightedTokens with correct ratios
+        // swap feeToken to WeightedTokens with correct ratios
         ERC20(feeToken).safeTransfer(swapper, ERC20(feeToken).balanceOf(address(this)));
         ISwapper(swapper).swap(tokens, callDatas);
 
