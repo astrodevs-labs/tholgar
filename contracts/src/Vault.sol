@@ -301,13 +301,13 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, AOperator, AWeighte
         address _feeToken = feeToken;
         uint256 oldFeeBalance = ERC20(_feeToken).balanceOf(address(this));
 
-        // claim all harvastable rewards
+        // claim all harvastable rewards and send them to the swapper
         IStaker.UserClaimableRewards[] memory rewards = IStaker(staker).getUserTotalClaimableRewards(address(this));
         uint256 length = rewards.length;
         for (uint256 i; i < length;) {
             IStaker.UserClaimableRewards memory reward = rewards[i];
             if (reward.claimableAmount != 0 && !tokensNotToHarvest[reward.reward]) {
-                IStaker(staker).claimRewards(reward.reward, address(this));
+                IStaker(staker).claimRewards(reward.reward, swapper);
             }
             unchecked {
                 ++i;
@@ -316,13 +316,6 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, AOperator, AWeighte
 
         // swap to harvested tokens to feeToken
         length = tokens.length;
-        for (uint256 i; i < length;) {
-            address token = tokens[i];
-            ERC20(token).safeTransfer(swapper, ERC20(token).balanceOf(address(this)));
-            unchecked {
-                ++i;
-            }
-        }
         ISwapper(swapper).swap(tokens, callDatas);
 
         // transfer havestfee %oo to fee recipient
