@@ -10,7 +10,6 @@ import {IStaker} from "warlord/interfaces/IStaker.sol";
 import {ERC4626} from "solmate/mixins/ERC4626.sol";
 import {ERC20} from "solmate/tokens/ERC20.sol";
 import {ISwapper} from "./interfaces/ISwapper.sol";
-import {AWeightedTokens} from "./abstracts/AWeightedTokens.sol";
 import {AOperator} from "./abstracts/AOperator.sol";
 import {AFees} from "./abstracts/AFees.sol";
 import {Errors} from "./utils/Errors.sol";
@@ -19,7 +18,7 @@ import {Allowance} from "./utils/Allowance.sol";
 /// @author 0xtekgrinder
 /// @title Vault contract
 /// @notice Auto compounding vault for the warlord protocol with token to deposit being WAR and asset being stkWAR
-contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, AOperator, AWeightedTokens {
+contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, AOperator {
     using SafeTransferLib for ERC20;
     using FixedPointMathLib for uint256;
 
@@ -69,11 +68,6 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, AOperator, AWeighte
      * @notice Address of the swapper contract
      */
     address public swapper;
-
-    /**
-     * @notice mapping to keep track of which tokens to harvest
-     */
-    mapping(address token => bool harvestOrNot) public tokensNotToHarvest;
 
     /*//////////////////////////////////////////////////////////////
                                CONSTRUCTOR
@@ -164,30 +158,6 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, AOperator, AWeighte
         minter = newMinter;
 
         emit MinterUpdated(oldMinter, newMinter);
-
-        WeightedToken[] memory _weightedTokens = weightedTokens;
-        uint256 length = _weightedTokens.length;
-
-        for (uint256 i = 0; i < length;) {
-            ERC20(_weightedTokens[i].token).safeApprove(newMinter, type(uint256).max);
-            unchecked {
-                ++i;
-            }
-        }
-    }
-
-    /**
-     * @notice Set the token to harvest or not
-     * @param token the token to harvest or not
-     * @param harvestOrNot true or false
-     * @custom:requires owner
-     */
-    function setTokenNotToHarvest(address token, bool harvestOrNot) external onlyOwner {
-        if (token == address(0)) revert Errors.ZeroAddress();
-
-        tokensNotToHarvest[token] = harvestOrNot;
-
-        emit TokenNotToHarvestUpdated(token, harvestOrNot);
     }
 
     /**
@@ -293,30 +263,31 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, AOperator, AWeighte
 
     /**
      * @notice Harvest all rewards from staker
-     * @param tokens reward tokens claimed from staker
+     * @dev calldatas should swap from all reward tokens to feeToken
+     * @param tokensToHarvest tokens to harvest
+     * @param tokensToSwap tokens to swap to feeToken
      * @param callDatas swapper routes to swap to feeToken
      * @custom:requires operator or owner
      */
-    function harvest(address[] calldata tokens, bytes[] calldata callDatas) external nonReentrant onlyOperatorOrOwner {
+    function harvest(address[] calldata tokensToHarvest, address[] calldata tokensToSwap, bytes[] calldata callDatas)
+        external
+        nonReentrant
+        onlyOperatorOrOwner
+    {
         address _feeToken = feeToken;
         uint256 oldFeeBalance = ERC20(_feeToken).balanceOf(address(this));
 
         // claim all harvastable rewards and send them to the swapper
-        IStaker.UserClaimableRewards[] memory rewards = IStaker(staker).getUserTotalClaimableRewards(address(this));
-        uint256 length = rewards.length;
+        uint256 length = tokensToHarvest.length;
         for (uint256 i; i < length;) {
-            IStaker.UserClaimableRewards memory reward = rewards[i];
-            if (reward.claimableAmount != 0 && !tokensNotToHarvest[reward.reward]) {
-                IStaker(staker).claimRewards(reward.reward, swapper);
-            }
+            IStaker(staker).claimRewards(tokensToHarvest[i], swapper);
             unchecked {
                 ++i;
             }
         }
 
         // swap to harvested tokens to feeToken
-        length = tokens.length;
-        ISwapper(swapper).swap(tokens, callDatas);
+        ISwapper(swapper).swap(tokensToSwap, callDatas);
 
         // transfer havestfee %oo to fee recipient
         uint256 harvestedAmount = ERC20(_feeToken).balanceOf(address(this)) - oldFeeBalance;
@@ -326,46 +297,37 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, AOperator, AWeighte
     }
 
     /**
-     * @notice Turn  all rewards into more staked assets
+     * @notice Turn all rewards into more staked assets
      * @param callDatas swapper routes to swap to more assets
+     * @param tokensToMint tokens to mint more stkWAR
+     * @param tokensToSwap tokens which includes the feeToken to swap to more assets
      * @custom:requires operator or owner
      */
-    function compound(address[] calldata tokens, bytes[] calldata callDatas)
+    function compound(address[] calldata tokensToSwap, bytes[] calldata callDatas, address[] calldata tokensToMint)
         external
         nonReentrant
         onlyOperatorOrOwner
     {
+        address _feeToken = feeToken;
+
         // swap feeToken to WeightedTokens with correct ratios
-        ERC20(feeToken).safeTransfer(swapper, ERC20(feeToken).balanceOf(address(this)));
-        ISwapper(swapper).swap(tokens, callDatas);
+        ERC20(_feeToken).safeTransfer(swapper, ERC20(_feeToken).balanceOf(address(this)));
+        ISwapper(swapper).swap(tokensToSwap, callDatas);
 
         // Mint more stkWAR
-        address[] memory weightedTokensAddresses = getWeightedTokenAddresses();
-        uint256 length = weightedTokensAddresses.length;
+        uint256 length = tokensToMint.length;
         uint256[] memory amounts = new uint256[](length);
         for (uint256 i; i < length;) {
-            amounts[i] = ERC20(weightedTokensAddresses[i]).balanceOf(address(this));
+            address token = tokensToMint[i];
+            amounts[i] = ERC20(token).balanceOf(address(this));
+            Allowance._approveTokenIfNeeded(token, minter);
             unchecked {
                 ++i;
             }
         }
-        IMinter(minter).mintMultiple(weightedTokensAddresses, amounts);
+        IMinter(minter).mintMultiple(tokensToMint, amounts);
         uint256 stakedAmount = IStaker(staker).stake(asset.balanceOf(address(this)), address(this));
 
         emit Compounded(stakedAmount);
-    }
-
-    /**
-     * @dev Approve the output tokens to minter
-     */
-    function setWeightedTokens(WeightedToken[] calldata newWeightedTokens) public override {
-        super.setWeightedTokens(newWeightedTokens);
-
-        for (uint256 i; i < newWeightedTokens.length;) {
-            Allowance._approveTokenIfNeeded(newWeightedTokens[i].token, minter);
-            unchecked {
-                ++i;
-            }
-        }
     }
 }

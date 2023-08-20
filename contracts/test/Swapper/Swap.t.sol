@@ -10,6 +10,7 @@ contract Swap is SwapperTest {
 
         tokens[0] = address(usdc);
 
+        vm.prank(vault);
         vm.expectCall(augustusSwapper, "");
         swapper.swap(tokens, data);
 
@@ -20,6 +21,7 @@ contract Swap is SwapperTest {
         address[] memory tokens = new address[](0);
         bytes[] memory data = new bytes[](0);
 
+        vm.prank(vault);
         swapper.swap(tokens, data);
     }
 
@@ -32,6 +34,7 @@ contract Swap is SwapperTest {
         vm.prank(address(swapper));
         usdc.approve(address(swapper.tokenTransferAddress()), UINT256_MAX);
 
+        vm.prank(vault);
         vm.expectCall(augustusSwapper, "");
         swapper.swap(tokens, data);
 
@@ -46,6 +49,7 @@ contract Swap is SwapperTest {
 
         vm.mockCallRevert(augustusSwapper, "", "");
 
+        vm.prank(vault);
         vm.expectRevert(Errors.SwapError.selector);
         swapper.swap(tokens, data);
     }
@@ -58,6 +62,7 @@ contract Swap is SwapperTest {
 
         vm.mockCallRevert(augustusSwapper, "", "Swap failed");
 
+        vm.prank(vault);
         vm.expectRevert("Swap failed");
         swapper.swap(tokens, data);
     }

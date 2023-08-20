@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.20;
 
-import {Vault, AWeightedTokens} from "../src/Vault.sol";
+import {Vault} from "../src/Vault.sol";
 import {Zap} from "../src/Zap.sol";
 import {Swapper} from "../src/Swapper.sol";
 import "forge-std/Script.sol";
@@ -23,7 +23,6 @@ contract DeployScript is Script {
     address feeRecipient;
     address feeToken;
     address operator;
-    AWeightedTokens.WeightedToken[] tokens;
     address newOwner;
 
     function setUp() public {
@@ -32,9 +31,6 @@ contract DeployScript is Script {
         feeRecipient = makeAddr("feeRecipient");
         operator = makeAddr("operator");
         newOwner = makeAddr("newOwner");
-
-        tokens.push(AWeightedTokens.WeightedToken(address(aura), 6666));
-        tokens.push(AWeightedTokens.WeightedToken(address(cvx), 3333));
     }
 
     function run() external {
@@ -51,18 +47,6 @@ contract DeployScript is Script {
 
         // Set vault in the swapper
         swapper.setVault(address(vault));
-
-        // set output tokens
-        uint256 length = tokens.length;
-        AWeightedTokens.WeightedToken[] memory outTokens = new AWeightedTokens.WeightedToken[](length);
-        for (uint256 i = 0; i < length; i++) {
-            outTokens[i] = AWeightedTokens.WeightedToken(tokens[i].token, tokens[i].ratio);
-        }
-        vault.setWeightedTokens(outTokens);
-
-        // set token to harvest
-        vault.setTokenNotToHarvest(cvxCrv, true);
-        vault.setTokenNotToHarvest(auraBal, true);
 
         // deploy zap
         Zap zap = new Zap(war, address(vault), minter);

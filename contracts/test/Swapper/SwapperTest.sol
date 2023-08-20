@@ -7,7 +7,9 @@ import {ERC20Mock} from "../mock/ERC20.sol";
 
 contract SwapperTest is MainnetTest {
     Swapper swapper;
+    address vault = makeAddr("vault");
 
+    event VaultUpdated(address oldVault, address newVault);
     event SwapRouterUpdated(address oldSwapRouter, address newSwapRouter);
     event TokenTransferAddressUpdated(address oldTokenTransferAddress, address newTokenTransferAddress);
 
@@ -18,6 +20,8 @@ contract SwapperTest is MainnetTest {
         vm.startPrank(owner);
 
         swapper = new Swapper(augustusSwapper, tokenTransferAddress);
+
+        swapper.setVault(vault);
 
         vm.stopPrank();
     }
