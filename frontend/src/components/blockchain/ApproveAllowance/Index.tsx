@@ -50,7 +50,7 @@ export const ApproveAllowance: FC<ApproveAllowanceProps> = ({
         args: [zapAddress, allowTotal ? maxAllowance : tokenDepositInputAmount]
       });
     }
-  }, [tokenDepositInputAmount, allowTotal, token, isLoading, isSuccess]);
+  }, [tokenDepositInputAmount, allowTotal, token, write, isLoading, isSuccess]);
 
   useEffect(() => {
     if (isSuccess) {

@@ -72,7 +72,7 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
       wstkWAROutputAmount && wstkWarDecimals
         ? convertBigintToFormatted(wstkWAROutputAmount, wstkWarDecimals)
         : '0',
-    [wstkWAROutputAmount]
+    [wstkWAROutputAmount, wstkWarDecimals]
   );
   const isDepositDisabled = useMemo(() => {
     if (depositToken === 'war') return warDepositAmount === 0n;
