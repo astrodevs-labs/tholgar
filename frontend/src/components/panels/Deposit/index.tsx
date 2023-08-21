@@ -126,6 +126,11 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
     setDepositOutputTokenAmounts('tWAR', auraAmountInWar + cvxAmountInWar);
   }, [auraRatio, cvxRatio, auraDepositAmount, cvxDepositAmount, depositToken]);
 
+
+  const buttonBgColor = useColorModeValue('brand.primary.200', 'brand.primary.300');
+  const buttonHoverColor = useColorModeValue('brand.primary.300', 'brand.primary.100');
+  const buttonColor = useColorModeValue('#00cf6f', 'inherit');
+
   return (
     <>
       <VStack gap={5}>
@@ -166,11 +171,11 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
               {isConnected ? (
                 <Button
                   w={'full'}
-                  backgroundColor={useColorModeValue('brand.primary.200', 'brand.primary.300')}
+                  backgroundColor={buttonBgColor}
                   onClick={onOpen}
                   isDisabled={isDepositDisabled}
-                  _hover={{ bgColor: useColorModeValue('brand.primary.300', 'brand.primary.100') }}
-                  color={useColorModeValue('#00cf6f', 'inherit')}>
+                  _hover={{ bgColor: buttonHoverColor }}
+                  color={buttonColor}>
                   Deposit
                 </Button>
               ) : (
