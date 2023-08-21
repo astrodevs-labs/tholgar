@@ -23,27 +23,27 @@ contract DeployScript is Script {
     address feeRecipient;
     address feeToken;
     address operator;
-    address newOwner;
+    address owner;
     Vault vault;
     Swapper swapper;
 
     function setUp() public {
         // ALl variables to set up the vault
         harvestFee = 500;
-        feeRecipient = makeAddr("feeRecipient");
-        operator = makeAddr("operator");
-        newOwner = makeAddr("newOwner");
+        owner = vm.envAddress("OWNER");
+        feeRecipient = owner;
+        feeToken = weth;
+        operator = owner;
     }
 
-
-    function _deploySwapper(address owner) internal {
+    function _deploySwapper() internal {
         swapper = new Swapper(owner, augustusSwapper, tokenTransferAddress);
         console.log("Swapper deployed at: %s", address(swapper));
     }
 
-    function _deployVault(address owner) internal {
+    function _deployVault() internal {
         // deploy vault
-        vault = new Vault(owner, staker, minter, address(swapper), harvestFee, feeRecipient, weth, operator, war);
+        vault = new Vault(owner, staker, minter, address(swapper), harvestFee, feeRecipient, feeToken, operator, war);
         console.log("Vault deployed at: %s", address(vault));
 
         // Set vault in the swapper
@@ -58,19 +58,18 @@ contract DeployScript is Script {
         return zap;
     }
 
-    function _deployContracts(address owner) internal {
-        _deploySwapper(owner);
-        _deployVault(owner);
+    function _deployContracts() internal {
+        _deploySwapper();
+        _deployVault();
         _deployZap();
     }
 
     function run() external {
-        address owner = vm.envAddress("OWNER");
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         address deployer = vm.rememberKey(deployerPrivateKey);
         vm.startBroadcast(deployer);
 
-        _deployContracts(owner);
+        _deployContracts();
 
         vm.stopBroadcast();
     }
