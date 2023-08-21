@@ -24,10 +24,10 @@ export const WarWithdrawPanel: FC<WarWithdrawPanelProps> = () => {
   }, [warWithdrawOutputAmount, war]);
 
   useEffect(() => {
-    if (!vault || !stakerBalance || !vault?.totalSupply) return;
+    if (!vault || stakerBalance === undefined || vault?.totalSupply === undefined) return;
     setWithdrawOutputAmount(
       'war',
-      wstkWARWithdrawInputAmount * (stakerBalance / vault?.totalSupply)
+      vault.totalSupply === 0n ? wstkWARWithdrawInputAmount : wstkWARWithdrawInputAmount * (stakerBalance / vault.totalSupply)
     );
   }, [wstkWARWithdrawInputAmount, vault, stakerBalance]);
 
