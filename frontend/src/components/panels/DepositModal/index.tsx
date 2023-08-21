@@ -69,7 +69,7 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({ open, onClose })
   });
 
   useEffect(() => {
-    if (activeStep == steps.length - 1) {
+    if (activeStep == steps.length) {
       resetBalances();
       onClose();
     }
@@ -98,15 +98,6 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({ open, onClose })
             <AuraCvxDepositModal step={activeStep} validateStep={goToNext} />
           )}
         </ModalBody>
-
-        {/*<ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={onClose}>
-            Close
-          </Button>
-          <Button variant="ghost" onClick={goToNext}>
-            Secondary Action
-          </Button>
-        </ModalFooter>*/}
       </ModalContent>
     </Modal>
   );

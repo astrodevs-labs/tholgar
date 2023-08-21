@@ -50,7 +50,7 @@ export const ApproveAllowance: FC<ApproveAllowanceProps> = ({
         args: [zapAddress, allowTotal ? maxAllowance : tokenDepositInputAmount]
       });
     }
-  }, [tokenDepositInputAmount, allowTotal, token]);
+  }, [tokenDepositInputAmount, allowTotal, token, isLoading, isSuccess]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -59,7 +59,7 @@ export const ApproveAllowance: FC<ApproveAllowanceProps> = ({
   }, [isSuccess]);
 
   useEffect(() => {
-    if (allowanceRes.data && allowanceRes.data > tokenDepositInputAmount) validateStep();
+    if (allowanceRes.data && allowanceRes.data >= tokenDepositInputAmount) validateStep();
   }, [allowanceRes]);
 
   return (
