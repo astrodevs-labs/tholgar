@@ -3,11 +3,12 @@ import config from "../config/config";
 
 const checkGasPrice = async (maxGasPrice: number): Promise<number> => {
   const etherscanApiKey = config.etherscanApiKey();
+  const etherscanApiUrl = config.etherscanApiUrl();
 
   let gasPrice: number;
   try {
     const result: any = await axios.get(
-      `${etherscanApiKey}/api?module=gastracker&action=gasoracle&apikey=${etherscanApiKey}`
+      `${etherscanApiUrl}/api?module=gastracker&action=gasoracle&apikey=${etherscanApiKey}`
     );
     gasPrice = parseFloat(result.data.result.SafeGasPrice);
   } catch (err: any) {

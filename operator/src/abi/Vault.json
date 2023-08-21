@@ -647,7 +647,12 @@
     "inputs": [
       {
         "internalType": "address[]",
-        "name": "tokens",
+        "name": "tokensToHarvest",
+        "type": "address[]"
+      },
+      {
+        "internalType": "address[]",
+        "name": "tokensToSwap",
         "type": "address[]"
       },
       {

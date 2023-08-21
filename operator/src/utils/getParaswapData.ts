@@ -11,12 +11,12 @@ export default async function getParaswapData(
   userAddress: string,
   chainId: number,
   slippage: number,
-  recipient: string
+  receiver: string
 ): Promise<string> {
   const paraswapApiUrl = config.paraswapApiUrl();
   try {
     const priceRoute: any = await axios.get(
-      `${paraswapApiUrl}/prices?srcToken=${srcToken}&destToken=${destToken}&amount=${amount.toString()}&side=SELL&network=${chainId}&srcDecimals=${srcDecimals}&destDecimals=${destDecimals}&userAddress=${userAddress}`
+      `${paraswapApiUrl}/prices?srcToken=${srcToken}&destToken=${destToken}&amount=${amount.toString()}&side=SELL&network=${chainId}&srcDecimals=${srcDecimals}&destDecimals=${destDecimals}&userAddress=${userAddress}&excludeDirectContractMethods=true`
     );
     if (!priceRoute.data["priceRoute"]) {
       throw new Error("No price route found");
@@ -40,7 +40,7 @@ export default async function getParaswapData(
         partner: "paraswap.io",
         srcDecimals: priceRoute.data["priceRoute"].srcDecimals,
         destDecimals: priceRoute.data["priceRoute"].destDecimals,
-        recipient,
+        receiver,
       }
     );
     if (!priceData.data["data"]) {

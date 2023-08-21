@@ -30,7 +30,8 @@ const compound = async (
     const feeToken = await vault.feeToken();
     const feeContract = new Contract(feeToken, ERC20_ABI, provider);
     const srcDecimals = await feeContract.decimals();
-    const balance = await feeContract.balanceOf(vaultAddress);
+    const swapperAddress = await vault.swapper();
+    const balance = await feeContract.balanceOf(swapperAddress);
 
     for (let i = 0; i < ratios.size; i++) {
       tokensToSwap.push(feeToken);
@@ -49,7 +50,7 @@ const compound = async (
         token,
         destDecimals,
         amount,
-        vaultAddress,
+        swapperAddress,
         chainId,
         slippage,
         vaultAddress
@@ -61,7 +62,7 @@ const compound = async (
   }
 
   if (!execute) {
-    const calldata = vault.encodeFunctionData("compound", [
+    const calldata = vault.interface.encodeFunctionData("compound", [
       tokensToSwap,
       outputData,
       tokensToMint,

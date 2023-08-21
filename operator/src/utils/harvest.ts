@@ -48,11 +48,11 @@ const harvest = async (
       reward !== feeToken &&
       claimableRewards.find((c: any) => c[0] === reward)[1] > 0
     )
-      tokens.push(reward);
+      tokens.push(claimableRewards.find((c: any) => c[0] === reward));
   }
 
   // Check if there are rewards to harvest
-  if (tokens.length === 0) {
+  if (tokensToHarvest.length === 0) {
     throw new Error("No rewards to harvest");
   }
 
@@ -83,7 +83,8 @@ const harvest = async (
   }
 
   if (!execute) {
-    const calldata = vault.encodeFunctionData("harvest", [
+    const calldata = vault.interface.encodeFunctionData("harvest", [
+      tokensToHarvest,
       tokens.map((token: any) => token[0]),
       inputData,
     ]);
@@ -92,6 +93,7 @@ const harvest = async (
     try {
       // Harvest the rewards
       const tx = await vault.harvest(
+        tokensToHarvest,
         tokens.map((token: any) => token[0]),
         inputData,
         { gasPrice: BigNumber.from(gasPrice).mul(10000000000) }
