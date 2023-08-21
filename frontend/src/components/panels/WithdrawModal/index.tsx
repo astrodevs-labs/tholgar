@@ -6,7 +6,6 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
   Spinner,
@@ -94,7 +93,6 @@ export const WithdrawPanelModal: FC<WithdrawPanelModalProps> = ({ open, onClose 
             </Button>
           </Flex>
         </ModalBody>
-        <ModalFooter />
       </ModalContent>
     </Modal>
   );
