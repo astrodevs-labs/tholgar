@@ -42,13 +42,21 @@ class Config {
     return this.getEnv("TOKENS_TO_HARVEST", required).split(",");
   }
 
+  static harvest(): boolean {
+    return this.getEnv("HARVEST", false) === "true";
+  }
+
+  static compound(): boolean {
+    return this.getEnv("COMPOUND", false) === "true";
+  }
+
   static ratios(required = true): Map<string, BigNumber> {
     return new Map(
       this.getEnv("RATIOS", required)
         .split(",")
         .map((ratio) => ratio.split(":"))
         .map((ratio) => [ratio[0], BigNumber.from(ratio[1])])
-        );
+    );
   }
 
   private static getEnv(name: string, required: boolean): string {

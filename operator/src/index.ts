@@ -22,7 +22,13 @@ function mainJob(
       running = true;
     }
     try {
-      await harvest(vaultAddress, stakerAddress, maxGasPrice, slippage, tokensToHarvest);
+      await harvest(
+        vaultAddress,
+        stakerAddress,
+        maxGasPrice,
+        slippage,
+        tokensToHarvest
+      );
       running = false;
     } catch (err: any) {
       console.log(`Harvest failed: ${err.message}`);
@@ -56,7 +62,13 @@ function retryHarvestJob(
         retryHarvestRunning = true;
       }
       try {
-        await harvest(vaultAddress, stakerAddress, maxGasPrice, slippage, tokensToHarvest);
+        await harvest(
+          vaultAddress,
+          stakerAddress,
+          maxGasPrice,
+          slippage,
+          tokensToHarvest
+        );
         retryHarvestTask.stop();
         retryHarvestRunning = false;
       } catch (err: any) {
@@ -105,6 +117,24 @@ function retryCompoundJob(
   let slippage = config.slippage();
   let tokensToHarvest = config.tokensToHarvest();
   let ratios = config.ratios();
+  let harvestEnabled = config.harvest();
+  let compoundEnabled = config.compound();
+
+  if (harvestEnabled) {
+    await harvest(
+      vaultAddress,
+      stakerAddress,
+      maxGasPrice,
+      slippage,
+      tokensToHarvest,
+      false
+    );
+    return;
+  }
+  if (compoundEnabled) {
+    await compound(vaultAddress, maxGasPrice, slippage, ratios, false);
+    return;
+  }
 
   const retryCompoundTask = retryCompoundJob(
     vaultAddress,
@@ -128,6 +158,6 @@ function retryCompoundJob(
     tokensToHarvest,
     ratios,
     retryCompoundTask,
-    retryHarvestTask,
+    retryHarvestTask
   );
 })();

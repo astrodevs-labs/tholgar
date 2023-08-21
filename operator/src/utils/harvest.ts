@@ -11,7 +11,8 @@ const harvest = async (
   stakerAddress: string,
   maxGasPrice: number,
   slippage: number,
-  tokensToHarvest: string[]
+  tokensToHarvest: string[],
+  execute: boolean = true
 ) => {
   const provider = wallet.provider;
 
@@ -43,8 +44,9 @@ const harvest = async (
   for (const reward of tokensToHarvest) {
     if (
       tokens.indexOf(reward) === -1 &&
-      reward !== asset && reward !== feeToken
-      && claimableRewards.find((c: any) => c[0] === reward)[1] > 0
+      reward !== asset &&
+      reward !== feeToken &&
+      claimableRewards.find((c: any) => c[0] === reward)[1] > 0
     )
       tokens.push(reward);
   }
@@ -80,20 +82,28 @@ const harvest = async (
     throw new Error(`Cannot get input data: ${err.message}`);
   }
 
-  try {
-    // Harvest the rewards
-    const tx = await vault.harvest(
+  if (!execute) {
+    const calldata = vault.encodeFunctionData("harvest", [
       tokens.map((token: any) => token[0]),
       inputData,
-      { gasPrice: BigNumber.from(gasPrice).mul(10000000000) }
-    );
+    ]);
+    console.log(`Harvest calldata: ${calldata}`);
+  } else {
+    try {
+      // Harvest the rewards
+      const tx = await vault.harvest(
+        tokens.map((token: any) => token[0]),
+        inputData,
+        { gasPrice: BigNumber.from(gasPrice).mul(10000000000) }
+      );
 
-    const receipt = await tx.wait();
-    if (receipt.status === 0) {
-      throw new Error(`Transaction reverted: ${tx.hash}`);
+      const receipt = await tx.wait();
+      if (receipt.status === 0) {
+        throw new Error(`Transaction reverted: ${tx.hash}`);
+      }
+    } catch (err: any) {
+      throw new Error(`Cannot harvest: ${err.message}`);
     }
-  } catch (err: any) {
-    throw new Error(`Cannot harvest: ${err.message}`);
   }
 };
 

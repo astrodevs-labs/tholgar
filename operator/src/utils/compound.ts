@@ -11,7 +11,8 @@ const compound = async (
   vaultAddress: string,
   maxGasPrice: number,
   slippage: number,
-  ratios: Map<string, BigNumber>
+  ratios: Map<string, BigNumber>,
+  execute: boolean = true
 ) => {
   const provider = wallet.provider;
 
@@ -59,18 +60,27 @@ const compound = async (
     throw new Error(`Cannot get output data: ${err.message}`);
   }
 
-  try {
-    // Compound the rewards
-    const tx = await vault.compound(tokensToSwap, outputData, tokensToMint, {
-      gasPrice: BigNumber.from(gasPrice).mul(10000000000),
-    });
+  if (!execute) {
+    const calldata = vault.encodeFunctionData("compound", [
+      tokensToSwap,
+      outputData,
+      tokensToMint,
+    ]);
+    console.log(`Compound calldata: ${calldata}`);
+  } else {
+    try {
+      // Compound the rewards
+      const tx = await vault.compound(tokensToSwap, outputData, tokensToMint, {
+        gasPrice: BigNumber.from(gasPrice).mul(10000000000),
+      });
 
-    const receipt = await tx.wait();
-    if (receipt.status === 0) {
-      throw new Error(`Transaction reverted: ${tx.hash}`);
+      const receipt = await tx.wait();
+      if (receipt.status === 0) {
+        throw new Error(`Transaction reverted: ${tx.hash}`);
+      }
+    } catch (err: any) {
+      throw new Error(`Cannot compound: ${err.message}`);
     }
-  } catch (err: any) {
-    throw new Error(`Cannot compound: ${err.message}`);
   }
 };
 
