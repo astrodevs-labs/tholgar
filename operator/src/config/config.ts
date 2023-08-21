@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { BigNumber } from "ethers";
 
 class Config {
   static slippage(required = true): number {
@@ -35,6 +36,19 @@ class Config {
 
   static paraswapApiUrl(required = true): string {
     return this.getEnv("PARASWAP_API_URL", required);
+  }
+
+  static tokensToHarvest(required = true): string[] {
+    return this.getEnv("TOKENS_TO_HARVEST", required).split(",");
+  }
+
+  static ratios(required = true): Map<string, BigNumber> {
+    return new Map(
+      this.getEnv("RATIOS", required)
+        .split(",")
+        .map((ratio) => ratio.split(":"))
+        .map((ratio) => [ratio[0], BigNumber.from(ratio[1])])
+        );
   }
 
   private static getEnv(name: string, required: boolean): string {

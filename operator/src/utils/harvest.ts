@@ -1,4 +1,4 @@
-import { Contract } from "ethers";
+import { BigNumber, Contract } from "ethers";
 import wallet from "../config/wallet";
 import getParaswapData from "./getParaswapData";
 import ERC20_ABI from "../abi/ERC20.json";
@@ -10,7 +10,8 @@ const harvest = async (
   vaultAddress: string,
   stakerAddress: string,
   maxGasPrice: number,
-  slippage: number
+  slippage: number,
+  tokensToHarvest: string[]
 ) => {
   const provider = wallet.provider;
 
@@ -39,11 +40,11 @@ const harvest = async (
   }
 
   const tokens: any = [];
-  for (const reward of claimableRewards) {
+  for (const reward of tokensToHarvest) {
     if (
       tokens.indexOf(reward) === -1 &&
-      !(await vault.tokensNotToHarvest(reward)) &&
       reward !== asset && reward !== feeToken
+      && claimableRewards.find((c: any) => c[0] === reward)[1] > 0
     )
       tokens.push(reward);
   }
@@ -84,7 +85,7 @@ const harvest = async (
     const tx = await vault.harvest(
       tokens.map((token: any) => token[0]),
       inputData,
-      { gasPrice: gasPrice * 10000000000 }
+      { gasPrice: BigNumber.from(gasPrice).mul(10000000000) }
     );
 
     const receipt = await tx.wait();

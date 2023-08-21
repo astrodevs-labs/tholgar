@@ -2,12 +2,15 @@ import compound from "./utils/compound";
 import harvest from "./utils/harvest";
 import cron from "node-cron";
 import config from "./config/config";
+import { BigNumber } from "ethers";
 
 function mainJob(
   vaultAddress: string,
   stakerAddress: string,
   maxGasPrice: number,
   slippage: number,
+  tokensToHarvest: string[],
+  ratios: Map<string, BigNumber>,
   retryCompoundTask: cron.ScheduledTask,
   retryHarvestTask: cron.ScheduledTask
 ) {
@@ -19,7 +22,7 @@ function mainJob(
       running = true;
     }
     try {
-      await harvest(vaultAddress, stakerAddress, maxGasPrice, slippage);
+      await harvest(vaultAddress, stakerAddress, maxGasPrice, slippage, tokensToHarvest);
       running = false;
     } catch (err: any) {
       console.log(`Harvest failed: ${err.message}`);
@@ -28,7 +31,7 @@ function mainJob(
     }
 
     try {
-      await compound(vaultAddress, maxGasPrice, slippage);
+      await compound(vaultAddress, maxGasPrice, slippage, ratios);
     } catch (err: any) {
       console.log(`Compound failed: ${err.message}`);
       retryCompoundTask.start();
@@ -40,7 +43,8 @@ function retryHarvestJob(
   vaultAddress: string,
   stakerAddress: string,
   maxGasPrice: number,
-  slippage: number
+  slippage: number,
+  tokensToHarvest: string[]
 ): cron.ScheduledTask {
   let retryHarvestRunning = false;
   const retryHarvestTask = cron.schedule(
@@ -52,7 +56,7 @@ function retryHarvestJob(
         retryHarvestRunning = true;
       }
       try {
-        await harvest(vaultAddress, stakerAddress, maxGasPrice, slippage);
+        await harvest(vaultAddress, stakerAddress, maxGasPrice, slippage, tokensToHarvest);
         retryHarvestTask.stop();
         retryHarvestRunning = false;
       } catch (err: any) {
@@ -68,7 +72,8 @@ function retryHarvestJob(
 function retryCompoundJob(
   vaultAddress: string,
   maxGasPrice: number,
-  slippage: number
+  slippage: number,
+  ratios: Map<string, BigNumber>
 ): cron.ScheduledTask {
   let retryCompoundRunning = false;
   const retryCompoundTask = cron.schedule(
@@ -80,7 +85,7 @@ function retryCompoundJob(
         retryCompoundRunning = true;
       }
       try {
-        await compound(vaultAddress, maxGasPrice, slippage);
+        await compound(vaultAddress, maxGasPrice, slippage, ratios);
         retryCompoundTask.stop();
         retryCompoundRunning = false;
       } catch (err: any) {
@@ -98,17 +103,21 @@ function retryCompoundJob(
   let stakerAddress = config.stakerAddress();
   let maxGasPrice = config.maxGasPrice();
   let slippage = config.slippage();
+  let tokensToHarvest = config.tokensToHarvest();
+  let ratios = config.ratios();
 
   const retryCompoundTask = retryCompoundJob(
     vaultAddress,
     maxGasPrice,
-    slippage
+    slippage,
+    ratios
   );
   const retryHarvestTask = retryHarvestJob(
     vaultAddress,
     stakerAddress,
     maxGasPrice,
-    slippage
+    slippage,
+    tokensToHarvest
   );
 
   mainJob(
@@ -116,7 +125,9 @@ function retryCompoundJob(
     stakerAddress,
     maxGasPrice,
     slippage,
+    tokensToHarvest,
+    ratios,
     retryCompoundTask,
-    retryHarvestTask
+    retryHarvestTask,
   );
 })();
