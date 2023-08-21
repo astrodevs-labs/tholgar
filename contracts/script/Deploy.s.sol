@@ -24,6 +24,7 @@ contract DeployScript is Script {
     address feeToken;
     address operator;
     address newOwner;
+    Vault vault;
 
     function setUp() public {
         // ALl variables to set up the vault
@@ -33,28 +34,44 @@ contract DeployScript is Script {
         newOwner = makeAddr("newOwner");
     }
 
-    function run() external {
-        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-        address deployer = vm.rememberKey(deployerPrivateKey);
-        vm.startBroadcast(deployer);
 
-        Swapper swapper = new Swapper(augustusSwapper, tokenTransferAddress);
+    function _deploySwapper(address owner) internal returns (Swapper) {
+        Swapper swapper = new Swapper(owner, augustusSwapper, tokenTransferAddress);
         console.log("Swapper deployed at: %s", address(swapper));
 
+        return swapper;
+    }
+
+    function _deployVault(address owner, Swapper swapper) internal {
         // deploy vault
-        Vault vault = new Vault(staker, minter, address(swapper), harvestFee, feeRecipient, weth, operator, war);
+        vault = new Vault(owner, staker, minter, address(swapper), harvestFee, feeRecipient, weth, operator, war);
         console.log("Vault deployed at: %s", address(vault));
 
         // Set vault in the swapper
         swapper.setVault(address(vault));
+    }
 
+    function _deployZap() internal returns (Zap) {
         // deploy zap
         Zap zap = new Zap(war, address(vault), minter);
         console.log("Zap deployed at: %s", address(zap));
 
-        // transfer ownership
-        vault.transferOwnership(newOwner);
-        swapper.transferOwnership(newOwner);
+        return zap;
+    }
+
+    function _deployContracts(address owner) internal {
+        Swapper swapper = _deploySwapper(owner);
+        _deployVault(owner, swapper);
+        _deployZap();
+    }
+
+    function run() external {
+        address owner = vm.envAddress("OWNER");
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address deployer = vm.rememberKey(deployerPrivateKey);
+        vm.startBroadcast(deployer);
+
+        _deployContracts(owner);
 
         vm.stopBroadcast();
     }

@@ -70,6 +70,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, AOperator {
     //////////////////////////////////////////////////////////////*/
 
     constructor(
+        address initialOwner,
         address initialStaker,
         address initialMinter,
         address initialSwapper,
@@ -83,10 +84,11 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, AOperator {
         AFees(initialHarvestFee, initialFeeRecipient, initialFeeToken)
         AOperator(initialOperator)
     {
-        if (initialStaker == address(0) || initialMinter == address(0) || initialSwapper == address(0)) {
+        if (initialOwner == address(0) || initialStaker == address(0) || initialMinter == address(0) || initialSwapper == address(0)) {
             revert Errors.ZeroAddress();
         }
 
+        _transferOwnership(initialOwner);
         staker = initialStaker;
         minter = initialMinter;
         swapper = initialSwapper;

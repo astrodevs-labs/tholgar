@@ -22,10 +22,10 @@ contract VaultTest is MainnetTest {
 
         vm.startPrank(owner);
 
-        swapper = new Swapper(augustusSwapper, tokenTransferAddress);
+        swapper = new Swapper(owner, augustusSwapper, tokenTransferAddress);
 
         vault =
-        new Vault(address(staker), address(minter), address(swapper), 500, owner, address(usdc), operator, address(war));
+        new Vault(owner, address(staker), address(minter), address(swapper), 500, owner, address(usdc), operator, address(war));
 
         swapper.setVault(address(vault));
         vm.stopPrank();

@@ -13,11 +13,11 @@ contract Constructor is SwapperTest {
 
     function test_constructor_ZeroAddressSwapRouter() public {
         vm.expectRevert(Errors.ZeroAddress.selector);
-        new Swapper(address(0), tokenTransferAddress);
+        new Swapper(owner, address(0), tokenTransferAddress);
     }
 
     function test_constructor_ZeroAddressTokenTransferAddress() public {
         vm.expectRevert(Errors.ZeroAddress.selector);
-        new Swapper(augustusSwapper, address(0));
+        new Swapper(owner, augustusSwapper, address(0));
     }
 }

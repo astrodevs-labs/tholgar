@@ -58,9 +58,10 @@ contract Swapper is Ownable2Step {
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor(address initialSwapRouter, address initialTokenTransferAddress) {
-        if (initialSwapRouter == address(0) || initialTokenTransferAddress == address(0)) revert Errors.ZeroAddress();
+    constructor(address initialOwner, address initialSwapRouter, address initialTokenTransferAddress) {
+        if (initialOwner == address(0) || initialSwapRouter == address(0) || initialTokenTransferAddress == address(0)) revert Errors.ZeroAddress();
 
+        _transferOwnership(initialOwner);
         swapRouter = initialSwapRouter;
         tokenTransferAddress = initialTokenTransferAddress;
     }

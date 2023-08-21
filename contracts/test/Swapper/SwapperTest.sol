@@ -19,7 +19,7 @@ contract SwapperTest is MainnetTest {
 
         vm.startPrank(owner);
 
-        swapper = new Swapper(augustusSwapper, tokenTransferAddress);
+        swapper = new Swapper(owner, augustusSwapper, tokenTransferAddress);
 
         swapper.setVault(vault);
 
