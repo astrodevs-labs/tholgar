@@ -272,20 +272,28 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, AOperator {
         nonReentrant
         onlyOperatorOrOwner
     {
+        address _swapper = swapper;
         address _feeToken = feeToken;
         uint256 oldFeeBalance = ERC20(_feeToken).balanceOf(address(this));
 
         // claim all harvastable rewards and send them to the swapper
         uint256 length = tokensToHarvest.length;
         for (uint256 i; i < length;) {
-            IStaker(staker).claimRewards(tokensToHarvest[i], swapper);
+            address tokenToHarvest = tokensToHarvest[i];
+            address recipient;
+            if (tokenToHarvest == address(asset) || tokenToHarvest == address(_feeToken)) {
+                recipient = address(this);
+            } else {
+                recipient = _swapper;
+            }
+            IStaker(staker).claimRewards(tokenToHarvest, recipient);
             unchecked {
                 ++i;
             }
         }
 
         // swap to harvested tokens to feeToken
-        ISwapper(swapper).swap(tokensToSwap, callDatas);
+        ISwapper(_swapper).swap(tokensToSwap, callDatas);
 
         // transfer havestfee %oo to fee recipient
         uint256 harvestedAmount = ERC20(_feeToken).balanceOf(address(this)) - oldFeeBalance;
