@@ -25,6 +25,7 @@ contract DeployScript is Script {
     address operator;
     address newOwner;
     Vault vault;
+    Swapper swapper;
 
     function setUp() public {
         // ALl variables to set up the vault
@@ -35,14 +36,12 @@ contract DeployScript is Script {
     }
 
 
-    function _deploySwapper(address owner) internal returns (Swapper) {
-        Swapper swapper = new Swapper(owner, augustusSwapper, tokenTransferAddress);
+    function _deploySwapper(address owner) internal {
+        swapper = new Swapper(owner, augustusSwapper, tokenTransferAddress);
         console.log("Swapper deployed at: %s", address(swapper));
-
-        return swapper;
     }
 
-    function _deployVault(address owner, Swapper swapper) internal {
+    function _deployVault(address owner) internal {
         // deploy vault
         vault = new Vault(owner, staker, minter, address(swapper), harvestFee, feeRecipient, weth, operator, war);
         console.log("Vault deployed at: %s", address(vault));
@@ -60,8 +59,8 @@ contract DeployScript is Script {
     }
 
     function _deployContracts(address owner) internal {
-        Swapper swapper = _deploySwapper(owner);
-        _deployVault(owner, swapper);
+        _deploySwapper(owner);
+        _deployVault(owner);
         _deployZap();
     }
 
