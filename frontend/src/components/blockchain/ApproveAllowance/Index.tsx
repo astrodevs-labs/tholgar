@@ -32,6 +32,7 @@ export const ApproveAllowance: FC<ApproveAllowanceProps> = ({
 }) => {
   const tokenDepositInputAmount = useStore((state) => state.getDepositInputTokenAmount(token));
   const [allowTotal, setAllowTotal] = useBoolean(false);
+  const [validated, setValidated] = useBoolean(false);
   const { data, write } = useContractWrite({
     address: tokenAddress,
     abi: erc20ABI,
@@ -55,7 +56,8 @@ export const ApproveAllowance: FC<ApproveAllowanceProps> = ({
   }, [tokenDepositInputAmount, allowTotal, write, isLoading, isSuccess, allowanceFor]);
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess && !validated) {
+      setValidated.on();
       validateStep();
     }
   }, [isSuccess, validateStep]);
