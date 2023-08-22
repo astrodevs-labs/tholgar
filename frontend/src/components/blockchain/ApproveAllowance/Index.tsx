@@ -52,17 +52,17 @@ export const ApproveAllowance: FC<ApproveAllowanceProps> = ({
         args: [allowanceFor, allowTotal ? maxAllowance : tokenDepositInputAmount]
       });
     }
-  }, [tokenDepositInputAmount, allowTotal, write, isLoading, isSuccess]);
+  }, [tokenDepositInputAmount, allowTotal, write, isLoading, isSuccess, allowanceFor]);
 
   useEffect(() => {
     if (isSuccess) {
       validateStep();
     }
-  }, [isSuccess]);
+  }, [isSuccess, validateStep]);
 
   useEffect(() => {
     if (allowanceRes.data && allowanceRes.data >= tokenDepositInputAmount) validateStep();
-  }, [allowanceRes]);
+  }, [allowanceRes, tokenDepositInputAmount, validateStep]);
 
   return (
     <Flex direction={'column'}>
