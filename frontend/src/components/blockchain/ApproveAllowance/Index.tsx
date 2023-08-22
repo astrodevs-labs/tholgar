@@ -12,11 +12,12 @@ import {
   useColorModeValue
 } from '@chakra-ui/react';
 import { erc20ABI, useContractRead, useContractWrite, useWaitForTransaction } from 'wagmi';
-import { maxAllowance, zapAddress } from '../../../config/blockchain';
+import { maxAllowance } from '../../../config/blockchain';
 
 export interface ApproveAllowanceProps {
   token: inputTokenIds;
   tokenAddress: `0x${string}`;
+  allowanceFor: `0x${string}`;
   step: number;
   validateStep: () => void;
   address: `0x${string}`;
@@ -26,7 +27,8 @@ export const ApproveAllowance: FC<ApproveAllowanceProps> = ({
   validateStep,
   address,
   tokenAddress,
-  token
+  token,
+  allowanceFor
 }) => {
   const tokenDepositInputAmount = useStore((state) => state.getDepositInputTokenAmount(token));
   const [allowTotal, setAllowTotal] = useBoolean(false);
@@ -42,12 +44,12 @@ export const ApproveAllowance: FC<ApproveAllowanceProps> = ({
     address: tokenAddress,
     abi: erc20ABI,
     functionName: 'allowance',
-    args: [address, zapAddress]
+    args: [address, allowanceFor]
   });
   const allow = useCallback(() => {
     if (!isLoading && !isSuccess) {
       write({
-        args: [zapAddress, allowTotal ? maxAllowance : tokenDepositInputAmount]
+        args: [allowanceFor, allowTotal ? maxAllowance : tokenDepositInputAmount]
       });
     }
   }, [tokenDepositInputAmount, allowTotal, write, isLoading, isSuccess]);

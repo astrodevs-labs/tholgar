@@ -84,6 +84,7 @@ export const AuraCvxDepositModal: FC<AuraCvxDepositModalProps> = ({ step, valida
           token={'aura'}
           tokenAddress={auraAddress}
           step={step}
+          allowanceFor={zapAddress}
           validateStep={validateStep}
           address={address!}
         />
@@ -97,6 +98,7 @@ export const AuraCvxDepositModal: FC<AuraCvxDepositModalProps> = ({ step, valida
           token={'cvx'}
           tokenAddress={cvxAddress}
           step={step}
+          allowanceFor={zapAddress}
           validateStep={validateStep}
           address={address!}
         />

@@ -73,6 +73,7 @@ export const WarDepositModal: FC<WarDepositModalProps> = ({ step, validateStep }
       token={'war'}
       tokenAddress={warAddress}
       step={step}
+      allowanceFor={vaultAddress}
       validateStep={validateStep}
       address={address!}
     />
