@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity 0.8.20;
 
-import {Errors} from "../src/utils/Errors.sol";
+import { Errors } from "../src/utils/Errors.sol";
 import "forge-std/Test.sol";
 
 contract BaseTest is Test {

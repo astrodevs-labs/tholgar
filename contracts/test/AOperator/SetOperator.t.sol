@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 import "./AOperatorTest.sol";
-import {Errors} from "../../src/utils/Errors.sol";
+import { Errors } from "../../src/utils/Errors.sol";
 
 contract SetOperator is AOperatorTest {
     function test_setOperator_Normal(address newOperator) public {

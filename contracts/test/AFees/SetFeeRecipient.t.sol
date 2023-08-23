@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 import "./AFeesTest.sol";
-import {Errors} from "../../src/utils/Errors.sol";
+import { Errors } from "../../src/utils/Errors.sol";
 
 contract SetFeeRecipient is AFeesTest {
     function test_setFeeRecipient_Normal(address recipient) public {

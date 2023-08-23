@@ -2,8 +2,8 @@
 pragma solidity 0.8.20;
 
 import "../BaseTest.sol";
-import {AFeesMock} from "../mock/AFees.sol";
-import {ERC20Mock} from "../mock/ERC20.sol";
+import { AFeesMock } from "../mock/AFees.sol";
+import { ERC20Mock } from "../mock/ERC20.sol";
 
 contract AFeesTest is BaseTest {
     AFeesMock fees;

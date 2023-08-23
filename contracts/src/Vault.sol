@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.8.20;
 
-import {Pausable} from "openzeppelin-contracts/security/Pausable.sol";
-import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
-import {ReentrancyGuard} from "solmate/utils/ReentrancyGuard.sol";
-import {IMinter} from "warlord/interfaces/IMinter.sol";
-import {IStaker} from "warlord/interfaces/IStaker.sol";
-import {ERC4626} from "solmate/mixins/ERC4626.sol";
-import {ERC20} from "solmate/tokens/ERC20.sol";
-import {ISwapper} from "./interfaces/ISwapper.sol";
-import {AOperator} from "./abstracts/AOperator.sol";
-import {AFees} from "./abstracts/AFees.sol";
-import {Errors} from "./utils/Errors.sol";
-import {Allowance} from "./utils/Allowance.sol";
-import {Owned2Step} from "./utils/Owned2Step.sol";
+import { Pausable } from "openzeppelin-contracts/security/Pausable.sol";
+import { SafeTransferLib } from "solmate/utils/SafeTransferLib.sol";
+import { ReentrancyGuard } from "solmate/utils/ReentrancyGuard.sol";
+import { IMinter } from "warlord/interfaces/IMinter.sol";
+import { IStaker } from "warlord/interfaces/IStaker.sol";
+import { ERC4626 } from "solmate/mixins/ERC4626.sol";
+import { ERC20 } from "solmate/tokens/ERC20.sol";
+import { ISwapper } from "./interfaces/ISwapper.sol";
+import { AOperator } from "./abstracts/AOperator.sol";
+import { AFees } from "./abstracts/AFees.sol";
+import { Errors } from "./utils/Errors.sol";
+import { Allowance } from "./utils/Allowance.sol";
+import { Owned2Step } from "./utils/Owned2Step.sol";
 
 /// @author 0xtekgrinder
 /// @title Vault contract

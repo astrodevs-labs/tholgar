@@ -2,8 +2,8 @@
 pragma solidity 0.8.20;
 
 import "../Vault/VaultTest.sol";
-import {Zap} from "../../src/Zap.sol";
-import {Vault} from "../../src/Vault.sol";
+import { Zap } from "../../src/Zap.sol";
+import { Vault } from "../../src/Vault.sol";
 
 contract ZapTest is VaultTest {
     uint256 constant cvxMaxSupply = 100_000_000e18;
