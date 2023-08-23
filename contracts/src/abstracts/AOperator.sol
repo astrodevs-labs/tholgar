@@ -2,14 +2,14 @@
 pragma solidity 0.8.20;
 
 import {Errors} from "../utils/Errors.sol";
-import {Ownable2Step} from "openzeppelin-contracts/access/Ownable2Step.sol";
+import {Owned2Step} from "../utils/Owned2Step.sol";
 
 /**
  *  @title AOperator contract
  *  @notice Provide operator checking
  *  @author 0xMemoryGrinder
  */
-abstract contract AOperator is Ownable2Step {
+abstract contract AOperator is Owned2Step {
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
@@ -33,7 +33,7 @@ abstract contract AOperator is Ownable2Step {
     //////////////////////////////////////////////////////////////*/
 
     modifier onlyOperatorOrOwner() {
-        if (msg.sender != operator && msg.sender != owner()) revert Errors.NotOperatorOrOwner();
+        if (msg.sender != operator && msg.sender != owner) revert Errors.NotOperatorOrOwner();
         _;
     }
 

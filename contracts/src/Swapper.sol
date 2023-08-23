@@ -2,17 +2,15 @@
 pragma solidity 0.8.20;
 
 import {ERC20} from "solmate/tokens/ERC20.sol";
-import {Ownable2Step} from "openzeppelin-contracts/access/Ownable2Step.sol";
+import {Owned2Step} from "./utils/Owned2Step.sol";
 import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
 import {Errors} from "./utils/Errors.sol";
 import {Allowance} from "./utils/Allowance.sol";
 
-/**
- *  @title contract
- *  @notice Provide swapper functions to swap tokens using a router/aggregator
- *  @author 0xMemoryGrinder
- */
-contract Swapper is Ownable2Step {
+/// @author 0xtekgrinder
+/// @title Swapper contract
+/// @notice Contract to manage swaps using a router/aggregator
+contract Swapper is Owned2Step {
     using SafeTransferLib for ERC20;
 
     /**
@@ -58,10 +56,11 @@ contract Swapper is Ownable2Step {
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor(address initialOwner, address initialSwapRouter, address initialTokenTransferAddress) {
-        if (initialOwner == address(0) || initialSwapRouter == address(0) || initialTokenTransferAddress == address(0)) revert Errors.ZeroAddress();
+    constructor(address initialOwner, address initialSwapRouter, address initialTokenTransferAddress)
+        Owned2Step(initialOwner)
+    {
+        if (initialSwapRouter == address(0) || initialTokenTransferAddress == address(0)) revert Errors.ZeroAddress();
 
-        _transferOwnership(initialOwner);
         swapRouter = initialSwapRouter;
         tokenTransferAddress = initialTokenTransferAddress;
     }
@@ -125,7 +124,7 @@ contract Swapper is Ownable2Step {
         uint256 amount = ERC20(token).balanceOf(address(this));
         if (amount == 0) revert Errors.ZeroValue();
 
-        ERC20(token).safeTransfer(owner(), amount);
+        ERC20(token).safeTransfer(owner, amount);
 
         return true;
     }

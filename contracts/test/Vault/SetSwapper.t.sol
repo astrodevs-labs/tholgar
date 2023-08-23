@@ -24,7 +24,7 @@ contract SetSwapper is VaultTest {
 
     function test_setSwapper_NotOwner() public {
         vm.prank(bob);
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.expectRevert("UNAUTHORIZED");
         vault.setSwapper(bob);
     }
 }

@@ -19,7 +19,7 @@ contract SetHarvestFee is AFeesTest {
         amount = bound(amount, 0, fees.MAX_BPS());
 
         vm.prank(alice);
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.expectRevert("UNAUTHORIZED");
         fees.setHarvestFee(amount);
     }
 

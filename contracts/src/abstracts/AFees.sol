@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.8.20;
 
-import {Ownable2Step} from "openzeppelin-contracts/access/Ownable2Step.sol";
+import {Owned2Step} from "../utils/Owned2Step.sol";
 import {Errors} from "../utils/Errors.sol";
 
 /// @author 0xtekgrinder
 /// @title Fees contract
 /// @notice contract to manage fees
-abstract contract AFees is Ownable2Step {
+abstract contract AFees is Owned2Step {
     /*//////////////////////////////////////////////////////////////
                                   EVENTS
     //////////////////////////////////////////////////////////////*/

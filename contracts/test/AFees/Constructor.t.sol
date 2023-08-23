@@ -12,18 +12,18 @@ contract Constructor is AFeesTest {
 
     function test_constructor_ZeroAddressFeeRecipient() public {
         vm.expectRevert(Errors.ZeroAddress.selector);
-        new AFeesMock(500, address(0), address(feeToken));
+        new AFeesMock(500, address(0), address(feeToken), owner);
     }
 
     function test_constructor_ZeroAddressFeeToken() public {
         vm.expectRevert(Errors.ZeroAddress.selector);
-        new AFeesMock(500, owner, address(0));
+        new AFeesMock(500, owner, address(0), owner);
     }
 
     function test_constructor_InvalidFee(uint256 amount) public {
         amount = bound(amount, fees.MAX_BPS() + 1, UINT256_MAX);
 
         vm.expectRevert(Errors.InvalidFee.selector);
-        new AFeesMock(amount, owner, address(feeToken));
+        new AFeesMock(amount, owner, address(feeToken), owner);
     }
 }

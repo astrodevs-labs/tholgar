@@ -17,7 +17,7 @@ contract AFeesTest is BaseTest {
         vm.startPrank(owner);
 
         feeToken = new ERC20Mock("Fee Token", "FEE", 18);
-        fees = new AFeesMock(500, owner, address(feeToken));
+        fees = new AFeesMock(500, owner, address(feeToken), owner);
 
         vm.stopPrank();
     }

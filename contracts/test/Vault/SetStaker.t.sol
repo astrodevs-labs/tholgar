@@ -33,7 +33,7 @@ contract SetStaker is VaultTest {
     function test_setStaker_NotOwner() public {
         WarStaker newStaker = new WarStaker(address(vault.asset()));
 
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.expectRevert("UNAUTHORIZED");
         vm.prank(bob);
         vault.setStaker(address(newStaker));
     }

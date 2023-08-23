@@ -19,7 +19,7 @@ contract SetVault is SwapperTest {
         vm.assume(newVault != address(0));
 
         vm.prank(alice);
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.expectRevert("UNAUTHORIZED");
         swapper.setVault(newVault);
     }
 

@@ -2,7 +2,6 @@
 pragma solidity 0.8.20;
 
 import {Pausable} from "openzeppelin-contracts/security/Pausable.sol";
-import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
 import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
 import {ReentrancyGuard} from "solmate/utils/ReentrancyGuard.sol";
 import {IMinter} from "warlord/interfaces/IMinter.sol";
@@ -14,13 +13,13 @@ import {AOperator} from "./abstracts/AOperator.sol";
 import {AFees} from "./abstracts/AFees.sol";
 import {Errors} from "./utils/Errors.sol";
 import {Allowance} from "./utils/Allowance.sol";
+import {Owned2Step} from "./utils/Owned2Step.sol";
 
 /// @author 0xtekgrinder
 /// @title Vault contract
 /// @notice Auto compounding vault for the warlord protocol with token to deposit being WAR and asset being stkWAR
 contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, AOperator {
     using SafeTransferLib for ERC20;
-    using FixedPointMathLib for uint256;
 
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
@@ -80,15 +79,15 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, AOperator {
         address initialOperator,
         address definitiveAsset
     )
+        Owned2Step(initialOwner)
         ERC4626(ERC20(definitiveAsset), "Tholgar Warlord Token", "tWAR")
         AFees(initialHarvestFee, initialFeeRecipient, initialFeeToken)
         AOperator(initialOperator)
     {
-        if (initialOwner == address(0) || initialStaker == address(0) || initialMinter == address(0) || initialSwapper == address(0)) {
+        if (initialStaker == address(0) || initialMinter == address(0) || initialSwapper == address(0)) {
             revert Errors.ZeroAddress();
         }
 
-        _transferOwnership(initialOwner);
         staker = initialStaker;
         minter = initialMinter;
         swapper = initialSwapper;
@@ -171,7 +170,7 @@ contract Vault is ERC4626, Pausable, ReentrancyGuard, AFees, AOperator {
         uint256 amount = ERC20(token).balanceOf(address(this));
         if (amount == 0) revert Errors.ZeroValue();
 
-        ERC20(token).safeTransfer(owner(), amount);
+        ERC20(token).safeTransfer(owner, amount);
 
         return true;
     }

@@ -13,7 +13,7 @@ contract AOperatorTest is BaseTest {
     function setUp() public virtual {
         vm.startPrank(owner);
 
-        operator = new AOperatorMock(bob);
+        operator = new AOperatorMock(bob, owner);
 
         vm.stopPrank();
     }

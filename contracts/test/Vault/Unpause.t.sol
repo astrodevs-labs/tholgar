@@ -14,7 +14,7 @@ contract Unpause is VaultTest {
 
     function test_unpause_NotOwner() public {
         vm.prank(bob);
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.expectRevert("UNAUTHORIZED");
         vault.unpause();
     }
 }

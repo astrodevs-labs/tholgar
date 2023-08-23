@@ -28,7 +28,7 @@ contract RecoverERC20 is SwapperTest {
 
     function test_recoverERC20_NotOwner() public {
         vm.prank(bob);
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.expectRevert("UNAUTHORIZED");
         swapper.recoverERC20(address(usdc));
     }
 }

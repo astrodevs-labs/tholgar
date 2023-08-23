@@ -20,7 +20,7 @@ contract SetFeeRecipient is AFeesTest {
         vm.assume(recipient != address(0));
 
         vm.prank(alice);
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.expectRevert("UNAUTHORIZED");
         fees.setFeeRecipient(recipient);
     }
 

@@ -20,7 +20,7 @@ contract SetOperator is AOperatorTest {
         vm.assume(newOperator != address(0));
 
         vm.prank(alice);
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.expectRevert("UNAUTHORIZED");
         operator.setOperator(newOperator);
     }
 

@@ -19,7 +19,7 @@ contract SetSwapRouter is SwapperTest {
         vm.assume(newSwapRouter != address(0));
 
         vm.prank(alice);
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.expectRevert("UNAUTHORIZED");
         swapper.setSwapRouter(newSwapRouter);
     }
 

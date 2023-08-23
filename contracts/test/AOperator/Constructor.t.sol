@@ -10,6 +10,6 @@ contract Constructor is AOperatorTest {
 
     function test_constructor_ZeroAddressOperator() public {
         vm.expectRevert(Errors.ZeroAddress.selector);
-        new AOperatorMock(address(0));
+        new AOperatorMock(address(0), owner);
     }
 }
