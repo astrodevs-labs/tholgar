@@ -18,7 +18,7 @@ export interface CirculatingSupplyProps {}
 export const CirculatingSupply: FC<CirculatingSupplyProps> = () => {
   const [circulatingSupply, setCirculatingSupply] = useStore((state) => [state.circulatingSupply, state.setCirculatingSupply]);
   const { data: vault } = useToken({
-    address:  circulatingSupply !== undefined ? vaultAddress : undefined
+    address:  circulatingSupply === undefined ? vaultAddress : undefined
   });
 
   useEffect(() => {
