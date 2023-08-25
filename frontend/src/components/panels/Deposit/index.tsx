@@ -65,9 +65,9 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
   ]);
   const setDepositOutputTokenAmounts = useStore((state) => state.setDepositOutputTokenAmount);
   const stakerBalance = useOrFetchTokenBalance({ address: stakerAddress, account: vaultAddress });
-  const warBalance = useOrFetchTokenBalance({ token: "war"});
-  const auraBalance = useOrFetchTokenBalance({ token: "aura"});
-  const cvxBalance = useOrFetchTokenBalance({ token: "cvx"});
+  const warBalance = useOrFetchTokenBalance({ token: 'war' });
+  const auraBalance = useOrFetchTokenBalance({ token: 'aura' });
+  const cvxBalance = useOrFetchTokenBalance({ token: 'cvx' });
   const wstkWarInfos = useOrFetchTokenInfos({ token: 'tWAR' });
   const wstkWarDecimals = wstkWarInfos?.decimals;
   const wstkWAROutputAmountFormatted = useMemo(
@@ -78,8 +78,14 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
     [wstkWAROutputAmount, wstkWarDecimals]
   );
   const isDepositDisabled = useMemo(() => {
-    if (depositToken === 'war') return warDepositAmount === 0n || (warBalance !== undefined && warDepositAmount > warBalance);
-    if (depositToken === 'aura/cvx') return (auraDepositAmount === 0n && cvxDepositAmount === 0n)  || (auraBalance !== undefined && auraDepositAmount > auraBalance) || (cvxBalance !== undefined && cvxDepositAmount > cvxBalance);
+    if (depositToken === 'war')
+      return warDepositAmount === 0n || (warBalance !== undefined && warDepositAmount > warBalance);
+    if (depositToken === 'aura/cvx')
+      return (
+        (auraDepositAmount === 0n && cvxDepositAmount === 0n) ||
+        (auraBalance !== undefined && auraDepositAmount > auraBalance) ||
+        (cvxBalance !== undefined && cvxDepositAmount > cvxBalance)
+      );
     return true;
   }, [depositToken, warDepositAmount, auraDepositAmount, cvxDepositAmount]);
   const input = tokensInputs.get(depositToken);
@@ -128,7 +134,6 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
 
     setDepositOutputTokenAmounts('tWAR', auraAmountInWar + cvxAmountInWar);
   }, [auraRatio, cvxRatio, auraDepositAmount, cvxDepositAmount, depositToken]);
-
 
   const buttonBgColor = useColorModeValue('brand.primary.200', 'brand.primary.300');
   const buttonHoverColor = useColorModeValue('brand.primary.300', 'brand.primary.100');

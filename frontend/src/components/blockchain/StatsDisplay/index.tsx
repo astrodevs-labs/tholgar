@@ -1,13 +1,10 @@
 import React, { FC } from 'react';
-import {
-  GridItem,
-  Grid,
-} from '@chakra-ui/react';
+import { GridItem, Grid } from '@chakra-ui/react';
 import { Container } from 'components/ui/Container';
-import {CirculatingSupply} from "./CirculatingSupply";
-import {APY} from "./APY";
-import {WarLocked} from "./WarLocked";
-import {TVL} from "./TVL";
+import { CirculatingSupply } from './CirculatingSupply';
+import { APY } from './APY';
+import { WarLocked } from './WarLocked';
+import { TVL } from './TVL';
 
 export interface StatsDisplayProps {}
 

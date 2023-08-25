@@ -1,12 +1,11 @@
-
-import {useEffect, useState} from "react";
-import axios, {AxiosResponse} from "axios";
+import { useEffect, useState } from 'react';
+import axios, { AxiosResponse } from 'axios';
 
 export default function usePostRequest(url: string, data: any): any | null {
   const [response, setResponse] = useState<AxiosResponse<any, any> | null>(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect( () => {
+  useEffect(() => {
     console.log('usePostRequest', url, data);
     const fetchData = async () => {
       if (!loading) {
@@ -21,7 +20,7 @@ export default function usePostRequest(url: string, data: any): any | null {
     fetchData();
     return () => {
       console.log('usePostRequest cleanup', url, data);
-    }
+    };
   }, []);
   return response;
 }

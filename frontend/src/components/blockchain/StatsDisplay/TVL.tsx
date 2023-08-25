@@ -1,14 +1,8 @@
 /* eslint-disable no-unused-vars */
 
-import React, {FC, useEffect} from 'react';
-import {
-  Text,
-  VStack,
-  Spinner,
-  useColorModeValue,
-  useColorMode
-} from '@chakra-ui/react';
-import {useBalance, useContractRead, useToken} from "wagmi";
+import React, { FC, useEffect } from 'react';
+import { Text, VStack, Spinner, useColorModeValue, useColorMode } from '@chakra-ui/react';
+import { useBalance, useContractRead, useToken } from 'wagmi';
 import {
   auraAddress,
   cvxAddress,
@@ -18,9 +12,9 @@ import {
   warCvxLocker,
   warLockerAbi
 } from 'config/blockchain';
-import formatNumber from "utils/formatNumber";
-import {useStore} from "store";
-import getTotalPricePerToken from "../../../utils/getTotalPricePerToken";
+import formatNumber from 'utils/formatNumber';
+import { useStore } from 'store';
+import getTotalPricePerToken from '../../../utils/getTotalPricePerToken';
 
 export interface TVLProps {}
 

@@ -1,13 +1,9 @@
 /* eslint-disable no-unused-vars */
 
-import React, {FC, useEffect} from 'react';
-import {
-  Text,
-  VStack,
-  Spinner, useColorMode, useColorModeValue,
-} from '@chakra-ui/react';
-import {useBalance, useContractRead} from "wagmi";
-import {FetchBalanceResult} from "@wagmi/core";
+import React, { FC, useEffect } from 'react';
+import { Text, VStack, Spinner, useColorMode, useColorModeValue } from '@chakra-ui/react';
+import { useBalance, useContractRead } from 'wagmi';
+import { FetchBalanceResult } from '@wagmi/core';
 import {
   auraAddress,
   cvxAddress,
@@ -26,24 +22,26 @@ import {
   warRedeemerABI,
   wethAddress
 } from 'config/blockchain';
-import {useStore} from "store";
-import {useFetchRewardStates} from "hooks/useFetchRewardStates";
-import usePostRequest from "hooks/usePostRequest";
-import getTotalPricePerToken from "utils/getTotalPricePerToken";
+import { useStore } from 'store';
+import { useFetchRewardStates } from 'hooks/useFetchRewardStates';
+import usePostRequest from 'hooks/usePostRequest';
+import getTotalPricePerToken from 'utils/getTotalPricePerToken';
 
-
-
-async function computeActiveTvl(totalWarLocked: FetchBalanceResult | undefined, auraRatio: bigint, cvxRatio: bigint, weights: any[]): Promise<number | undefined> {
+async function computeActiveTvl(
+  totalWarLocked: FetchBalanceResult | undefined,
+  auraRatio: bigint,
+  cvxRatio: bigint,
+  weights: any[]
+): Promise<number | undefined> {
   if (totalWarLocked === undefined || weights == undefined) return;
 
-  const auraWeight = (weights as any).find(
-    (weight: any) => weight.token === auraAddress
-  ).weight;
+  const auraWeight = (weights as any).find((weight: any) => weight.token === auraAddress).weight;
   const cvxWeight = (weights as any).find((weight: any) => weight.token === cvxAddress).weight;
 
   if (auraWeight === undefined || cvxWeight === undefined) return;
 
-  const auraAmount = (totalWarLocked.value as bigint * auraWeight) / (auraRatio as bigint) / BigInt(1e18);
+  const auraAmount =
+    ((totalWarLocked.value as bigint) * auraWeight) / (auraRatio as bigint) / BigInt(1e18);
   const cvxAmount = (totalWarLocked.value * cvxWeight) / (cvxRatio as bigint) / BigInt(1e18);
 
   const warlordTVL =
@@ -52,7 +50,12 @@ async function computeActiveTvl(totalWarLocked: FetchBalanceResult | undefined, 
   return warlordTVL;
 }
 
-async function computeCrvCvxApr(rewardData: any, lockedSupply: any, cvxLocked: any, tvl: number): Promise<number | undefined> {
+async function computeCrvCvxApr(
+  rewardData: any,
+  lockedSupply: any,
+  cvxLocked: any,
+  tvl: number
+): Promise<number | undefined> {
   if (rewardData === undefined || lockedSupply === undefined) return;
 
   const cvxCrvAmount =
@@ -64,16 +67,26 @@ async function computeCrvCvxApr(rewardData: any, lockedSupply: any, cvxLocked: a
   return cvxCrvApr;
 }
 
-async function computeAuraBalApr(totalWarLocked: FetchBalanceResult | undefined, weights: any[], auraLocked: any, breakdownResponse: any, auraRatio: any): Promise<number | undefined> {
-  if (totalWarLocked === undefined || weights === undefined || auraLocked === undefined || !breakdownResponse) return;
+async function computeAuraBalApr(
+  totalWarLocked: FetchBalanceResult | undefined,
+  weights: any[],
+  auraLocked: any,
+  breakdownResponse: any,
+  auraRatio: any
+): Promise<number | undefined> {
+  if (
+    totalWarLocked === undefined ||
+    weights === undefined ||
+    auraLocked === undefined ||
+    !breakdownResponse
+  )
+    return;
 
   let amount = 0;
   for (const apr of breakdownResponse.data.data.locker.aprs.breakdown) {
     amount += apr.value;
   }
-  const auraWeight = (weights as any).find(
-    (weight: any) => weight.token === auraAddress
-  ).weight;
+  const auraWeight = (weights as any).find((weight: any) => weight.token === auraAddress).weight;
   // TODO clean without number
   return (
     (((amount * (Number(auraWeight) / 1e18)) / 100) * Number(auraLocked as bigint)) /
@@ -81,15 +94,19 @@ async function computeAuraBalApr(totalWarLocked: FetchBalanceResult | undefined,
   );
 }
 
-async function computeWarApr(warRates: bigint[] | undefined, weights: any[], auraRatio: any, cvxRatio: any, tvl: number): Promise<number | undefined> {
+async function computeWarApr(
+  warRates: bigint[] | undefined,
+  weights: any[],
+  auraRatio: any,
+  cvxRatio: any,
+  tvl: number
+): Promise<number | undefined> {
   if (warRates === undefined || weights === undefined) return;
   if ((warRates as bigint[])[2] * 1000n <= new Date().valueOf()) return 0;
 
   const warAmount = (warRates as bigint[])[3] * 604800n * 4n * 12n;
 
-  const auraWeight = (weights as any).find(
-    (weight: any) => weight.token === auraAddress
-  ).weight;
+  const auraWeight = (weights as any).find((weight: any) => weight.token === auraAddress).weight;
   const cvxWeight = (weights as any).find((weight: any) => weight.token === cvxAddress).weight;
 
   const cvxAmount = (warAmount * auraWeight) / (auraRatio as bigint) / BigInt(1e18);
@@ -137,12 +154,23 @@ async function computeAPY(
   palRates: any,
   rewardData: any,
   lockedSupply: any,
-  cvxLocked: any,
+  cvxLocked: any
 ): Promise<string> {
-  const warlordTVL = await computeActiveTvl(totalWarLocked, auraRatio as bigint, cvxRatio as bigint, weights as any[]);
-  if (warlordTVL === undefined) throw new Error("warlordTVL is undefined");
+  const warlordTVL = await computeActiveTvl(
+    totalWarLocked,
+    auraRatio as bigint,
+    cvxRatio as bigint,
+    weights as any[]
+  );
+  if (warlordTVL === undefined) throw new Error('warlordTVL is undefined');
 
-  const auraBalApr = await computeAuraBalApr(totalWarLocked, weights as any[], auraLocked, breakdownResponse, auraRatio);
+  const auraBalApr = await computeAuraBalApr(
+    totalWarLocked,
+    weights as any[],
+    auraLocked,
+    breakdownResponse,
+    auraRatio
+  );
   const warApr = await computeWarApr(warRates, weights as any[], auraRatio, cvxRatio, warlordTVL);
   const wethApr = await computeWethApr(wethRates, warlordTVL);
   const palApr = await computePalApr(palRates, warlordTVL);
@@ -154,13 +182,12 @@ async function computeAPY(
     palApr === undefined ||
     cvxCrvApr === undefined
   )
-    throw new Error("APR is undefined");
+    throw new Error('APR is undefined');
 
   const apr = auraBalApr + warApr + wethApr + palApr + cvxCrvApr;
   const apy = (1 + apr / 48) ** 48 - 1;
   return (apy * 100).toFixed(2) + '%';
 }
-
 
 export interface APYProps {}
 
@@ -215,25 +242,26 @@ export const APY: FC<APYProps> = () => {
   const breakdownResponse = usePostRequest('https://data.aura.finance/graphql', {
     query:
       '{\n  locker {\n    aprs {\n      breakdown {\n        value      },\n    }\n  }\n  \n}\n  \n  '
-  })
-
+  });
 
   useEffect(() => {
-    if (apy === undefined) computeAPY(
-      totalWarLocked,
-      auraRatio,
-      cvxRatio,
-      weights,
-      auraLocked,
-      breakdownResponse,
-      warRates,
-      wethRates,
-      palRates,
-      rewardData,
-      lockedSupply,
-      cvxLocked
-    ).then(setApy)
-     .catch(() => {});
+    if (apy === undefined)
+      computeAPY(
+        totalWarLocked,
+        auraRatio,
+        cvxRatio,
+        weights,
+        auraLocked,
+        breakdownResponse,
+        warRates,
+        wethRates,
+        palRates,
+        rewardData,
+        lockedSupply,
+        cvxLocked
+      )
+        .then(setApy)
+        .catch(() => {});
   }, [
     palRates,
     warRates,
@@ -246,13 +274,11 @@ export const APY: FC<APYProps> = () => {
     cvxRatio
   ]);
 
-
   const textProps =
     useColorMode().colorMode === 'light'
       ? { color: 'brand.primary.300' }
       : { bgGradient: 'linear(to-r, brand.primary.300, white)' };
   const infoColor = useColorModeValue('black', 'white');
-
 
   return (
     <VStack>

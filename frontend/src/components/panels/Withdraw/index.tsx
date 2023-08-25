@@ -26,7 +26,7 @@ import { tokensSelection, useStore } from '../../../store';
 import useOrFetchTokenInfos from '../../../hooks/useOrFetchTokenInfos';
 import { WalletConnectButton } from 'components/blockchain/WalletConnectButton';
 import useConnectedAccount from 'hooks/useConnectedAccount';
-import useOrFetchTokenBalance from "../../../hooks/useOrFetchTokenBalance";
+import useOrFetchTokenBalance from '../../../hooks/useOrFetchTokenBalance';
 
 export interface WithdrawPanelProps {}
 
@@ -64,7 +64,10 @@ export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
     [setWithdrawInputTokenAmount, wstkWARDecimals]
   );
   const isWithdrawDisabled = useMemo(() => {
-    return wstkWARWithdrawInputAmount === 0n || (tWarBalance !== undefined && tWarBalance < wstkWARWithdrawInputAmount);
+    return (
+      wstkWARWithdrawInputAmount === 0n ||
+      (tWarBalance !== undefined && tWarBalance < wstkWARWithdrawInputAmount)
+    );
   }, [wstkWARWithdrawInputAmount]);
   const output = tokensOutputs.get(withdrawToken);
 

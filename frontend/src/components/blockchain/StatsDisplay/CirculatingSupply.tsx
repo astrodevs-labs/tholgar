@@ -1,24 +1,21 @@
 /* eslint-disable no-unused-vars */
 
-import React, {FC, useEffect} from 'react';
-import {
-  Text,
-  VStack,
-  Spinner,
-  useColorModeValue,
-  useColorMode
-} from '@chakra-ui/react';
-import {useToken} from "wagmi";
+import React, { FC, useEffect } from 'react';
+import { Text, VStack, Spinner, useColorModeValue, useColorMode } from '@chakra-ui/react';
+import { useToken } from 'wagmi';
 import { vaultAddress } from 'config/blockchain';
-import formatNumber from "utils/formatNumber";
-import {useStore} from "store";
+import formatNumber from 'utils/formatNumber';
+import { useStore } from 'store';
 
 export interface CirculatingSupplyProps {}
 
 export const CirculatingSupply: FC<CirculatingSupplyProps> = () => {
-  const [circulatingSupply, setCirculatingSupply] = useStore((state) => [state.circulatingSupply, state.setCirculatingSupply]);
+  const [circulatingSupply, setCirculatingSupply] = useStore((state) => [
+    state.circulatingSupply,
+    state.setCirculatingSupply
+  ]);
   const { data: vault } = useToken({
-    address:  circulatingSupply === undefined ? vaultAddress : undefined
+    address: circulatingSupply === undefined ? vaultAddress : undefined
   });
 
   useEffect(() => {
@@ -26,8 +23,6 @@ export const CirculatingSupply: FC<CirculatingSupplyProps> = () => {
       setCirculatingSupply(formatNumber(vault!.totalSupply.formatted));
     }
   }, [circulatingSupply, vault, setCirculatingSupply]);
-
-
 
   const textProps =
     useColorMode().colorMode === 'light'

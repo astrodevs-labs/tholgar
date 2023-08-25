@@ -1,17 +1,11 @@
 /* eslint-disable no-unused-vars */
 
-import React, {FC, useEffect} from 'react';
-import {
-  Text,
-  VStack,
-  Spinner,
-  useColorModeValue,
-  useColorMode
-} from '@chakra-ui/react';
-import {useBalance} from "wagmi";
-import {stakerAddress, vaultAddress} from 'config/blockchain';
-import formatNumber from "utils/formatNumber";
-import {useStore} from "store";
+import React, { FC, useEffect } from 'react';
+import { Text, VStack, Spinner, useColorModeValue, useColorMode } from '@chakra-ui/react';
+import { useBalance } from 'wagmi';
+import { stakerAddress, vaultAddress } from 'config/blockchain';
+import formatNumber from 'utils/formatNumber';
+import { useStore } from 'store';
 
 export interface WarLockedProps {}
 
@@ -26,7 +20,6 @@ export const WarLocked: FC<WarLockedProps> = () => {
     if (warLocked === undefined && warBalance !== undefined)
       setWarLocked(formatNumber(warBalance!.formatted));
   }, [warLocked, warBalance, setWarLocked]);
-
 
   const textProps =
     useColorMode().colorMode === 'light'
