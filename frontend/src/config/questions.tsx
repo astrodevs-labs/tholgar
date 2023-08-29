@@ -57,25 +57,25 @@ export const questions: { question: string; answer: string | (() => JSX.Element)
         <HStack>
           <Text>Vault:</Text>
           <Link
-            href="https://etherscan.io/address/0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5"
+            href="https://etherscan.io/address/0x188cA46Aa2c7ae10C14A931512B62991D5901453"
             isExternal>
-            0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5
+            0x188cA46Aa2c7ae10C14A931512B62991D5901453
           </Link>
         </HStack>
         <HStack>
           <Text>Zap:</Text>
           <Link
-            href="https://etherscan.io/address/0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5"
+            href="https://etherscan.io/address/0x0598c652eEB0F95137Af02f3202200513945374"
             isExternal>
-            0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5
+            0x0598c652eEB0F95137Af02f3202200513945374
           </Link>
         </HStack>
         <HStack>
           <Text>Swapper:</Text>
           <Link
-            href="https://etherscan.io/address/0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5"
+            href="https://etherscan.io/address/0x4247d145049B426d39f19F41555137D9cB154B99"
             isExternal>
-            0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5
+            0x4247d145049B426d39f19F41555137D9cB154B99
           </Link>
         </HStack>
       </VStack>

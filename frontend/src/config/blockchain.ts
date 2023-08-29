@@ -1,6 +1,6 @@
 // TODO update once its deployed
-export const vaultAddress = '0xc1EeD9232A0A44c2463ACB83698c162966FBc78d';
-export const zapAddress = '0xce830DA8667097BB491A70da268b76a081211814';
+export const vaultAddress = '0x188cA46Aa2c7ae10C14A931512B62991D5901453';
+export const zapAddress = '0x0598c652eEB0F95137Af02f32022005139453744';
 
 export const warAuraLocker = '0x7B90e043aaC79AdeA0Dbb0690E3c832757207a3B';
 export const warCvxLocker = '0x700d6d24A55512c6AEC08820B49da4e4193105B3';
