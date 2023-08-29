@@ -6,10 +6,8 @@ export default function usePostRequest(url: string, data: any): any | null {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log('usePostRequest', url, data);
     const fetchData = async () => {
       if (!loading) {
-        console.log('usePostRequest loading', url, data);
         setLoading(true);
         const res = await axios.post(url, data);
         const json = await res;
@@ -18,9 +16,7 @@ export default function usePostRequest(url: string, data: any): any | null {
       }
     };
     fetchData();
-    return () => {
-      console.log('usePostRequest cleanup', url, data);
-    };
+    return () => {};
   }, []);
   return response;
 }

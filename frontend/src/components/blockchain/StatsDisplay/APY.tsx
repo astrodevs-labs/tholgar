@@ -175,6 +175,7 @@ async function computeAPY(
   const wethApr = await computeWethApr(wethRates, warlordTVL);
   const palApr = await computePalApr(palRates, warlordTVL);
   const cvxCrvApr = await computeCrvCvxApr(rewardData, lockedSupply, cvxLocked, warlordTVL);
+
   if (
     auraBalApr === undefined ||
     warApr === undefined ||
@@ -186,7 +187,9 @@ async function computeAPY(
 
   const apr = auraBalApr + warApr + wethApr + palApr + cvxCrvApr;
   const apy = (1 + apr / 48) ** 48 - 1;
-  return (apy * 100).toFixed(2) + '%';
+  const apyString = (apy * 100).toFixed(2) + '%';
+
+  return apyString;
 }
 
 export interface APYProps {}
@@ -267,6 +270,7 @@ export const APY: FC<APYProps> = () => {
     warRates,
     wethRates,
     totalWarLocked,
+    breakdownResponse,
     weights,
     auraLocked,
     cvxLocked,
