@@ -1,18 +1,9 @@
 import { FC, useCallback, useEffect } from 'react';
-import {
-  Button,
-  Flex,
-  Spinner,
-  useColorModeValue
-} from '@chakra-ui/react';
-import {
-  useAccount,
-  useContractWrite,
-  useWaitForTransaction
-} from 'wagmi';
-import {vaultABI, vaultAddress, warAddress} from '../../../config/blockchain';
+import { Button, Flex, Spinner, useColorModeValue } from '@chakra-ui/react';
+import { useAccount, useContractWrite, useWaitForTransaction } from 'wagmi';
+import { vaultABI, vaultAddress, warAddress } from '../../../config/blockchain';
 import { useStore } from '../../../store';
-import {ApproveAllowance} from "../../blockchain/ApproveAllowance/Index";
+import { ApproveAllowance } from '../../blockchain/ApproveAllowance/Index';
 
 export interface WarDepositModalProps {
   step: number;
@@ -69,15 +60,15 @@ export const WarDepositModal: FC<WarDepositModalProps> = ({ step, validateStep }
 
   if (step == 0) {
     return (
-    <ApproveAllowance
-      token={'war'}
-      tokenAddress={warAddress}
-      step={step}
-      allowanceFor={vaultAddress}
-      validateStep={validateStep}
-      address={address!}
-    />
-  );
+      <ApproveAllowance
+        token={'war'}
+        tokenAddress={warAddress}
+        step={step}
+        allowanceFor={vaultAddress}
+        validateStep={validateStep}
+        address={address!}
+      />
+    );
   } else if (step == 1) {
     return <Step2 validateStep={validateStep} address={address!} />;
   }
