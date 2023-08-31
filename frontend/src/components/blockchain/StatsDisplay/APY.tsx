@@ -41,8 +41,8 @@ async function computeActiveTvl(
   if (auraWeight === undefined || cvxWeight === undefined) return;
 
   const auraAmount =
-    ((totalWarLocked.value as bigint) * auraWeight) / (auraRatio as bigint) / BigInt(1e18);
-  const cvxAmount = (totalWarLocked.value * cvxWeight) / (cvxRatio as bigint) / BigInt(1e18);
+    Number(((totalWarLocked.value as bigint) * auraWeight) / (auraRatio as bigint) / BigInt(1e16)) / 100;
+  const cvxAmount = Number((totalWarLocked.value * cvxWeight) / (cvxRatio as bigint) / BigInt(1e16)) / 100;
 
   const warlordTVL =
     (await getTotalPricePerToken(auraAmount, auraAddress)) +
@@ -59,9 +59,9 @@ async function computeCrvCvxApr(
   if (rewardData === undefined || lockedSupply === undefined) return;
 
   const cvxCrvAmount =
-    ((rewardData as any)[2] * 604800n * 4n * 12n * (cvxLocked as bigint)) /
+    Number(((rewardData as any)[2] * 604800n * 4n * 12n * (cvxLocked as bigint)) /
     (lockedSupply as bigint) /
-    BigInt(1e18);
+    BigInt(1e16)) / 100;
   const cvxCrvDollar = await getTotalPricePerToken(cvxCrvAmount, cvxCrvAddress);
   const cvxCrvApr = cvxCrvDollar / tvl;
   return cvxCrvApr;
@@ -109,8 +109,8 @@ async function computeWarApr(
   const auraWeight = (weights as any).find((weight: any) => weight.token === auraAddress).weight;
   const cvxWeight = (weights as any).find((weight: any) => weight.token === cvxAddress).weight;
 
-  const cvxAmount = (warAmount * auraWeight) / (auraRatio as bigint) / BigInt(1e18);
-  const auraAmount = (warAmount * cvxWeight) / (cvxRatio as bigint) / BigInt(1e18);
+  const cvxAmount = Number((warAmount * auraWeight) / (auraRatio as bigint) / BigInt(1e16)) / 100;
+  const auraAmount = Number((warAmount * cvxWeight) / (cvxRatio as bigint) / BigInt(1e16)) / 100;
 
   const cvxDollar = await getTotalPricePerToken(cvxAmount, cvxAddress);
   const auraDollar = await getTotalPricePerToken(auraAmount, auraAddress);
@@ -126,7 +126,7 @@ async function computeWethApr(wethRates: any, tvl: number): Promise<number | und
 
   const wethAmount = (wethRates as bigint[])[3] * 604800n * 4n * 12n;
 
-  const wethDollar = await getTotalPricePerToken(wethAmount / BigInt(1e18), wethAddress);
+  const wethDollar = await getTotalPricePerToken(Number(wethAmount / BigInt(1e16)) / 100, wethAddress);
   const wethApr = wethDollar / tvl;
   return wethApr;
 }
@@ -137,7 +137,7 @@ async function computePalApr(palRates: any, tvl: number): Promise<number | undef
 
   const palAmount = (palRates as bigint[])[3] * 604800n * 4n * 12n;
 
-  const palDollar = await getTotalPricePerToken(palAmount / BigInt(1e18), palAddress);
+  const palDollar = await getTotalPricePerToken(Number(palAmount / BigInt(1e16)) / 100, palAddress);
   const palApr = palDollar / tvl;
   return palApr;
 }
