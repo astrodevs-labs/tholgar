@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, {FC, useMemo} from 'react';
 import { CaptionedNumber } from 'components/ui/CaptionedNumber';
 import useOrFetchTokenBalance from 'hooks/useOrFetchTokenBalance';
 import convertBigintToFormatted from 'utils/convertBigintToFormatted';
@@ -25,14 +25,16 @@ export const BalanceDisplay: FC<BalanceDisplayProps> = ({
   const balance = useOrFetchTokenBalance({ address: token, account });
   const infos = useOrFetchTokenInfos({ address: token });
   const decimals = infos?.decimals;
-  const balanceFormatted =
-    balance !== undefined && decimals !== undefined ? (
-      convertBigintToFormatted(balance, decimals)
-    ) : isConnected ? (
-      <Spinner />
-    ) : (
-      '?'
-    );
+  const balanceFormatted = useMemo(() => {
+    console.log('balanceFormatted', balance, decimals);
+    if (balance !== undefined && decimals !== undefined) {
+      return convertBigintToFormatted(balance, decimals);
+    } else if (isConnected) {
+      return <Spinner />;
+    } else {
+      return '?';
+    }
+  }, [balance, decimals, isConnected]);
   const symbol = displaySymbol ? infos?.symbol || '' : '';
 
   return (
