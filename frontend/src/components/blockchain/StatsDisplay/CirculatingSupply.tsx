@@ -16,8 +16,6 @@ export const CirculatingSupply: FC<CirculatingSupplyProps> = () => {
   ]);
   const infos = useOrFetchTokenInfos({ token: 'tWAR' });
 
-  console.log('infos', infos);
-
   useEffect(() => {
     if (
       infos?.totalSupply !== undefined &&

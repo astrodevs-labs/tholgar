@@ -41,7 +41,6 @@ export default function useOrFetchTokenInfos({
   });
 
   useEffect(() => {
-    console.log('useOrFetchTokenInfos', tokenInfos, data);
     if (
       tokenInfos &&
       (tokenInfos.totalSupply === undefined ||
