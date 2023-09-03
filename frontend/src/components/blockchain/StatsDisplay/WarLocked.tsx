@@ -12,12 +12,20 @@ export interface WarLockedProps {}
 export const WarLocked: FC<WarLockedProps> = () => {
   const [warLocked, setWarLocked] = useStore((state) => [state.warLocked, state.setWarLocked]);
   const { data: warBalance } = useBalance({
-    address: !warLocked ? vaultAddress : undefined,
-    token: stakerAddress
+    address: vaultAddress,
+    token: stakerAddress,
+    cacheTime: 1,
+    staleTime: 1
+    // watch: true
   });
 
+  // console.log('warLocked', warLocked, warBalance, blockNumber);
+
   useEffect(() => {
-    if (warLocked === undefined && warBalance !== undefined)
+    if (
+      warBalance !== undefined &&
+      (warLocked === undefined || warLocked !== formatNumber(warBalance!.formatted))
+    )
       setWarLocked(formatNumber(warBalance!.formatted));
   }, [warLocked, warBalance, setWarLocked]);
 

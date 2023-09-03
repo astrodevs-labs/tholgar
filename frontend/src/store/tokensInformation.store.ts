@@ -20,6 +20,7 @@ export interface TokensInformationStore {
   setTokensInfos: (balances: TokenInfo[]) => void;
   setTokenInfos: (token: Token, data: FetchTokenResult) => void;
   setAddressInfos: (address: string, data: FetchTokenResult) => void;
+  resetTokenInfos: (token: Token) => void;
 }
 
 const defaultTokenInfos: TokenInfo[] = [
@@ -83,5 +84,21 @@ export const createTokensInformationStore: StateCreator<Store, [], [], TokensInf
         }
         return tokenInfos;
       })
-    }))
+    })),
+  resetTokenInfos: (token: Token) => {
+    set((state: Store) => ({
+      ...state,
+      tokensInfos: state.tokensInfos.map((tokenInfos) => {
+        if (tokenInfos.id === token) {
+          return {
+            ...tokenInfos,
+            totalSupply: undefined,
+            decimals: undefined,
+            symbol: undefined
+          };
+        }
+        return tokenInfos;
+      })
+    }));
+  }
 });

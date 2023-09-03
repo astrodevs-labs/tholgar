@@ -26,7 +26,7 @@ import { tokensSelection, useStore } from '../../../store';
 import useOrFetchTokenInfos from '../../../hooks/useOrFetchTokenInfos';
 import { WalletConnectButton } from 'components/blockchain/WalletConnectButton';
 import useConnectedAccount from 'hooks/useConnectedAccount';
-import useOrFetchTokenBalance from '../../../hooks/useOrFetchTokenBalance';
+import useOrFetchUserTokenBalance from '../../../hooks/useOrFetchUserTokenBalance';
 
 export interface WithdrawPanelProps {}
 
@@ -39,7 +39,7 @@ const tokens = [{ id: 'war', name: 'WAR', iconUrl: warIconUrl }];
 
 export const WithdrawPanel: FC<WithdrawPanelProps> = () => {
   const wstkWARInfos = useOrFetchTokenInfos({ token: 'tWAR' });
-  const tWarBalance = useOrFetchTokenBalance({ token: 'tWAR' });
+  const tWarBalance = useOrFetchUserTokenBalance({ token: 'tWAR' });
   const wstkWARDecimals = wstkWARInfos?.decimals;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isConnected } = useConnectedAccount();

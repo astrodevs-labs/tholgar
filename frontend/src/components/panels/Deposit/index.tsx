@@ -34,7 +34,8 @@ import useConnectedAccount from '../../../hooks/useConnectedAccount';
 import { tokensSelection, useStore } from '../../../store';
 import useOrFetchTokenInfos from '../../../hooks/useOrFetchTokenInfos';
 import useTokenRatio from '../../../hooks/useTokenRatio';
-import useOrFetchTokenBalance from 'hooks/useOrFetchTokenBalance';
+import useOrFetchUserTokenBalance from 'hooks/useOrFetchUserTokenBalance';
+import { useBalance } from 'wagmi';
 
 export interface DepositPanelProps {}
 
@@ -64,10 +65,13 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
     state.setDepositToken
   ]);
   const setDepositOutputTokenAmounts = useStore((state) => state.setDepositOutputTokenAmount);
-  const stakerBalance = useOrFetchTokenBalance({ address: stakerAddress, account: vaultAddress });
-  const warBalance = useOrFetchTokenBalance({ token: 'war' });
-  const auraBalance = useOrFetchTokenBalance({ token: 'aura' });
-  const cvxBalance = useOrFetchTokenBalance({ token: 'cvx' });
+  const stakerBalance = useBalance({
+    token: stakerAddress,
+    address: vaultAddress
+  }).data?.value;
+  const warBalance = useOrFetchUserTokenBalance({ token: 'war' });
+  const auraBalance = useOrFetchUserTokenBalance({ token: 'aura' });
+  const cvxBalance = useOrFetchUserTokenBalance({ token: 'cvx' });
   const wstkWarInfos = useOrFetchTokenInfos({ token: 'tWAR' });
   const wstkWarDecimals = wstkWarInfos?.decimals;
   const wstkWAROutputAmountFormatted = useMemo(
@@ -111,12 +115,18 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
   const cvxRatio = useTokenRatio(cvxAddress);
 
   useEffect(() => {
+    // console.log('refreshing tWAR amount');
+    // console.log('stakerBalance', stakerBalance);
+    // console.log('wstkWarInfos', wstkWarInfos);
     if (
       depositToken !== 'war' ||
       wstkWarInfos?.totalSupply === undefined ||
       stakerBalance === undefined
     )
       return;
+
+    // console.log('stakerBalance', stakerBalance);
+    // console.log('wstkWarInfos?.totalSupply', wstkWarInfos?.totalSupply);
 
     const amount =
       wstkWarInfos?.totalSupply == 0n

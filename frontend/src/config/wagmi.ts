@@ -2,8 +2,7 @@ import { createConfig, configureChains } from 'wagmi';
 import '@rainbow-me/rainbowkit/styles.css';
 import { getDefaultWallets } from '@rainbow-me/rainbowkit';
 import { mainnet } from 'viem/chains';
-import { alchemyProvider } from 'wagmi/providers/alchemy';
-import { publicProvider } from 'wagmi/providers/public';
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { QueryClient } from '@tanstack/react-query';
 
 if (
@@ -17,9 +16,10 @@ if (
 const { chains, publicClient } = configureChains(
   [mainnet],
   [
-    publicProvider(),
-    alchemyProvider({
-      apiKey: process.env.REACT_APP_ALCHEMY_KEY
+    jsonRpcProvider({
+      rpc: () => ({
+        http: 'http://localhost:8545'
+      })
     })
   ]
 );
@@ -39,12 +39,12 @@ export const config = createConfig({
         networkMode: 'offlineFirst',
         refetchOnWindowFocus: false,
         retry: 0,
-        staleTime: 1, // 24 hours
+        staleTime: 1 // 24 hours
       },
       mutations: {
-        networkMode: 'offlineFirst',
-      },
-    },
+        networkMode: 'offlineFirst'
+      }
+    }
   }),
   connectors,
   publicClient

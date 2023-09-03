@@ -26,6 +26,7 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({ open, onClose })
   const warDepositAmount = useStore((state) => state.getDepositInputTokenAmount('war'));
   const resetBalances = useStore((state) => state.resetBalances);
   const resetStats = useStore((state) => state.resetStats);
+  const resetTokenInfos = useStore((state) => state.resetTokenInfos);
   const steps = useMemo(() => {
     if (depositTokens == 'war')
       return [
@@ -73,6 +74,7 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({ open, onClose })
     if (activeStep == steps.length) {
       resetBalances();
       resetStats();
+      resetTokenInfos('tWAR');
       onClose();
     }
   }, [activeStep, steps, resetBalances, resetStats, onClose]);
