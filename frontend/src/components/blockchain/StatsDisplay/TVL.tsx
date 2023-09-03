@@ -46,7 +46,6 @@ export const TVL: FC<TVLProps> = () => {
       staker === undefined
     )
       return;
-    console.log(cvxLocked, auraLocked, warBalance.value, staker.totalSupply.value);
     const auraPrice = await getTotalPricePerToken(
       Number(
         ((auraLocked as bigint) * warBalance.value) / staker.totalSupply.value / BigInt(1e16)
@@ -58,14 +57,13 @@ export const TVL: FC<TVLProps> = () => {
         100,
       cvxAddress
     );
-    console.log(auraPrice, cvxPrice);
     const total = auraPrice + cvxPrice;
     setTvl(formatNumber(total.toFixed(0).toString()) + '$');
   }
 
   useEffect(() => {
     if (tvl === undefined) computeTVL();
-  }, [cvxLocked, auraLocked, warBalance]);
+  }, [cvxLocked, auraLocked, warBalance, staker]);
 
   const textProps =
     useColorMode().colorMode === 'light'

@@ -12,10 +12,10 @@ export interface WarWithdrawPanelProps {}
 export const WarWithdrawPanel: FC<WarWithdrawPanelProps> = () => {
   const war = useOrFetchTokenInfos({ token: 'war' });
   const vault = useOrFetchTokenInfos({ token: 'tWAR' });
-  const {data: stakerBalance} = useBalance({
+  const { data: stakerBalance } = useBalance({
     token: stakerAddress,
     address: vaultAddress
-  })
+  });
   const wstkWARWithdrawInputAmount = useStore((state) => state.getWithdrawInputTokenAmount('tWAR'));
   const warWithdrawOutputAmount = useStore((state) => state.getWithdrawOutputTokenAmount('war'));
   const setWithdrawOutputAmount = useStore((state) => state.setWithdrawOutputTokenAmount);
