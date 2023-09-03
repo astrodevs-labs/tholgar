@@ -25,6 +25,8 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({ open, onClose })
   const cvxDepositAmount = useStore((state) => state.getDepositInputTokenAmount('cvx'));
   const warDepositAmount = useStore((state) => state.getDepositInputTokenAmount('war'));
   const resetBalances = useStore((state) => state.resetBalances);
+  const resetStats = useStore((state) => state.resetStats);
+  const resetTokenInfos = useStore((state) => state.resetTokenInfos);
   const steps = useMemo(() => {
     if (depositTokens == 'war')
       return [
@@ -71,9 +73,11 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({ open, onClose })
   useEffect(() => {
     if (activeStep == steps.length) {
       resetBalances();
+      resetStats();
+      resetTokenInfos('tWAR');
       onClose();
     }
-  }, [activeStep, steps]);
+  }, [activeStep, steps, resetBalances, resetStats, onClose]);
 
   useEffect(() => {
     if (depositTokens == 'war' && warDepositAmount === 0n) {

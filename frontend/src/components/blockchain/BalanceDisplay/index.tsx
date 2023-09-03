@@ -1,10 +1,11 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { CaptionedNumber } from 'components/ui/CaptionedNumber';
-import useOrFetchTokenBalance from 'hooks/useOrFetchTokenBalance';
+// import useOrFetchUserTokenBalance from 'hooks/useOrFetchUserTokenBalance';
 import convertBigintToFormatted from 'utils/convertBigintToFormatted';
 import useOrFetchTokenInfos from 'hooks/useOrFetchTokenInfos';
 import useConnectedAccount from 'hooks/useConnectedAccount';
 import { Spinner } from '@chakra-ui/spinner';
+import { useBalance } from 'wagmi';
 
 export interface BalanceDisplayProps {
   token: `0x${string}`;
@@ -21,18 +22,28 @@ export const BalanceDisplay: FC<BalanceDisplayProps> = ({
   displaySymbol,
   inline
 }) => {
-  const { isConnected } = useConnectedAccount();
-  const balance = useOrFetchTokenBalance({ address: token, account });
+  const { isConnected, address } = useConnectedAccount();
+  const balance = useBalance({
+    token,
+    address: account ? account : address
+  }).data?.value;
+  // const balance = account
+  //   ? useBalance({
+  //       token,
+  //       address: account
+  //     }).data?.value
+  //   : useOrFetchUserTokenBalance({ address: token });
   const infos = useOrFetchTokenInfos({ address: token });
   const decimals = infos?.decimals;
-  const balanceFormatted =
-    balance !== undefined && decimals !== undefined ? (
-      convertBigintToFormatted(balance, decimals)
-    ) : isConnected ? (
-      <Spinner />
-    ) : (
-      '?'
-    );
+  const balanceFormatted = useMemo(() => {
+    if (balance !== undefined && decimals !== undefined) {
+      return convertBigintToFormatted(balance, decimals);
+    } else if (isConnected) {
+      return <Spinner />;
+    } else {
+      return '?';
+    }
+  }, [balance, decimals, isConnected]);
   const symbol = displaySymbol ? infos?.symbol || '' : '';
 
   return (

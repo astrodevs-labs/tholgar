@@ -5,14 +5,14 @@ import { warIconUrl } from 'config/blockchain';
 import { useStore } from '../../../store';
 import useOrFetchTokenInfos from '../../../hooks/useOrFetchTokenInfos';
 import convertBigintToFormatted from '../../../utils/convertBigintToFormatted';
-import useOrFetchTokenBalance from 'hooks/useOrFetchTokenBalance';
+import useOrFetchUserTokenBalance from 'hooks/useOrFetchUserTokenBalance';
 
 export interface WarWithdrawPanelProps {}
 
 export const WarWithdrawPanel: FC<WarWithdrawPanelProps> = () => {
   const war = useOrFetchTokenInfos({ token: 'war' });
   const vault = useOrFetchTokenInfos({ token: 'tWAR' });
-  const stakerBalance = useOrFetchTokenBalance({
+  const stakerBalance = useOrFetchUserTokenBalance({
     token: 'stkWAR'
   });
   const wstkWARWithdrawInputAmount = useStore((state) => state.getWithdrawInputTokenAmount('tWAR'));

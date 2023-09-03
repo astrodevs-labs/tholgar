@@ -4,14 +4,12 @@ import { Token } from 'types/Token';
 import { useBalance } from 'wagmi';
 import useConnectedAccount from './useConnectedAccount';
 
-export default function useOrFetchTokenBalance({
+export default function useOrFetchUserTokenBalance({
   token,
-  address,
-  account
+  address
 }: {
   token?: Token;
   address?: `0x${string}`;
-  account?: `0x${string}`;
 }): bigint | undefined {
   if (token === undefined && address === undefined) {
     console.warn('useOrFetchTokenBalance: token and address are undefined');
@@ -32,11 +30,11 @@ export default function useOrFetchTokenBalance({
   const { address: accountAddress } = useConnectedAccount();
   const newBalance = useBalance({
     token: tokenAddress,
-    address: balance != undefined ? undefined : account != undefined ? account : accountAddress
+    address: balance != undefined ? undefined : accountAddress
   });
 
   useEffect(() => {
-    if (balance === undefined) {
+    if (balance === undefined || newBalance?.data?.value !== balance) {
       if (!newBalance.data) return;
       if (token) useStore.getState().setTokenBalance(token, newBalance.data?.value);
       if (address) useStore.getState().setAddressBalance(address, newBalance.data?.value);
@@ -49,5 +47,5 @@ export default function useOrFetchTokenBalance({
       if (address) useStore.getState().setAddressBalance(address, undefined);
     }
   }, [accountAddress]);
-  return balance;
+  return balance || newBalance.data?.value;
 }

@@ -36,6 +36,7 @@ const Step2: FC<StepProps> = ({ validateStep, address }) => {
 
   useEffect(() => {
     if (isSuccess) {
+      // setTimeout(validateStep, 5000);
       validateStep();
     }
   }, [isSuccess]);

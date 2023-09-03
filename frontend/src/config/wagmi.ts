@@ -2,6 +2,7 @@ import { createConfig, configureChains } from 'wagmi';
 import '@rainbow-me/rainbowkit/styles.css';
 import { getDefaultWallets } from '@rainbow-me/rainbowkit';
 import { mainnet } from 'viem/chains';
+import { QueryClient } from '@tanstack/react-query';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 
@@ -31,6 +32,20 @@ const { connectors } = getDefaultWallets({
 
 export const config = createConfig({
   autoConnect: true,
+  queryClient: new QueryClient({
+    defaultOptions: {
+      queries: {
+        cacheTime: 1, // 24 hours
+        networkMode: 'offlineFirst',
+        refetchOnWindowFocus: false,
+        retry: 0,
+        staleTime: 1 // 24 hours
+      },
+      mutations: {
+        networkMode: 'offlineFirst'
+      }
+    }
+  }),
   connectors,
   publicClient
 });

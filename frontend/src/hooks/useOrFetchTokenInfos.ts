@@ -33,13 +33,24 @@ export default function useOrFetchTokenInfos({
   }
 
   const { data } = useToken({
-    address: tokenInfos?.decimals || tokenInfos?.totalSupply ? undefined : addressToUse
+    address: addressToUse,
+    enabled:
+      tokenInfos?.decimals === undefined ||
+      tokenInfos?.totalSupply === undefined ||
+      tokenInfos?.symbol === undefined
   });
 
   useEffect(() => {
-    if (tokenInfos && data) {
+    console.log('useOrFetchTokenInfos', tokenInfos, data);
+    if (
+      tokenInfos &&
+      (tokenInfos.totalSupply === undefined ||
+        tokenInfos?.decimals === undefined ||
+        tokenInfos.symbol === undefined) &&
+      data
+    ) {
       useStore.getState().setTokenInfos(tokenInfos?.id, data);
     }
-  }, [token, data]);
+  }, [tokenInfos, data]);
   return tokenInfos;
 }

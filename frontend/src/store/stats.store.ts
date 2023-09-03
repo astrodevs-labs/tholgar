@@ -13,9 +13,11 @@ export interface StatsStore {
   resetCirculatingSupply: () => void;
   resetWarLocked: () => void;
   resetTvl: () => void;
+  resetApy: () => void;
+  resetStats: () => void;
 }
 
-export const createStatsStore: StateCreator<Store, [], [], StatsStore> = (set) => ({
+export const createStatsStore: StateCreator<Store, [], [], StatsStore> = (set, get) => ({
   circulatingSupply: undefined,
   warLocked: undefined,
   tvl: undefined,
@@ -29,5 +31,12 @@ export const createStatsStore: StateCreator<Store, [], [], StatsStore> = (set) =
   resetCirculatingSupply: () =>
     set((state: StatsStore) => ({ ...state, circulatingSupply: undefined })),
   resetWarLocked: () => set((state: StatsStore) => ({ ...state, warLocked: undefined })),
-  resetTvl: () => set((state: StatsStore) => ({ ...state, tvl: undefined }))
+  resetTvl: () => set((state: StatsStore) => ({ ...state, tvl: undefined })),
+  resetApy: () => set((state: StatsStore) => ({ ...state, apy: undefined })),
+  resetStats: () => {
+    get().resetCirculatingSupply();
+    get().resetWarLocked();
+    get().resetTvl();
+    get().resetApy();
+  }
 });

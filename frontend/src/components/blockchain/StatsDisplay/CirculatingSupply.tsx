@@ -2,10 +2,10 @@
 
 import React, { FC, useEffect } from 'react';
 import { Text, VStack, Spinner, useColorModeValue, useColorMode } from '@chakra-ui/react';
-import { useToken } from 'wagmi';
-import { vaultAddress } from 'config/blockchain';
 import formatNumber from 'utils/formatNumber';
 import { useStore } from 'store';
+import useOrFetchTokenInfos from '../../../hooks/useOrFetchTokenInfos';
+import convertBigintToFormatted from '../../../utils/convertBigintToFormatted';
 
 export interface CirculatingSupplyProps {}
 
@@ -14,15 +14,23 @@ export const CirculatingSupply: FC<CirculatingSupplyProps> = () => {
     state.circulatingSupply,
     state.setCirculatingSupply
   ]);
-  const { data: vault } = useToken({
-    address: circulatingSupply === undefined ? vaultAddress : undefined
-  });
+  const infos = useOrFetchTokenInfos({ token: 'tWAR' });
+
+  console.log('infos', infos);
 
   useEffect(() => {
-    if (circulatingSupply === undefined && vault !== undefined) {
-      setCirculatingSupply(formatNumber(vault!.totalSupply.formatted));
+    if (
+      infos?.totalSupply !== undefined &&
+      infos?.decimals !== undefined &&
+      (circulatingSupply === undefined ||
+        circulatingSupply !==
+          formatNumber(convertBigintToFormatted(infos.totalSupply, infos.decimals)))
+    ) {
+      setCirculatingSupply(
+        formatNumber(convertBigintToFormatted(infos.totalSupply, infos.decimals))
+      );
     }
-  }, [circulatingSupply, vault, setCirculatingSupply]);
+  }, [circulatingSupply, infos, setCirculatingSupply]);
 
   const textProps =
     useColorMode().colorMode === 'light'
