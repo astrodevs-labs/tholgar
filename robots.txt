@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://docs.tholgar.xyz/sitemap.xml.gz
+Sitemap: https://doc.tholgar.xyz/sitemap.xml.gz
