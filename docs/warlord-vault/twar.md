@@ -35,7 +35,7 @@ All of the code of the server that will make the calls is open source and can be
 The only fee taken by the vault is **5%** of the yield harvested only in WETH (excluding WAR directly harvested). This fee is used to cover gas fees and will decline as the Vault grows.
 
 ## Security
-
-We follow the industry standard for smart contract development and use the solmate library to implement our contracts.  
   
 All of the funds held by the Vault are non custodial meaning that admins will never be able to access them.  
+  
+At the current stage, the vaylt has not undergone a formal security audit. However, the contracts have undergone extensive internal testing & external reviews, giving confidence in the existing security measures implemented. We strongly advise users to conduct their own research and make informed decisions based on their individual risk tolerance.

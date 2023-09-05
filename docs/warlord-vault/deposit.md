@@ -12,7 +12,7 @@ Currently, two set of tokens can be deposited : WAR and AURA/CVX. The process is
 
 The war deposit is the default option when the app is loaded. You can still retrieve it by selecting the deposit tab and selecting WAR token in the bottom-left dropdown.
 
-![WAR Deposit](../assets/WarDeposit.png)
+![](../assets/WarDeposit.png)
 
 ### Depositing
 
@@ -25,19 +25,19 @@ Enter the desired amount of WAR you wish to deposit and click the "Deposit" butt
 A dialog will open by first asking you to approve the WAR spending (according to ERC-20 standards).
 You can select to approve only your deposit amount or approve the max spending to avoid this step on the following deposits.
 
-![Approve allowances](../assets/WarDeposit-Approve.png)
+![](../assets/WarDeposit-Approve.png)
 
 #### Deposit
 
 You will then be prompted to sign the transaction to deposit. This is the final step.
 
-![Deposit](../assets/WarDeposit-Deposit.png)
+![](../assets/WarDeposit-Deposit.png)
 
 #### Verify
 
 The "Circulating Supply" and "War Locked" stats should be increased by your deposit amount. If it is not immediatly the case, try to refresh you page.
 
-![Deposited](../assets/WarDeposit-Deposited.png)
+![](../assets/WarDeposit-Deposited.png)
 
 
 ## Deposit AURA/CVX
@@ -45,7 +45,7 @@ The "Circulating Supply" and "War Locked" stats should be increased by your depo
 
 To access AURA/CVX deposit, you need to change the deposit token(s) by using the bottom-left dropdown in the deposit tab.
 
-![Aura/CVX deposit](../assets/AuraCvxDeposit.png)
+![](../assets/AuraCvxDeposit.png)
 
 ### Depositing
 
@@ -58,17 +58,17 @@ Enter the desired amount of AURA and/or CVX you wish to deposit and click the "D
 A dialog will open by first asking you to approve the AURA and CVX spendings (according to ERC-20 standards).
 You can select to approve only your deposit amount or approve the max spending to avoid those step on the following deposits.
 
-![Approve AURA allowances](../assets/AuraCvxDeposit-ApproveAura.png)
-![Approve CVX allowances](../assets/AuraCvxDeposit-ApproveCvx.png)
+![](../assets/AuraCvxDeposit-ApproveAura.png)
+![](../assets/AuraCvxDeposit-ApproveCvx.png)
 
 #### Deposit
 
 You will then be prompted to sign the transaction to deposit. This is the final step.
 
-![Deposit](../assets/AuraCvxDeposit-Deposit.png)
+![](../assets/AuraCvxDeposit-Deposit.png)
 
 #### Verify
 
 The "Circulating Supply" and "War Locked" stats should be increased by your deposit amounts wheighted by the current ratios. If it is not immediatly the case, try to refresh you page.
 
-![Deposited](../assets/AuraCvxDeposit-Deposited.png)
+![](../assets/AuraCvxDeposit-Deposited.png)

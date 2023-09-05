@@ -10,7 +10,7 @@ You can currently withdraw your tWAR into WAR tokens.
 
 You can access the WAR withdraw by selecting the withdraw tab.
 
-![WAR Withdraw](../assets/WarWithdraw.png)
+![](../assets/WarWithdraw.png)
 
 ### Withdrawing
 
@@ -22,10 +22,10 @@ Enter the desired amount of tWAR you wish to withdraw and click the "Withdraw" b
 
 A dialog will open by first asking you to sign the withdraw transaction.
 
-![Approve allowances](../assets/WarWithdraw-Withdraw.png)
+![](../assets/WarWithdraw-Withdraw.png)
 
 #### Verify
 
 The "Circulating Supply" and "War Locked" stats should be decreased by your withdraw amount. If it is not immediatly the case, try to refresh you page.
 
-![Deposited](../assets/WarWithdraw-Withdrawn.png)
+![](../assets/WarWithdraw-Withdrawn.png)
