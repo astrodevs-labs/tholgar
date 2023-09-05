@@ -1,5 +1,5 @@
 ---
-sidebar_position: 5
+order: 1
 ---
 
 # Redeem

@@ -5,7 +5,7 @@ sidebar_position: 1
 
 # Overview
 
-![Logo](./assets/logoFull.png)
+![](./assets/logoFull.png)
 
 
 Tholgar is a DeFi protocol that build products on top of other DeFi protocol enabling users to gain higher yield than alone.  
