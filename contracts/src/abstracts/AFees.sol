@@ -5,8 +5,8 @@ import { Owned2Step } from "../utils/Owned2Step.sol";
 import { Errors } from "../utils/Errors.sol";
 
 /// @author 0xtekgrinder
-/// @title Fees contract
-/// @notice contract to manage fees
+/// @title AFees
+/// @notice Abstract contract to allow access only to operator or owner
 abstract contract AFees is Owned2Step {
     /*//////////////////////////////////////////////////////////////
                                   EVENTS

@@ -4,11 +4,9 @@ pragma solidity 0.8.20;
 import { Errors } from "../utils/Errors.sol";
 import { Owned2Step } from "../utils/Owned2Step.sol";
 
-/**
- *  @title AOperator contract
- *  @notice Provide operator checking
- *  @author 0xMemoryGrinder
- */
+/// @author 0xtekgrinder
+/// @title AOperator
+/// @notice Abstract contract to allow access only to operator or owner
 abstract contract AOperator is Owned2Step {
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
