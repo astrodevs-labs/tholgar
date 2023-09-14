@@ -55,7 +55,7 @@ export const SideBarBody: FC<PropsWithChildren<SideBarBodyProps>> = (props) => {
       <Divider color={useColorModeValue('border.light', 'black')} opacity={'unset'} />
       <VStack mx="4" my={'5'}>
         <HStack justify="center" gap="1.5em">
-          <ChakraLink href={'https://discord.gg/xr4zcRxsuK'} isExternal>
+          <ChakraLink href={'https://discord.gg/ycuFbMg9MW'} isExternal>
             <Icon
               as={BiLogoDiscord}
               _hover={{
