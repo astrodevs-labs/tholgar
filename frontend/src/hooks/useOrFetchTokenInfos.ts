@@ -34,6 +34,7 @@ export default function useOrFetchTokenInfos({
 
   const { data } = useToken({
     address: addressToUse,
+    staleTime: 0,
     enabled:
       tokenInfos?.decimals === undefined ||
       tokenInfos?.totalSupply === undefined ||
@@ -43,7 +44,7 @@ export default function useOrFetchTokenInfos({
   useEffect(() => {
     if (
       tokenInfos &&
-      (tokenInfos.totalSupply === undefined ||
+      (tokenInfos.totalSupply === undefined || tokenInfos.totalSupply !== data?.totalSupply.value ||
         tokenInfos?.decimals === undefined ||
         tokenInfos.symbol === undefined) &&
       data
