@@ -65,9 +65,9 @@ export const questions: { question: string; answer: string | (() => JSX.Element)
         <HStack>
           <Text>Zap:</Text>
           <Link
-            href="https://etherscan.io/address/0x0598c652eEB0F95137Af02f3202200513945374"
+            href="https://etherscan.io/address/0x0598c652eEB0F95137Af02f32022005139453744"
             isExternal>
-            0x0598c652eEB0F95137Af02f3202200513945374
+            0x0598c652eEB0F95137Af02f32022005139453744
           </Link>
         </HStack>
         <HStack>
