@@ -74,7 +74,7 @@ export const TVL: FC<TVLProps> = () => {
   return (
     <VStack>
       <Text whiteSpace={'nowrap'} fontSize={'1.125em'} color={infoColor} opacity={'.7'}>
-        {'Total Volume Locked'}
+        {'Total Value Locked'}
       </Text>
       {tvl === undefined ? (
         <Spinner />
