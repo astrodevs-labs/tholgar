@@ -96,14 +96,15 @@ async function computeWarApr(
 
   const warAmount = (warRates as bigint[])[3] * 604800n * 4n * 12n;
 
-  const cvxAmount = (Number(cvxLocked) / 1e18) * (Number(warAmount) / 1e18);
-  const auraAmount = (Number(auraLocked) / 1e18) * (Number(warAmount) / 1e18);
+  const cvxAmount = Number(cvxLocked * warAmount / warSupply.totalSupply.value / BigInt(1e16)) / 100;
+  const auraAmount = Number(auraLocked * warAmount / warSupply.totalSupply.value / BigInt(1e16)) / 100;
 
   const cvxDollar = await getTotalPricePerToken(cvxAmount, cvxAddress);
   const auraDollar = await getTotalPricePerToken(auraAmount, auraAddress);
 
   const warDollar = cvxDollar + auraDollar;
   const warApr = warDollar / tvl;
+
   return warApr;
 }
 
