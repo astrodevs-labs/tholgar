@@ -44,7 +44,8 @@ export default function useOrFetchTokenInfos({
   useEffect(() => {
     if (
       tokenInfos &&
-      (tokenInfos.totalSupply === undefined || tokenInfos.totalSupply !== data?.totalSupply.value ||
+      (tokenInfos.totalSupply === undefined ||
+        tokenInfos.totalSupply !== data?.totalSupply.value ||
         tokenInfos?.decimals === undefined ||
         tokenInfos.symbol === undefined) &&
       data

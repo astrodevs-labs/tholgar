@@ -48,13 +48,13 @@ export const TVL: FC<TVLProps> = () => {
       return;
     const auraPrice = await getTotalPricePerToken(
       Number(
-        ((auraLocked as bigint) * warBalance.value) / staker.totalSupply.value / BigInt(1e16)
-      ) / 100,
+        ((auraLocked as bigint) * warBalance.value) / staker.totalSupply.value / BigInt(1e15)
+      ) / 1000,
       auraAddress
     );
     const cvxPrice = await getTotalPricePerToken(
-      Number(((cvxLocked as bigint) * warBalance.value) / staker.totalSupply.value / BigInt(1e16)) /
-        100,
+      Number(((cvxLocked as bigint) * warBalance.value) / staker.totalSupply.value / BigInt(1e15)) /
+        1000,
       cvxAddress
     );
     const total = auraPrice + cvxPrice;

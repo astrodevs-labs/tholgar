@@ -27,14 +27,22 @@ async function computeActiveTvl(
   totalWarLocked: FetchBalanceResult | undefined,
   warSupply: FetchTokenResult | undefined,
   auraLocked: bigint | undefined,
-  cvxLocked: bigint | undefined,
+  cvxLocked: bigint | undefined
 ): Promise<number | undefined> {
-  if (totalWarLocked === undefined || auraLocked == undefined || cvxLocked == undefined || warSupply == undefined) return;
+  if (
+    totalWarLocked === undefined ||
+    auraLocked == undefined ||
+    cvxLocked == undefined ||
+    warSupply == undefined
+  )
+    return;
 
   const auraAmount =
-    Number(auraLocked * totalWarLocked.value / warSupply.totalSupply.value / BigInt(1e16)) / 100
+    Number((auraLocked * totalWarLocked.value) / (warSupply.totalSupply.value * BigInt(1e15))) /
+    1000;
   const cvxAmount =
-    Number(cvxLocked * totalWarLocked.value / warSupply.totalSupply.value  / BigInt(1e16)) / 100;
+    Number((cvxLocked * totalWarLocked.value) / (warSupply.totalSupply.value * BigInt(1e15))) /
+    1000;
 
   const warlordTVL =
     (await getTotalPricePerToken(auraAmount, auraAddress)) +
@@ -52,10 +60,10 @@ async function computeCrvCvxApr(
 
   const cvxCrvAmount =
     Number(
-      ((rewardData as any)[2] * 604800n * 4n * 12n * (cvxLocked as bigint)) /
+      ((rewardData as any)[2] * 86400n * 365n * (cvxLocked as bigint)) /
         (lockedSupply as bigint) /
-        BigInt(1e16)
-    ) / 100;
+        BigInt(1e15)
+    ) / 1000;
   const cvxCrvDollar = await getTotalPricePerToken(cvxCrvAmount, cvxCrvAddress);
   const cvxCrvApr = cvxCrvDollar / tvl;
   return cvxCrvApr;
@@ -66,7 +74,7 @@ async function computeAuraBalApr(
   warSupply: FetchTokenResult | undefined,
   auraLocked: bigint | undefined,
   cvxLocked: bigint | undefined,
-  breakdownResponse: any,
+  breakdownResponse: any
 ): Promise<number | undefined> {
   if (
     totalWarLocked === undefined ||
@@ -81,7 +89,12 @@ async function computeAuraBalApr(
   for (const apr of breakdownResponse.data.data.locker.aprs.breakdown) {
     amount += apr.value;
   }
-  return amount * (Number(auraLocked) / Number(cvxLocked) / 10 * (Number(warSupply.totalSupply.value) / Number(totalWarLocked.value))) / 100;
+  return (
+    (amount *
+      ((Number(auraLocked) / Number(cvxLocked) / 10) *
+        (Number(warSupply.totalSupply.value) / Number(totalWarLocked.value)))) /
+    100
+  );
 }
 
 async function computeWarApr(
@@ -91,13 +104,21 @@ async function computeWarApr(
   warSupply: FetchTokenResult | undefined,
   tvl: number
 ): Promise<number | undefined> {
-  if (warRates === undefined || auraLocked === undefined || cvxLocked === undefined || warSupply === undefined) return;
+  if (
+    warRates === undefined ||
+    auraLocked === undefined ||
+    cvxLocked === undefined ||
+    warSupply === undefined
+  )
+    return;
   if ((warRates as bigint[])[2] * 1000n <= new Date().valueOf()) return 0;
 
-  const warAmount = (warRates as bigint[])[3] * 604800n * 4n * 12n;
+  const warAmount = (warRates as bigint[])[3] * 86400n * 365n;
 
-  const cvxAmount = Number(cvxLocked * warAmount / warSupply.totalSupply.value / BigInt(1e16)) / 100;
-  const auraAmount = Number(auraLocked * warAmount / warSupply.totalSupply.value / BigInt(1e16)) / 100;
+  const cvxAmount =
+    Number((cvxLocked * warAmount) / warSupply.totalSupply.value / BigInt(1e15)) / 1000;
+  const auraAmount =
+    Number((auraLocked * warAmount) / warSupply.totalSupply.value / BigInt(1e15)) / 1000;
 
   const cvxDollar = await getTotalPricePerToken(cvxAmount, cvxAddress);
   const auraDollar = await getTotalPricePerToken(auraAmount, auraAddress);
@@ -112,12 +133,13 @@ async function computeWethApr(wethRates: any, tvl: number): Promise<number | und
   if (wethRates === undefined) return;
   if ((wethRates as bigint[])[2] * 1000n <= new Date().valueOf()) return 0;
 
-  const wethAmount = (wethRates as bigint[])[3] * 604800n * 4n * 12n;
+  const wethAmount = (wethRates as bigint[])[3] * 86400n * 365n;
 
   const wethDollar = await getTotalPricePerToken(
-    Number(wethAmount / BigInt(1e16)) / 100,
+    Number(wethAmount / BigInt(1e15)) / 1000,
     wethAddress
   );
+
   const wethApr = wethDollar / tvl;
   return wethApr;
 }
@@ -126,9 +148,12 @@ async function computePalApr(palRates: any, tvl: number): Promise<number | undef
   if (palRates === undefined) return;
   if ((palRates as bigint[])[2] * 1000n <= new Date().valueOf()) return 0;
 
-  const palAmount = (palRates as bigint[])[3] * 604800n * 4n * 12n;
+  const palAmount = (palRates as bigint[])[3] * 86400n * 365n;
 
-  const palDollar = await getTotalPricePerToken(Number(palAmount / BigInt(1e16)) / 100, palAddress);
+  const palDollar = await getTotalPricePerToken(
+    Number(palAmount / BigInt(1e15)) / 1000,
+    palAddress
+  );
   const palApr = palDollar / tvl;
   return palApr;
 }
@@ -145,12 +170,7 @@ async function computeAPY(
   lockedSupply: any,
   cvxLocked: any
 ): Promise<string> {
-  const warlordTVL = await computeActiveTvl(
-    totalWarLocked,
-    totalSupply,
-    auraLocked,
-    cvxLocked,
-  );
+  const warlordTVL = await computeActiveTvl(totalWarLocked, totalSupply, auraLocked, cvxLocked);
   if (warlordTVL === undefined) throw new Error('warlordTVL is undefined');
 
   const auraBalApr = await computeAuraBalApr(
@@ -158,7 +178,7 @@ async function computeAPY(
     totalSupply,
     auraLocked,
     cvxLocked,
-    breakdownResponse,
+    breakdownResponse
   );
   const warApr = await computeWarApr(warRates, auraLocked, cvxLocked, totalSupply, warlordTVL);
   const wethApr = await computeWethApr(wethRates, warlordTVL);
@@ -234,7 +254,7 @@ export const APY: FC<APYProps> = () => {
         palRates,
         rewardData,
         lockedSupply,
-        cvxLocked,
+        cvxLocked
       )
         .then(setApy)
         .catch(() => {});
@@ -246,7 +266,7 @@ export const APY: FC<APYProps> = () => {
     breakdownResponse,
     auraLocked,
     cvxLocked,
-    totalSupply,
+    totalSupply
   ]);
 
   const textProps =
