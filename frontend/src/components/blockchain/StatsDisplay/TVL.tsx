@@ -1,16 +1,16 @@
-/* eslint-disable no-unused-vars */
-
 import React, { FC, useEffect } from 'react';
 import { Text, VStack, Spinner, useColorModeValue, useColorMode } from '@chakra-ui/react';
 import { useBalance, useContractRead, useToken } from 'wagmi';
 import {
   auraAddress,
   cvxAddress,
+  redeemerAddress,
   stakerAddress,
   vaultAddress,
   warAuraLocker,
   warCvxLocker,
-  warLockerAbi
+  warLockerAbi,
+  warRedeemerABI
 } from 'config/blockchain';
 import formatNumber from 'utils/formatNumber';
 import { useStore } from 'store';
@@ -34,6 +34,18 @@ export const TVL: FC<TVLProps> = () => {
     address: !tvl ? vaultAddress : undefined,
     token: stakerAddress
   });
+  const { data: auraQueued } = useContractRead({
+    address: !tvl ? redeemerAddress : undefined,
+    abi: warRedeemerABI,
+    functionName: 'queuedForWithdrawal',
+    args: [auraAddress]
+  });
+  const { data: cvxQueued } = useContractRead({
+    address: !tvl ? redeemerAddress : undefined,
+    abi: warRedeemerABI,
+    functionName: 'queuedForWithdrawal',
+    args: [cvxAddress]
+  });
   const { data: staker } = useToken({
     address: !tvl ? stakerAddress : undefined
   });
@@ -43,17 +55,19 @@ export const TVL: FC<TVLProps> = () => {
       cvxLocked === undefined ||
       auraLocked === undefined ||
       warBalance === undefined ||
-      staker === undefined
+      staker === undefined ||
+      auraQueued === undefined ||
+      cvxQueued === undefined
     )
       return;
     const auraPrice = await getTotalPricePerToken(
       Number(
-        ((auraLocked as bigint) * warBalance.value) / staker.totalSupply.value / BigInt(1e15)
+        (((auraLocked as bigint) - (auraQueued as bigint)) * warBalance.value) / staker.totalSupply.value / BigInt(1e15)
       ) / 1000,
       auraAddress
     );
     const cvxPrice = await getTotalPricePerToken(
-      Number(((cvxLocked as bigint) * warBalance.value) / staker.totalSupply.value / BigInt(1e15)) /
+      Number((((cvxLocked as bigint) - (cvxQueued as bigint)) * warBalance.value) / staker.totalSupply.value / BigInt(1e15)) /
         1000,
       cvxAddress
     );
