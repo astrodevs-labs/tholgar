@@ -11,11 +11,13 @@ import {
   cvxLockerAbi,
   cvxLockerAddress,
   palAddress,
+  redeemerAddress,
   stakerAddress,
   warAddress,
   warAuraLocker,
   warCvxLocker,
   warLockerAbi,
+  warRedeemerABI,
   wethAddress
 } from 'config/blockchain';
 import { useStore } from 'store';
@@ -27,21 +29,25 @@ async function computeActiveTvl(
   totalWarLocked: FetchBalanceResult | undefined,
   warSupply: FetchTokenResult | undefined,
   auraLocked: bigint | undefined,
-  cvxLocked: bigint | undefined
+  cvxLocked: bigint | undefined,
+  auraQueued: bigint | undefined,
+  cvxQueued: bigint | undefined
 ): Promise<number | undefined> {
   if (
     totalWarLocked === undefined ||
     auraLocked == undefined ||
     cvxLocked == undefined ||
-    warSupply == undefined
+    warSupply == undefined ||
+    auraQueued == undefined ||
+    cvxQueued == undefined
   )
     return;
 
   const auraAmount =
-    Number((auraLocked * totalWarLocked.value) / (warSupply.totalSupply.value * BigInt(1e15))) /
+    Number(((auraLocked - auraQueued) * totalWarLocked.value) / (warSupply.totalSupply.value * BigInt(1e15))) /
     1000;
   const cvxAmount =
-    Number((cvxLocked * totalWarLocked.value) / (warSupply.totalSupply.value * BigInt(1e15))) /
+    Number(((cvxLocked - cvxQueued) * totalWarLocked.value) / (warSupply.totalSupply.value * BigInt(1e15))) /
     1000;
 
   const warlordTVL =
@@ -101,6 +107,8 @@ async function computeWarApr(
   warRates: bigint[] | undefined,
   auraLocked: bigint | undefined,
   cvxLocked: bigint | undefined,
+  auraQueued: bigint | undefined,
+  cvxQueued: bigint | undefined,
   warSupply: FetchTokenResult | undefined,
   tvl: number
 ): Promise<number | undefined> {
@@ -108,7 +116,9 @@ async function computeWarApr(
     warRates === undefined ||
     auraLocked === undefined ||
     cvxLocked === undefined ||
-    warSupply === undefined
+    warSupply === undefined ||
+    auraQueued === undefined ||
+    cvxQueued === undefined
   )
     return;
   if ((warRates as bigint[])[2] * 1000n <= new Date().valueOf()) return 0;
@@ -116,9 +126,9 @@ async function computeWarApr(
   const warAmount = (warRates as bigint[])[3] * 86400n * 365n;
 
   const cvxAmount =
-    Number((cvxLocked * warAmount) / warSupply.totalSupply.value / BigInt(1e15)) / 1000;
+    Number(((cvxLocked - cvxQueued) * warAmount) / warSupply.totalSupply.value / BigInt(1e15)) / 1000;
   const auraAmount =
-    Number((auraLocked * warAmount) / warSupply.totalSupply.value / BigInt(1e15)) / 1000;
+    Number(((auraLocked - auraQueued) * warAmount) / warSupply.totalSupply.value / BigInt(1e15)) / 1000;
 
   const cvxDollar = await getTotalPricePerToken(cvxAmount, cvxAddress);
   const auraDollar = await getTotalPricePerToken(auraAmount, auraAddress);
@@ -168,9 +178,11 @@ async function computeAPY(
   palRates: any,
   rewardData: any,
   lockedSupply: any,
-  cvxLocked: any
+  cvxLocked: any,
+  auraQueued: any,
+  cvxQueued: any,
 ): Promise<string> {
-  const warlordTVL = await computeActiveTvl(totalWarLocked, totalSupply, auraLocked, cvxLocked);
+  const warlordTVL = await computeActiveTvl(totalWarLocked, totalSupply, auraLocked, cvxLocked, auraQueued, cvxQueued);
   if (warlordTVL === undefined) throw new Error('warlordTVL is undefined');
 
   const auraBalApr = await computeAuraBalApr(
@@ -180,7 +192,7 @@ async function computeAPY(
     cvxLocked,
     breakdownResponse
   );
-  const warApr = await computeWarApr(warRates, auraLocked, cvxLocked, totalSupply, warlordTVL);
+  const warApr = await computeWarApr(warRates, auraLocked, cvxLocked, auraQueued, cvxQueued, totalSupply, warlordTVL);
   const wethApr = await computeWethApr(wethRates, warlordTVL);
   const palApr = await computePalApr(palRates, warlordTVL);
   const cvxCrvApr = await computeCrvCvxApr(rewardData, lockedSupply, cvxLocked, warlordTVL);
@@ -237,6 +249,18 @@ export const APY: FC<APYProps> = () => {
   const { data: totalSupply } = useToken({
     address: !apy ? warAddress : undefined
   });
+  const { data: auraQueued } = useContractRead({
+    address: !apy ? redeemerAddress : undefined,
+    abi: warRedeemerABI,
+    functionName: 'queuedForWithdrawal',
+    args: [auraAddress]
+  });
+  const { data: cvxQueued } = useContractRead({
+    address: !apy ? redeemerAddress : undefined,
+    abi: warRedeemerABI,
+    functionName: 'queuedForWithdrawal',
+    args: [cvxAddress]
+  });
   const breakdownResponse = usePostRequest('https://data.aura.finance/graphql', {
     query:
       '{\n  locker {\n    aprs {\n      breakdown {\n        value      },\n    }\n  }\n  \n}\n  \n  '
@@ -254,7 +278,9 @@ export const APY: FC<APYProps> = () => {
         palRates,
         rewardData,
         lockedSupply,
-        cvxLocked
+        cvxLocked,
+        auraQueued,
+        cvxQueued
       )
         .then(setApy)
         .catch(() => {});
@@ -266,7 +292,9 @@ export const APY: FC<APYProps> = () => {
     breakdownResponse,
     auraLocked,
     cvxLocked,
-    totalSupply
+    totalSupply,
+    auraQueued,
+    cvxQueued,
   ]);
 
   const textProps =
