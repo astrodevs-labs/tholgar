@@ -13,7 +13,7 @@ import {
   useBreakpointValue,
   useColorModeValue
 } from '@chakra-ui/react';
-import { BiQuestionMark, BiHome, BiLogoDiscord, BiLogoTwitter, BiLogoGithub } from 'react-icons/bi';
+import { BiQuestionMark, BiHome, BiLogoDiscord, BiLogoTwitter, BiLogoGithub, BiBookAlt } from 'react-icons/bi';
 import { NavItem } from '../NavItem';
 import { Link as ChakraLink } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
@@ -54,7 +54,7 @@ export const SideBarBody: FC<PropsWithChildren<SideBarBodyProps>> = (props) => {
       <Spacer />
       <Divider color={useColorModeValue('border.light', 'black')} opacity={'unset'} />
       <VStack mx="4" my={'5'}>
-        <HStack justify="center" gap="1.5em">
+        <HStack justify="center" gap="1.25em">
           <ChakraLink href={'https://discord.gg/ycuFbMg9MW'} isExternal>
             <Icon
               as={BiLogoDiscord}
@@ -63,7 +63,7 @@ export const SideBarBody: FC<PropsWithChildren<SideBarBodyProps>> = (props) => {
                 transition: 'color 0.25s ease'
               }}
               color={useColorModeValue('gray.600', 'white')}
-              boxSize={8}
+              boxSize={7}
             />
           </ChakraLink>
           <ChakraLink href={'https://twitter.com/TholgarFi'} isExternal>
@@ -74,7 +74,7 @@ export const SideBarBody: FC<PropsWithChildren<SideBarBodyProps>> = (props) => {
                 transition: 'color 0.25s ease'
               }}
               color={useColorModeValue('gray.600', 'white')}
-              boxSize={8}
+              boxSize={7}
             />
           </ChakraLink>
           <ChakraLink href={'https://github.com/astrodevs-labs/tholgar'} isExternal>
@@ -85,7 +85,18 @@ export const SideBarBody: FC<PropsWithChildren<SideBarBodyProps>> = (props) => {
                 transition: 'color 0.25s ease'
               }}
               color={useColorModeValue('gray.600', 'white')}
-              boxSize={8}
+              boxSize={7}
+            />
+          </ChakraLink>
+          <ChakraLink href={'https://doc.tholgar.xyz'} isExternal>
+            <Icon
+              as={BiBookAlt}
+              _hover={{
+                color: useColorModeValue('black', 'gray.400'),
+                transition: 'color 0.25s ease'
+              }}
+              color={useColorModeValue('gray.600', 'white')}
+              boxSize={7}
             />
           </ChakraLink>
         </HStack>
