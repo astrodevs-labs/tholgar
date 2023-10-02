@@ -30,7 +30,7 @@ export const WarWithdrawPanel: FC<WarWithdrawPanelProps> = () => {
       'war',
       vault.totalSupply === 0n
         ? wstkWARWithdrawInputAmount
-        : wstkWARWithdrawInputAmount * (stakerBalance.value / vault.totalSupply)
+        : wstkWARWithdrawInputAmount * stakerBalance.value / vault.totalSupply
     );
   }, [wstkWARWithdrawInputAmount, vault, stakerBalance]);
 
