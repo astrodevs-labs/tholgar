@@ -35,7 +35,7 @@ const harvest = async (
   let asset: string;
   try {
     feeToken = await vault.feeToken();
-    asset = vault.asset();
+    asset = await vault.asset();
   } catch (err: any) {
     throw new Error(`Rpc call failed: ${err.message}`);
   }
@@ -88,7 +88,9 @@ const harvest = async (
       tokens.map((token: any) => token[0]),
       inputData,
     ]);
-    console.log(`Harvest calldata: ${calldata}`);
+    console.log(tokensToHarvest,
+      tokens.map((token: any) => token[0]),
+      inputData);
   } else {
     try {
       // Harvest the rewards

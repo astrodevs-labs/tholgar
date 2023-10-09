@@ -31,7 +31,7 @@ const compound = async (
     const feeContract = new Contract(feeToken, ERC20_ABI, provider);
     const srcDecimals = await feeContract.decimals();
     const swapperAddress = await vault.swapper();
-    const balance = await feeContract.balanceOf(swapperAddress);
+    const balance = await feeContract.balanceOf(vaultAddress);
 
     for (let i = 0; i < ratios.size; i++) {
       tokensToSwap.push(feeToken);
@@ -43,7 +43,7 @@ const compound = async (
     for (const token of tokensToMint) {
       const tokenContract = new Contract(token, ERC20_ABI, provider);
       const destDecimals = await tokenContract.decimals();
-      const amount = balance.mul(ratios.get(token)!.div(MAX_WEIGHT));
+      const amount = BigNumber.from("1000000000000000000");
       const data = await getParaswapData(
         feeToken,
         srcDecimals,
@@ -67,7 +67,9 @@ const compound = async (
       outputData,
       tokensToMint,
     ]);
-    console.log(`Compound calldata: ${calldata}`);
+    console.log(tokensToSwap,
+      outputData,
+      tokensToMint);
   } else {
     try {
       // Compound the rewards
