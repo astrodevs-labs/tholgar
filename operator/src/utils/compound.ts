@@ -43,7 +43,7 @@ const compound = async (
     for (const token of tokensToMint) {
       const tokenContract = new Contract(token, ERC20_ABI, provider);
       const destDecimals = await tokenContract.decimals();
-      const amount = BigNumber.from("1000000000000000000");
+      const amount = balance.mul(ratios.get(token)!).div(MAX_WEIGHT);
       const data = await getParaswapData(
         feeToken,
         srcDecimals,
