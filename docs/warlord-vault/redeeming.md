@@ -2,7 +2,7 @@
 order: 1
 ---
 
-# Redeem
+# Redeeming
 
 To redeem in $AURA/$CVX, you will need to first withdraw your $tWAR into $WAR tokens ([see how](withdraw.md)).
 

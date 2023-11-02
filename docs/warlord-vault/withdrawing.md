@@ -2,7 +2,7 @@
 order: 2
 ---
 
-# Withdraw
+# Withdrawing
 
 You can currently withdraw your $tWAR tokens back into $WAR tokens.
 

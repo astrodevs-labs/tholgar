@@ -2,11 +2,11 @@
 order: 3
 ---
 
-# Deposit
+# Depositing
 
 Currently, two set of tokens can be deposited: $WAR and $AURA/$CVX. The process is nearly the same for both sets.
 
-## Deposit $WAR
+## Depositing $WAR
 
 ### Accessing the $WAR deposit
 
@@ -38,7 +38,7 @@ The "Circulating Supply" and "WAR Locked" statistics should reflect an increase 
 
 ![](../assets/WarDeposit-Deposited.png)
 
-## Deposit $AURA/$CVX
+## Depositing $AURA/$CVX
 ### Accessing the $AURA/$CVX deposit
 
 To access the $AURA/$CVX deposit, you need to switch the deposit token(s) by using the dropdown menu located in the bottom-left corner of the deposit tab.
