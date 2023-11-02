@@ -6,13 +6,13 @@ order: 5
 
 ## What is Warlord ?
 
-Warlord is an index of governance tokens that generates yield and automatically compounds some ot the rewards into WAR, optimizing the overall yield through an auto-voter for the most rewarding vote incentives. You can read more about it [here](https://doc.paladin.vote/warlord/overview).
+Warlord is an index of governance tokens that generates yield and automatically compounds some ot the rewards into $WAR, optimizing the overall yield through an auto-voter for the most rewarding vote incentives. You can read more about it [here](https://doc.paladin.vote/warlord/overview).
 
 ## What is the Warlord Vault ?
 
-The Warlord Vault is a product built by the Tholgar team. It is an auto-compounder built on top of Warlord, enabling anyone to participate in a vault and achieve higher, more optimized yields in a non-custodial manner.
+The Warlord Vault is a product built by the Tholgar team. It is an auto-compounder built on top of Warlord, enabling anyone to participate in a Vault and achieve higher, more optimized yields in a non-custodial manner.
 
-All vote incentives will be claimed on a weekly basis and automatically compounded into the vault, resulting in even higher yields.
+All vote incentives will be claimed on a weekly basis and automatically compounded into the Vault, resulting in even higher yields.
 
 It follows the ERC-4626 standard, aligning with the industry standard developed by Yearn to enhance composability with other protocols.
 
