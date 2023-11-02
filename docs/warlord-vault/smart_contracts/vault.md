@@ -4,83 +4,78 @@ sidebar_position: 1
 
 # Vault
 
-This is the main contract of the Warlord protocol. It allows user to deposit WAR that will then be staked in the Warlord staking contract. It also handles the harvest and compound logic of the vault. Some admions functions are here to handle fees and pause the contract if needed. The Vault itself can change staker but not the underlying asset.
+This is the primary contract of the Warlord protocol, enabling users to deposit $WAR, which is subsequently staked in the Warlord staking contract. It also manages the harvest and compounding logic of the vault. Some admin functions are included to manage fees and potentially pause the contract when necessary. The Vault itself can change stakers but not the underlying asset.
 
 
 ## State Variables
-### staker
-Address of the stkWAR token
 
+### staker
+
+Address of the $stkWAR token
 
 ```solidity
 address public staker;
 ```
 
-
 ### minter
-Address of the WAR minter contract
 
+Address of the $WAR minter contract
 
 ```solidity
 address public minter;
 ```
 
-
 ### swapper
-Address of the swapper contract
 
+Address of the swapper contract
 
 ```solidity
 address public swapper;
 ```
 
 ### MAX_BPS
-Max BPS value (100%)
 
+Max BPS value (100%)
 
 ```solidity
 uint256 public constant MAX_BPS = 10_000;
 ```
 
-
 ### harvestFee
-fee to be applied when harvesting rewards
 
+Fee to be applied when harvesting rewards
 
 ```solidity
 uint256 public harvestFee;
 ```
 
-
 ### feeRecipient
-address to receive the harvest fee
 
+Address to receive the harvest fee
 
 ```solidity
 address public feeRecipient;
 ```
 
-
 ### feeToken
-token to be used to pay the harvest fee
 
+Token to be used to pay the harvest fee
 
 ```solidity
 address public feeToken;
 ```
 
 ### operator
-operator caller address to allow access only to web3 function
 
+Operator caller address to allow access only to web3 function
 
 ```solidity
 address public operator;
 ```
 
-
 ## Functions
-### constructor
 
+### constructor
 
 ```solidity
 constructor(
@@ -102,12 +97,12 @@ constructor(
 
 ### setStaker
 
-update the staker contract to a new one
-
+Update the staker contract to a new one
 
 ```solidity
 function setStaker(address newStaker) external onlyOwner;
 ```
+
 **Parameters**
 
 |Name|Type|Description|
@@ -116,43 +111,39 @@ function setStaker(address newStaker) external onlyOwner;
 
 ### setOperator
 
-
 ```solidity
 function setOperator(address newOperator) external onlyOwner;
 ```
 
 ### setSwapper
 
-update the swapper contract to a new one
-
+Update the swapper contract to a new one
 
 ```solidity
 function setSwapper(address newSwapper) external onlyOwner;
 ```
+
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
 |`newSwapper`|`address`|the new swapper contract|
 
-
 ### setMinter
 
-update the minter contract to a new one
-
+Update the minter contract to a new one
 
 ```solidity
 function setMinter(address newMinter) external onlyOwner;
 ```
+
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
 |`newMinter`|`address`|the new minter contract|
 
-
 ### setHarvestFee
-
 
 ```solidity
 function setHarvestFee(uint256 newHarvestFee) external virtual onlyOwner;
@@ -160,29 +151,24 @@ function setHarvestFee(uint256 newHarvestFee) external virtual onlyOwner;
 
 ### setFeeRecipient
 
-
 ```solidity
 function setFeeRecipient(address newFeeRecipient) external virtual onlyOwner;
 ```
 
 ### setFeeToken
 
-
 ```solidity
 function setFeeToken(address newFeeToken) external virtual onlyOwner;
 ```
 
-
 ### recoverERC20
 
-Recover ERC2O tokens in the contract
-
-*Recover ERC2O tokens in the contract*
-
+Recover ERC-2O tokens in the contract
 
 ```solidity
 function recoverERC20(address token) external onlyOwner returns (bool);
 ```
+
 **Parameters**
 
 |Name|Type|Description|
@@ -195,11 +181,9 @@ function recoverERC20(address token) external onlyOwner returns (bool);
 |----|----|-----------|
 |`<none>`|`bool`|bool: success|
 
-
 ### pause
 
 Pause the contract
-
 
 ```solidity
 function pause() external onlyOwner;
@@ -209,15 +193,13 @@ function pause() external onlyOwner;
 
 Unpause the contract
 
-
 ```solidity
 function unpause() external onlyOwner;
 ```
 
 ### totalAssets
 
-*totalAssets is the total number of stkWAR*
-
+totalAssets is the total number of $stkWAR
 
 ```solidity
 function totalAssets() public view override returns (uint256);
@@ -225,20 +207,17 @@ function totalAssets() public view override returns (uint256);
 
 ### deposit
 
-
 ```solidity
 function deposit(uint256 assets, address receiver) public override whenNotPaused returns (uint256 shares);
 ```
 
 ### mint
 
-
 ```solidity
 function mint(uint256 shares, address receiver) public override whenNotPaused returns (uint256 assets);
 ```
 
 ### withdraw
-
 
 ```solidity
 function withdraw(uint256 assets, address receiver, address owner)
@@ -250,7 +229,6 @@ function withdraw(uint256 assets, address receiver, address owner)
 
 ### redeem
 
-
 ```solidity
 function redeem(uint256 shares, address receiver, address owner)
     public
@@ -261,8 +239,7 @@ function redeem(uint256 shares, address receiver, address owner)
 
 ### afterDeposit
 
-*stake assets after each deposit*
-
+Stake assets after each deposit
 
 ```solidity
 function afterDeposit(uint256 assets, uint256) internal override;
@@ -270,8 +247,7 @@ function afterDeposit(uint256 assets, uint256) internal override;
 
 ### beforeWithdraw
 
-*unstake assets before each withdraw to have enough WAR to transfer*
-
+Unstake assets before each withdraw to have enough $WAR to transfer
 
 ```solidity
 function beforeWithdraw(uint256 assets, uint256) internal override;
@@ -290,6 +266,7 @@ function harvest(address[] calldata tokensToHarvest, address[] calldata tokensTo
     nonReentrant
     onlyOperatorOrOwner;
 ```
+
 **Parameters**
 
 |Name|Type|Description|
@@ -298,11 +275,9 @@ function harvest(address[] calldata tokensToHarvest, address[] calldata tokensTo
 |`tokensToSwap`|`address[]`|tokens to swap to feeToken|
 |`callDatas`|`bytes[]`|swapper routes to swap to feeToken|
 
-
 ### compound
 
 Turn all rewards into more staked assets
-
 
 ```solidity
 function compound(address[] calldata tokensToSwap, bytes[] calldata callDatas, address[] calldata tokensToMint)
@@ -310,6 +285,7 @@ function compound(address[] calldata tokensToSwap, bytes[] calldata callDatas, a
     nonReentrant
     onlyOperatorOrOwner;
 ```
+
 **Parameters**
 
 |Name|Type|Description|
@@ -318,75 +294,75 @@ function compound(address[] calldata tokensToSwap, bytes[] calldata callDatas, a
 |`callDatas`|`bytes[]`|swapper routes to swap to more assets|
 |`tokensToMint`|`address[]`|tokens to mint more stkWAR|
 
-
 ## Events
-### StakerUpdated
-Event emitted when a staker is updated
 
+### StakerUpdated
+
+Event emitted when a staker is updated
 
 ```solidity
 event StakerUpdated(address oldStaker, address newStaker);
 ```
 
 ### MinterUpdated
-Event emitted when a minter is updated
 
+Event emitted when a minter is updated
 
 ```solidity
 event MinterUpdated(address oldMinter, address newMinter);
 ```
 
 ### SwapperUpdated
-Event emitted when a swapper is updated
 
+Event emitted when a swapper is updated
 
 ```solidity
 event SwapperUpdated(address oldSwapper, address newSwapper);
 ```
 
 ### Harvested
-Event emitted when reward have been harvested
 
+Event emitted when reward have been harvested
 
 ```solidity
 event Harvested(uint256 amount);
 ```
 
 ### Compounded
-Event emitted when rewards are compounded into more stkWAR
 
+Event emitted when rewards are compounded into more $stkWAR
 
 ```solidity
 event Compounded(uint256 amount);
 ```
 
 ### HarvestFeeUpdated
-Event emitted when harvestFee is updated
 
+Event emitted when harvestFee is updated
 
 ```solidity
 event HarvestFeeUpdated(uint256 oldHarvestFee, uint256 newHarvestFee);
 ```
 
 ### FeeRecipientUpdated
-Event emitted when feeRecipient is updated
 
+Event emitted when feeRecipient is updated
 
 ```solidity
 event FeeRecipientUpdated(address oldFeeRecipient, address newFeeRecipient);
 ```
 
 ### FeeTokenUpdated
-Event emitted when feeToken is updated
 
+Event emitted when feeToken is updated
 
 ```solidity
 event FeeTokenUpdated(address oldFeeToken, address newFeeToken);
 ```
 
 ### OperatorUpdated
-Event emitted when a output tokens and/or ratios are updated
 
+Event emitted when a output tokens and/or ratios are updated
 
 ```solidity
 event OperatorUpdated(address oldOperator, address newOperator);
