@@ -6,7 +6,7 @@ order: 5
 
 ## What is Warlord ?
 
-Warlord is an index of governance tokens that generates yield and automatically compounds some ot the rewards into $WAR, optimizing the overall yield through an auto-voter for the most rewarding vote incentives. You can read more about it [here](https://doc.paladin.vote/warlord/overview).
+Warlord is an index of governance tokens that generates yield and automatically compounds some ot the rewards into $WAR, optimizing the overall yield through an auto-voter for the most rewarding vote incentives. You can read more about it [!ref target="blank" text="here"](https://doc.paladin.vote/warlord/overview).
 
 ## What is the Warlord Vault ?
 
@@ -20,6 +20,6 @@ It follows the ERC-4626 standard, aligning with the industry standard developed 
 
 ## Addresses
 
-- Vault: [0x188cA46Aa2c7ae10C14A931512B62991D5901453](https://etherscan.io/address/0x188ca46aa2c7ae10c14a931512b62991d5901453)
-- Zap: [0x0598c652eEB0F95137Af02f32022005139453744](https://etherscan.io/address/0x0598c652eeb0f95137af02f32022005139453744)
-- Swapper: [0x4247d145049B426d39f19F41555137D9cB154B99](https://etherscan.io/address/0x4247d145049b426d39f19f41555137d9cb154b99)
+- Vault: [!ref target="blank" text="0x188cA46Aa2c7ae10C14A931512B62991D5901453"](https://etherscan.io/address/0x188ca46aa2c7ae10c14a931512b62991d5901453)
+- Zap: [!ref target="blank" text="0x0598c652eEB0F95137Af02f32022005139453744"](https://etherscan.io/address/0x0598c652eeb0f95137af02f32022005139453744)
+- Swapper: [!ref target="blank" text="0x4247d145049B426d39f19F41555137D9cB154B99"](https://etherscan.io/address/0x4247d145049b426d39f19f41555137d9cb154b99)
