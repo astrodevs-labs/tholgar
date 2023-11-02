@@ -5,12 +5,12 @@
 </p>
 
 <p align="center">
-    Tholgar is a protocol which build Auto compounder on top of Warlord from Paladin Finance.
+    Tholgar is a protocol that builds an Auto-Compounder on top of Warlord from Paladin Finance.
 </p>
 
 ## Motivation
 
-The motivation behind this project is to be able to attract more users to discover and use Paladin products. We started with Warlord which is the only index for governance tokens in the market and we will expand to other products in the future.
+The motivation behind this project is to attract more users to discover and use Paladin products. We started with Warlord, the only index for governance tokens in the market, and we plan to expand to other products in the future.
 
 ## Architecture
 
