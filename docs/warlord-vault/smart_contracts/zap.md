@@ -4,40 +4,37 @@ sidebar_position: 3
 
 # Zap
 
-This is an util contract to ease the deposit of aura/cvx into the vault. It will first mint WAR with the amount of aura/cvx you want to deposit, then deposit it into the vault for tWAR.
-
+This is a utility contract designed to simplify the deposit of $AURA/$CVX into the Vault. It initiates the process by minting $WAR in an amount equivalent to the $AURA/$CVX you wish to deposit, and then deposits it into the Vault in exchange for $tWAR.
 
 ## State Variables
-### asset
-Address of war token
 
+### asset
+
+Address of $WAR token
 
 ```solidity
 address public immutable asset;
 ```
 
-
 ### vault
-Address of the auto compounding war vault
 
+Address of the auto-compounding $WAR Vault
 
 ```solidity
 address public immutable vault;
 ```
 
-
 ### minter
-Address of the war minter
 
+Address of the $WAR minter
 
 ```solidity
 address public immutable minter;
 ```
 
-
 ## Functions
-### constructor
 
+### constructor
 
 ```solidity
 constructor(address definitiveAsset, address definitiveVault, address definitiveMinter);
@@ -45,12 +42,15 @@ constructor(address definitiveAsset, address definitiveVault, address definitive
 
 ### zap
 
-Zaps a given amount of tokens to mint WAR and deposit it
-
+Zaps a specified amount of tokens to mint $WAR and deposit it
 
 ```solidity
-function zap(address token, uint256 amount, address receiver) external nonReentrant returns (uint256);
+function zap(address token, uint256 amount, address receiver)
+    external
+    nonReentrant
+    returns (uint256);
 ```
+
 **Parameters**
 
 |Name|Type|Description|
@@ -65,11 +65,9 @@ function zap(address token, uint256 amount, address receiver) external nonReentr
 |----|----|-----------|
 |`<none>`|`uint256`|uint256 : Amount of shares minted|
 
-
 ### zapMultiple
 
-Zaps given amounts of tokens to mint WAR and deposit it
-
+Zaps multiple specified amounts of tokens to mint $WAR and deposit it
 
 ```solidity
 function zapMultiple(address[] calldata vlTokens, uint256[] calldata amounts, address receiver)
@@ -77,6 +75,7 @@ function zapMultiple(address[] calldata vlTokens, uint256[] calldata amounts, ad
     nonReentrant
     returns (uint256);
 ```
+
 **Parameters**
 
 |Name|Type|Description|
@@ -91,11 +90,11 @@ function zapMultiple(address[] calldata vlTokens, uint256[] calldata amounts, ad
 |----|----|-----------|
 |`<none>`|`uint256`|uint256 : Amount of shares minted|
 
-
 ## Events
-### ZapHappened
-Event emitted when a zap happens
 
+### ZapHappened
+
+Event emitted when a zap happens
 
 ```solidity
 event ZapHappened(address indexed sender, address indexed receiver, uint256 shares);

@@ -4,38 +4,36 @@ order: 4
 
 # $tWAR
 
-## What is WAR ?
+## What is $WAR ?
 
-WAR is an ERC-20 token that is always redeemable for its backing assets. As a governance index, WAR is composed of Convex (CVX) and Aura (AURA) which is vote-locked to generate yield. All rewards and yield are sent back to WAR stakers. At the moment, WAR accepts only these two assets but the system can be adapted to other vlTokens.  
-  
-The only way to mint WAR is by depositing either CVX or AURA, or both. When minting, users will receive WAR directly. To then start earning with WAR, users must stake WAR to earn their rewards and vote incentive yield. Vote incentives are distributed in WETH and are managed by Paladin’s delegation address. BAL and CRV are earned as auraBAL and cvxCRV to farm more AURA & BAL and CVX & CRV while it's not claimed. Other rewards include PAL, FXS and cvxFXS. Also, any AURA or CVX earned is auto-compounded into more WAR. Users who don’t stake their WAR forfeit their yield to other stakers.  
-  
-Users who wish to exit the Warlord system will need to redeem their WAR tokens for their backing. The redemption ratio will depend on the current ratio of locked assets within the system. Once redeemed, the WAR will be queued for the unlock date of each asset. CVX and AURA will unlock at separate dates depending on their availability. Once available, users will be able to claim their tokens. Note: assets in the redeem queue do not earn yield.  
-  
+$WAR is an ERC-20 token that is perpetually redeemable for its underlying assets. As a governance index, WAR is comprised of Convex ($CVX) and Aura ($AURA), which are vote-locked to generate yield. All rewards and yields are distributed to $WAR stakers. Currently, $WAR only supports these two assets, but the system can be adapted to accommodate other vlTokens.
 
-## What is tWAR ?
+The only way to mint $WAR is by depositing either $CVX or $AURA, or both. Upon minting, users will receive $WAR directly. To begin earning with $WAR, users must stake their $WAR tokens to receive rewards and vote-incentive yields. Vote incentives are distributed in $WETH and are managed by Paladin’s delegation address. $BAL and $CRV are earned as $auraBAL and $cvxCRV, allowing users to farm more $AURA & $BAL and $CVX & $CRV until claimed. Other rewards also include $PAL, $FXS and $cvxFXS. Furthermore, any $AURA or $CVX earned is automatically compounded into more $WAR. Users who do not stake their $WAR tokens forfeit their yield to other stakers.
 
-tWAR is an ERC20 token that represents the shares of the underlying amount of $WAR held by the vault. It means that for example if a user hold 10 $tWAR and the total amount of $tWAR is 1000, the user owns 1% of the $WAR held in the vault.  
-  
-It uses the ERC4626 standard to implement this feature and follow industry standard. This token will then be able to be used in other DeFi protocols.  
-  
-This vault is an auto-compounder meaning that instead of earning yield directly through $WAR, it will claim this yield then recompound it every week for more $WAR.  
-  
+Users who want to exit the Warlord system will need to redeem their $WAR tokens for their underlying assets. The redemption ratio will be determined by the current ratio of locked assets within the system. After redemption, the $WAR will be queued for the unlock date of each corresponding asset. $CVX and $AURA will have separate unlock dates depending on their availability. Once these assets become available, users will be able to claim their tokens. Please note that assets in the redemption queue do not generate yield.
 
-## How does the auto compounding works ?
+## What is $tWAR ?
 
-We have implemented the auto-compounder in a way that it will claim all the rewards every week and then recompound them into the vault. It will optimize the yield in the long term by not claiming cvxCRV and auraBAL rewards to first farm more WAR and then have less gas fees. It will also arbitrage the current weight of CVX and AURA to mint more WAR.  
+$tWAR is an ERC-20 token that represents shares of the underlying amount of $WAR held within the Warlord Vault. For instance, if a user holds 10 $tWAR tokens and the total amount of $tWAR in circulation is 1000, the user owns 1% of the $WAR held in the Vault.
+
+It uses the ERC-4626 standard to implement this feature and adhere to industry standards. This token will then be compatible with other DeFi protocols.
+
+The Warlord Vault is an auto-compounder, which means that instead of earning yield directly through $WAR, it will claim this yield and then automatically reinvest it every week to accumulate more $WAR.
+
+## How does the auto-compounding work ?
+
+The Tholgar team has implemented the auto-compounder in a way that it claims all the rewards every week and subsequently reinvests them into the Vault. To optimize the yield in the long term, it refrains from claiming $cvxCRV and $auraBAL rewards initially, allowing it to farm more $WAR and incur fewer gas fees. Additionally, it conducts arbitrage to adjust the current weight of $CVX and $AURA to mint more $WAR.
+
+The process begins with harvesting rewards using the **harvest** function and swapping them through a router, such as Paraswap, into feeToken. Following this, we compound the rewards using the **compound** function and swap the feeToken back into $CVX or $AURA, allowing us to mint more $WAR and stake it.
   
-The process is first we harvest rewards with the **harvest** function and swap them using an router such as Paraswap into feeToken. Then we compound rewards using the **compound** function and swap the feeToken back into CVX or AURA to then mint more WAR and stake it.
-  
-All of the code of the server that will make the calls is open source and can be found in the operator directory. We also aim in the future to use a decentralised way instead of a centralised server to make the calls.  
+The entire code for the server responsible for making these calls is open source and can be found in the operator directory. Additionally, our future goal is to transition from a centralized server to a decentralized method for making these calls.
 
 ## Fees
 
-The only fee taken by the vault is **5%** of the yield harvested only in WETH (excluding WAR directly harvested). This fee is used to cover gas fees and will decline as the Vault grows.
+The vault charges a **5%** fee exclusively on the WETH portion of the yield (excluding directly harvested $WAR). This fee is used to cover gas expenses and will decrease as the Vault expands.
 
 ## Security
-  
-All of the funds held by the Vault are non custodial meaning that admins will never be able to access them.  
-  
-At the current stage, the vaylt has not undergone a formal security audit. However, the contracts have undergone extensive internal testing & external reviews, giving confidence in the existing security measures implemented. We strongly advise users to conduct their own research and make informed decisions based on their individual risk tolerance.
+
+All the funds held by the Vault are non-custodial, meaning that admins will never have access to them.
+
+At the current stage, the Vault has not undergone a formal security audit. Nevertheless, the contracts have undergone extensive internal testing & external reviews, instilling confidence in the security measures that have been implemented. We strongly recommend that users conduct their own research and make informed decisions based on their individual risk tolerance.
