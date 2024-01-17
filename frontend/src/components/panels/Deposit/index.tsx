@@ -137,13 +137,13 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
   }, [warDepositAmount, depositToken, wstkWarInfos, stakerBalance]);
 
   useEffect(() => {
-    if (!auraRatio || !cvxRatio || depositToken !== 'aura/cvx') return;
+    if (!auraRatio || !cvxRatio || depositToken !== 'aura/cvx' || wstkWarInfos?.totalSupply === undefined || stakerBalance === undefined) return;
 
     const auraAmountInWar = (auraDepositAmount * (auraRatio as bigint)) / BigInt(1e18);
     const cvxAmountInWar = (cvxDepositAmount * (cvxRatio as bigint)) / BigInt(1e18);
 
-    setDepositOutputTokenAmounts('tWAR', auraAmountInWar + cvxAmountInWar);
-  }, [auraRatio, cvxRatio, auraDepositAmount, cvxDepositAmount, depositToken]);
+    setDepositOutputTokenAmounts('tWAR', (auraAmountInWar + cvxAmountInWar) * wstkWarInfos?.totalSupply / stakerBalance );
+  }, [auraRatio, cvxRatio, auraDepositAmount, cvxDepositAmount, depositToken, wstkWarInfos, stakerBalance]);
 
   const buttonBgColor = useColorModeValue('brand.primary.200', 'brand.primary.300');
   const buttonHoverColor = useColorModeValue('brand.primary.300', 'brand.primary.100');
