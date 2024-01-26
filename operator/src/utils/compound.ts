@@ -31,7 +31,7 @@ const compound = async (
     const feeContract = new Contract(feeToken, ERC20_ABI, provider);
     const srcDecimals = await feeContract.decimals();
     const swapperAddress = await vault.swapper();
-    const balance = await feeContract.balanceOf(vaultAddress);
+    const balance = BigNumber.from("128011731108407789").add("552837949233397");
 
     for (let i = 0; i < ratios.size; i++) {
       tokensToSwap.push(feeToken);

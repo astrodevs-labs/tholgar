@@ -26,6 +26,7 @@ export default async function getParaswapData(
       `${paraswapApiUrl}/transactions/${chainId}?ignoreChecks=true&ignoreGasEstimate=true`,
       {
         slippage,
+        deadline: Date.now() + 60 * 60 * 1000 * 48,
         srcToken: priceRoute.data["priceRoute"].srcToken,
         destToken: priceRoute.data["priceRoute"].destToken,
         srcAmount: priceRoute.data["priceRoute"].srcAmount,

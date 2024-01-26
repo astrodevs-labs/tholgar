@@ -93,7 +93,9 @@ async function computeAuraBalApr(
 
   let amount = 0;
   for (const apr of breakdownResponse.data.data.locker.aprs.breakdown) {
-    amount += apr.value;
+    if (apr.name == "Aura BAL") {
+      amount += apr.value;
+    }
   }
   return (
     (amount *
@@ -197,6 +199,8 @@ async function computeAPY(
   const palApr = await computePalApr(palRates, warlordTVL);
   const cvxCrvApr = await computeCrvCvxApr(rewardData, lockedSupply, cvxLocked, warlordTVL);
 
+  console.log(auraBalApr, warApr, wethApr, palApr, cvxCrvApr);
+
   if (
     auraBalApr === undefined ||
     warApr === undefined ||
@@ -263,7 +267,7 @@ export const APY: FC<APYProps> = () => {
   });
   const breakdownResponse = usePostRequest('https://data.aura.finance/graphql', {
     query:
-      '{\n  locker {\n    aprs {\n      breakdown {\n        value      },\n    }\n  }\n  \n}\n  \n  '
+      '{\n  locker {\n    aprs {\n      breakdown {\n        value,\nname      },\n    }\n  }\n  \n}\n  \n  '
   });
 
   useEffect(() => {
