@@ -39,7 +39,7 @@ export const questions: { question: string; answer: string | (() => JSX.Element)
           safe
         </Text>
         <Text>
-          Tholgar has been built with careful attention to scurity and is based on the battle-tested
+          Tholgar has been built with careful attention to security and is based on the battle-tested
           auto-compounder vaults by Yearn, standardized by ERC-4626
         </Text>
       </VStack>
