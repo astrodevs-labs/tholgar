@@ -10,25 +10,72 @@ import { Allowance } from "./utils/Allowance.sol";
 import { ERC4626 } from "solmate/tokens/ERC4626.sol";
 import { Owned2Step } from "./utils/Owned2Step.sol";
 
-/// @title Warlord Zapper Contract
-/// @author centonze.eth
-/// @dev This contract enables users to seamlessly convert any pair that is sufficiently liquid on Uniswap V3
-/// into stkWar tokens for the Warlord protocol by Paladin.vote. The conversion route is designed as:
-/// anyToken -> WETH (via Uniswap) -> either AURA or CVX based on the selected vlToken.
+/**
+ * @title Zapper contract
+ * @dev This contract enables users to seamlessly convert any token into tWAR tokens for the Warlord protocol by
+ * Paladin.vote. It uses a router such as paraswap to find the routing path for the swap.
+ * @author 0xtekgrinder
+ */
 contract Zapper is Owned2Step {
-    address public constant AURA = 0xC0c293ce456fF0ED870ADd98a0828Dd4d2903DBF;
-    address public constant CVX = 0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B;
-    address public constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+    /*//////////////////////////////////////////////////////////////
+                                 EVENTS
+    //////////////////////////////////////////////////////////////*/
 
-    // the address of the WAR token
+    /**
+     * @notice This event is emitted when a zap operation occurs.
+     * @param token The token that was zapped.
+     * @param amount The amount of token that was zapped.
+     * @param mintedAmount The amount of WAR tokens minted as a result.
+     * @param receiver The address of the recipient of the WAR tokens.
+     */
+    event Zapped(address indexed token, uint256 amount, uint256 mintedAmount, address receiver);
+    /**
+     * @notice This event is emitted when the WarMinter address is changed.
+     * @param newMinter The new WarMinter address.
+     */
+    event SetWarMinter(address newMinter);
+    /**
+     * @notice This event is emitted when the WarStaker address is changed.
+     * @param newStaker The new WarStaker address.
+     */
+    event SetWarStaker(address newStaker);
+    /**
+     *  @notice Event emitted when the swap router is updated
+     */
+    event SwapRouterUpdated(address newSwapRouter);
+    /**
+     *  @notice Event emitted when the token proxy is updated
+     */
+    event TokenTransferAddressUpdated(address newTokenTransferAddress);
+    /**
+     *  @notice Event emitted when the vault is updated
+     */
+    event VaultUpdated(address newVault);
+
+    /*//////////////////////////////////////////////////////////////
+                             CONSTANTS
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     * @notice Address of the AURA token
+     */
+    address public constant AURA = 0xC0c293ce456fF0ED870ADd98a0828Dd4d2903DBF;
+    /**
+     * @notice Address of the Convex token
+     */
+    address public constant CVX = 0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B;
+    /**
+     * @notice Address of the WETH token
+     */
+    address public constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+    /**
+     * @notice Address of the War token
+     */
     address public constant WAR = 0xa8258deE2a677874a48F5320670A869D74f0cbC1;
 
-    // Contract allowed to mint war
-    address public warMinter = 0x144a689A8261F1863c89954930ecae46Bd950341;
-    /**
-     * @notice Address of the ERC4626 vault
-     */
-    address public vault = 0x188cA46Aa2c7ae10C14A931512B62991D5901453;
+    /*//////////////////////////////////////////////////////////////
+                          MUTABLE VARIABLES
+    //////////////////////////////////////////////////////////////*/
     /**
      *  @notice Dex/aggregaor router to call to perform swaps
      */
@@ -37,33 +84,14 @@ contract Zapper is Owned2Step {
      * @notice Address to allow to swap tokens
      */
     address public tokenTransferAddress;
-
-    /// @notice This event is emitted when a zap operation occurs.
-    /// @param token The token that was zapped.
-    /// @param amount The amount of token that was zapped.
-    /// @param mintedAmount The amount of WAR tokens minted as a result.
-    /// @param receiver The address of the recipient of the WAR tokens.
-    event Zapped(address indexed token, uint256 amount, uint256 mintedAmount, address receiver);
-
-    /// @notice This event is emitted when the WarMinter address is changed.
-    /// @param newMinter The new WarMinter address.
-    event SetWarMinter(address newMinter);
-
-    /// @notice This event is emitted when the WarStaker address is changed.
-    /// @param newStaker The new WarStaker address.
-    event SetWarStaker(address newStaker);
     /**
-     *  @notice Event emitted when the swap router is updated
+     * @notice Address of the WarMinter contract
      */
-    event SwapRouterUpdated(address oldSwapRouter, address newSwapRouter);
+    address public warMinter = 0x144a689A8261F1863c89954930ecae46Bd950341;
     /**
-     *  @notice Event emitted when the token proxy is updated
+     * @notice Address of the ERC4626 vault
      */
-    event TokenTransferAddressUpdated(address oldTokenTransferAddress, address newTokenTransferAddress);
-    /**
-     *  @notice Event emitted when the vault is updated
-     */
-    event VaultUpdated(address oldVault, address newVault);
+    address public vault = 0x188cA46Aa2c7ae10C14A931512B62991D5901453;
 
     /*//////////////////////////////////////////////////////////////
                                CONSTRUCTOR
@@ -104,13 +132,17 @@ contract Zapper is Owned2Step {
     /              Warlord setters               /
     ////////////////////////////////////////////*/
 
-    /// @dev Changes the WarMinter contract address.
-    /// @param _warMinter The new WarMinter contract address.
-    function setWarMinter(address _warMinter) external onlyOwner {
-        if (_warMinter == address(0)) revert Errors.ZeroAddress();
-        warMinter = _warMinter;
+    /**
+        * @notice Set the WarMinter address
+        * @param newWarMinter address of the WarMinter
+     * @custom:requires owner
+     */
+    function setWarMinter(address newWarMinter) external onlyOwner {
+        if (newWarMinter == address(0)) revert Errors.ZeroAddress();
+        
+        warMinter = newWarMinter;
 
-        emit SetWarMinter(_warMinter);
+        emit SetWarMinter(newWarMinter);
     }
 
     /**
@@ -121,10 +153,9 @@ contract Zapper is Owned2Step {
     function setSwapRouter(address newSwapRouter) external onlyOwner {
         if (newSwapRouter == address(0)) revert Errors.ZeroAddress();
 
-        address oldSwapRouter = swapRouter;
         swapRouter = newSwapRouter;
 
-        emit SwapRouterUpdated(oldSwapRouter, newSwapRouter);
+        emit SwapRouterUpdated(newSwapRouter);
     }
 
     /**
@@ -135,10 +166,9 @@ contract Zapper is Owned2Step {
     function setTokenTransferAddress(address newTokenTransferAddress) external onlyOwner {
         if (newTokenTransferAddress == address(0)) revert Errors.ZeroAddress();
 
-        address oldtokenTransferAddress = tokenTransferAddress;
         tokenTransferAddress = newTokenTransferAddress;
 
-        emit TokenTransferAddressUpdated(oldtokenTransferAddress, newTokenTransferAddress);
+        emit TokenTransferAddressUpdated(newTokenTransferAddress);
     }
 
     /**
@@ -149,16 +179,20 @@ contract Zapper is Owned2Step {
     function setVault(address newVault) external onlyOwner {
         if (newVault == address(0)) revert Errors.ZeroAddress();
 
-        address oldVault = vault;
         vault = newVault;
 
-        emit VaultUpdated(oldVault, newVault);
+        emit VaultUpdated(newVault);
     }
 
     /*////////////////////////////////////////////
     /                Zap Functions               /
     ////////////////////////////////////////////*/
 
+    /**
+     * @notice Perform the swap using the router/aggregator
+     * @param tokens array of tokens to swap
+     * @param callDatas bytes to call the router/aggregator
+     */
     function _swap(address[] memory tokens, bytes[] memory callDatas) internal {
         uint256 length = tokens.length;
 
@@ -189,17 +223,24 @@ contract Zapper is Owned2Step {
         }
     }
 
-    function _swapAndMintSingleToken(
-        address receiver,
-        address token,
-        address vlToken,
-        bytes memory callDatas
-    ) internal returns (uint256 stakedAmount) {
+    /**
+     * @notice Swap to a single vlToken and mint tWAR
+     * @param receiver Address to stake for
+     * @param token Token to swap
+     * @param vlToken Token to mint WAR
+     * @param callDatas bytes to call the router/aggregator
+     * @return stakedAmount Amount of tWAR staked
+     */
+    function _swapAndMintSingleToken(address receiver, address token, address vlToken, bytes memory callDatas)
+        internal
+        returns (uint256 stakedAmount)
+    {
         address[] memory tokens = new address[](1);
         tokens[0] = token;
         bytes[] memory calldatas = new bytes[](1);
         calldatas[0] = callDatas;
 
+        // Swap tokens and mint tWAR
         _swap(tokens, calldatas);
         uint256 amount = ERC20(vlToken).balanceOf(address(this));
         IMinter(warMinter).mint(vlToken, amount);
@@ -209,6 +250,51 @@ contract Zapper is Owned2Step {
         emit Zapped(token, msg.value, stakedAmount, receiver);
     }
 
+    /**
+     * @notice Swap to multiple vlTokens and mint tWAR
+     * @param receiver Address to stake for
+     * @param token Token to swap
+     * @param vlTokens Tokens to mint WAR
+     * @param callDatas bytes to call the router/aggregator
+     * @return stakedAmount Amount of tWAR staked
+     */
+    function _swapAndMintMultipleTokens(
+        address receiver,
+        address token,
+        address[] memory vlTokens,
+        bytes[] memory callDatas
+    ) internal returns (uint256 stakedAmount) {
+        // Create an array of the same token
+        address[] memory tokens = new address[](callDatas.length);
+        for (uint256 i; i < callDatas.length;) {
+            tokens[i] = token;
+            unchecked {
+                ++i;
+            }
+        }
+
+        // Swap tokens and mint tWAR
+        _swap(tokens, callDatas);
+        for (uint256 i; i < vlTokens.length;) {
+            uint256 amount = ERC20(vlTokens[i]).balanceOf(address(this));
+            IMinter(warMinter).mint(vlTokens[i], amount);
+            unchecked {
+                ++i;
+            }
+        }
+        stakedAmount = ERC20(WAR).balanceOf(address(this));
+        ERC4626(vault).deposit(stakedAmount, receiver);
+
+        emit Zapped(token, msg.value, stakedAmount, receiver);
+    }
+
+    /**
+     * @notice Zaps ether to a single vlToken
+     * @param receiver Address to stake for
+     * @param vlToken Token to mint WAR
+     * @param callDatas bytes to call the router/aggregator
+     * @return stakedAmount Amount of tWAR staked
+     */
     function zapEtherToSingleToken(address receiver, address vlToken, bytes calldata callDatas)
         external
         payable
@@ -223,6 +309,15 @@ contract Zapper is Owned2Step {
         stakedAmount = _swapAndMintSingleToken(receiver, WETH, vlToken, callDatas);
     }
 
+    /**
+     * @notice Zaps an ERC20 token to a single vlToken
+     * @param token Token to swap
+     * @param vlToken Token to mint WAR
+     * @param amount Amount of token to swap
+     * @param receiver Address to stake for
+     * @param callDatas bytes to call the router/aggregator
+     * @return stakedAmount Amount of tWAR staked
+     */
     function zapERC20ToSingleToken(
         address token,
         address vlToken,
@@ -240,34 +335,13 @@ contract Zapper is Owned2Step {
         stakedAmount = _swapAndMintSingleToken(receiver, token, vlToken, callDatas);
     }
 
-    function _swapAndMintMultipleTokens(
-        address receiver,
-        address token,
-        address[] memory vlTokens,
-        bytes[] memory callDatas
-    ) internal returns (uint256 stakedAmount) {
-        address[] memory tokens = new address[](callDatas.length);
-        for (uint256 i; i < callDatas.length;) {
-            tokens[i] = token;
-            unchecked {
-                ++i;
-            }
-        }
-
-        _swap(tokens, callDatas);
-        for (uint256 i; i < vlTokens.length;) {
-            uint256 amount = ERC20(vlTokens[i]).balanceOf(address(this));
-            IMinter(warMinter).mint(vlTokens[i], amount);
-            unchecked {
-                ++i;
-            }
-        }
-        stakedAmount = ERC20(WAR).balanceOf(address(this));
-        ERC4626(vault).deposit(stakedAmount, receiver);
-
-        emit Zapped(token, msg.value, stakedAmount, receiver);
-    }
-
+    /**
+     * @notice Zaps ether to multiple vlTokens
+     * @param receiver Address to stake for
+     * @param vlTokens List of token addresses to deposit
+     * @param callDatas bytes to call the router/aggregator
+     * @return stakedAmount Amount of tWAR staked
+     */
     function zapEtherToMultipleTokens(address receiver, address[] calldata vlTokens, bytes[] calldata callDatas)
         external
         payable
@@ -282,6 +356,15 @@ contract Zapper is Owned2Step {
         stakedAmount = _swapAndMintMultipleTokens(receiver, WETH, vlTokens, callDatas);
     }
 
+    /**
+     * @notice Zaps an ERC20 token to multiple vlTokens
+     * @param token Token to swap
+     * @param amount Amount of token to swap
+     * @param receiver Address to stake for
+     * @param vlTokens List of token addresses to deposit
+     * @param callDatas bytes to call the router/aggregator
+     * @return stakedAmount Amount of tWAR staked
+     */
     function zapERC20ToMultipleTokens(
         address token,
         uint256 amount,

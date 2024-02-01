@@ -17,21 +17,24 @@ contract Constructor is VaultTest {
     function test_constructor_ZeroAddressStaker() public {
         vm.expectRevert(Errors.ZeroAddress.selector);
         vm.prank(owner);
-        vault =
-        new Vault(owner, address(0), address(minter), address(swapper), 500, owner, address(usdc), operator, address(war));
+        vault = new Vault(
+            owner, address(0), address(minter), address(swapper), 500, owner, address(usdc), operator, address(war)
+        );
     }
 
     function test_constructor_ZeroAddressMinter() public {
         vm.expectRevert(Errors.ZeroAddress.selector);
         vm.prank(owner);
-        vault =
-        new Vault(owner, address(staker), address(0), address(swapper), 500, owner, address(usdc), operator, address(war));
+        vault = new Vault(
+            owner, address(staker), address(0), address(swapper), 500, owner, address(usdc), operator, address(war)
+        );
     }
 
     function test_constructor_ZeroAddressSwapper() public {
         vm.expectRevert(Errors.ZeroAddress.selector);
         vm.prank(owner);
-        vault =
-        new Vault(owner, address(staker), address(minter), address(0), 500, owner, address(usdc), operator, address(war));
+        vault = new Vault(
+            owner, address(staker), address(minter), address(0), 500, owner, address(usdc), operator, address(war)
+        );
     }
 }
