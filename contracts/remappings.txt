@@ -4,3 +4,4 @@ openzeppelin-contracts/=lib/openzeppelin-contracts/contracts
 solmate/=lib/solmate/src/
 warlord/=lib/Warlord/src/
 solgen/=lib/solidity-generators/src/
+solady/=lib/solady/src/
