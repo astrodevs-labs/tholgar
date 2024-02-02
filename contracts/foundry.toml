@@ -4,6 +4,7 @@
   optimizer = true
   optimizer_runs = 1000
   verbosity = 2
+  via_ir = true
 
 [fmt]
   bracket_spacing = true
@@ -23,3 +24,6 @@
 
 [etherscan]
   mainnet = { key = "${ETHERSCAN_API_KEY}" }
+
+[profile.dev]
+  via_ir = false
