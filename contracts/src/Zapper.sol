@@ -87,23 +87,25 @@ contract Zapper is Owned2Step {
     /**
      * @notice Address of the WarMinter contract
      */
-    address public warMinter = 0x144a689A8261F1863c89954930ecae46Bd950341;
+    address public warMinter;
     /**
      * @notice Address of the ERC4626 vault
      */
-    address public vault = 0x188cA46Aa2c7ae10C14A931512B62991D5901453;
+    address public vault;
 
     /*//////////////////////////////////////////////////////////////
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor(address initialOwner, address initialSwapRouter, address initialTokenTransferAddress)
+    constructor(address initialOwner, address initialSwapRouter, address initialTokenTransferAddress, address initialWarMinter, address initialVault)
         Owned2Step(initialOwner)
     {
-        if (initialSwapRouter == address(0) || initialTokenTransferAddress == address(0)) revert Errors.ZeroAddress();
+        if (initialSwapRouter == address(0) || initialTokenTransferAddress == address(0) || initialWarMinter == address(0) || initialVault == address(0)) revert Errors.ZeroAddress();
 
         swapRouter = initialSwapRouter;
         tokenTransferAddress = initialTokenTransferAddress;
+        warMinter = initialWarMinter;
+        vault = initialVault;
     }
 
     /*////////////////////////////////////////////
@@ -133,13 +135,13 @@ contract Zapper is Owned2Step {
     ////////////////////////////////////////////*/
 
     /**
-        * @notice Set the WarMinter address
-        * @param newWarMinter address of the WarMinter
+     * @notice Set the WarMinter address
+     * @param newWarMinter address of the WarMinter
      * @custom:requires owner
      */
     function setWarMinter(address newWarMinter) external onlyOwner {
         if (newWarMinter == address(0)) revert Errors.ZeroAddress();
-        
+
         warMinter = newWarMinter;
 
         emit SetWarMinter(newWarMinter);
@@ -295,7 +297,7 @@ contract Zapper is Owned2Step {
      * @param callDatas bytes to call the router/aggregator
      * @return stakedAmount Amount of tWAR staked
      */
-    function zapEtherToSingleToken(address receiver, address vlToken, bytes calldata callDatas)
+    function zapEtherToSingleToken(address vlToken, address receiver, bytes calldata callDatas)
         external
         payable
         returns (uint256 stakedAmount)
@@ -342,7 +344,7 @@ contract Zapper is Owned2Step {
      * @param callDatas bytes to call the router/aggregator
      * @return stakedAmount Amount of tWAR staked
      */
-    function zapEtherToMultipleTokens(address receiver, address[] calldata vlTokens, bytes[] calldata callDatas)
+    function zapEtherToMultipleTokens(address[] calldata vlTokens, address receiver, bytes[] calldata callDatas)
         external
         payable
         returns (uint256 stakedAmount)
@@ -367,9 +369,9 @@ contract Zapper is Owned2Step {
      */
     function zapERC20ToMultipleTokens(
         address token,
+        address[] calldata vlTokens,
         uint256 amount,
         address receiver,
-        address[] calldata vlTokens,
         bytes[] calldata callDatas
     ) external returns (uint256 stakedAmount) {
         if (receiver == address(0)) revert Errors.ZeroAddress();
