@@ -5,11 +5,19 @@ import "./ZapperTest.sol";
 
 contract Constructor is ZapperTest {
     function test_constructor_Normal() public {
-        assertEq(address(zapper.swapRouter()), address(augustusSwapper), "swapRouter is not assigned correctly in constructor");
+        assertEq(
+            address(zapper.swapRouter()),
+            address(augustusSwapper),
+            "swapRouter is not assigned correctly in constructor"
+        );
         assertEq(address(zapper.owner()), address(owner), "owner is not assigned correctly in constructor");
         assertEq(address(zapper.vault()), address(vault), "vault is not assigned correctly in constructor");
         assertEq(address(zapper.warMinter()), address(minter), "warMinter is not assigned correctly in constructor");
-        assertEq(address(zapper.tokenTransferAddress()), address(tokenTransferAddress), "tokenTransferAddress is not assigned correctly in constructor");
+        assertEq(
+            address(zapper.tokenTransferAddress()),
+            address(tokenTransferAddress),
+            "tokenTransferAddress is not assigned correctly in constructor"
+        );
     }
 
     function test_constructor_ZeroAddressAugustusSwapper() public {

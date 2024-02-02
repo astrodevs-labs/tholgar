@@ -97,10 +97,17 @@ contract Zapper is Owned2Step {
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor(address initialOwner, address initialSwapRouter, address initialTokenTransferAddress, address initialWarMinter, address initialVault)
-        Owned2Step(initialOwner)
-    {
-        if (initialSwapRouter == address(0) || initialTokenTransferAddress == address(0) || initialWarMinter == address(0) || initialVault == address(0)) revert Errors.ZeroAddress();
+    constructor(
+        address initialOwner,
+        address initialSwapRouter,
+        address initialTokenTransferAddress,
+        address initialWarMinter,
+        address initialVault
+    ) Owned2Step(initialOwner) {
+        if (
+            initialSwapRouter == address(0) || initialTokenTransferAddress == address(0)
+                || initialWarMinter == address(0) || initialVault == address(0)
+        ) revert Errors.ZeroAddress();
 
         swapRouter = initialSwapRouter;
         tokenTransferAddress = initialTokenTransferAddress;

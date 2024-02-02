@@ -20,12 +20,14 @@ contract ZapEtherToSingleToken is ZapperTest {
         uint256 expectedShares = vault.previewDeposit(expectedMintedAmount);
 
         vm.prank(alice);
-        zapper.zapEtherToSingleToken{value: etherAmount}(address(token), alice, data);
-
+        zapper.zapEtherToSingleToken{ value: etherAmount }(address(token), alice, data);
 
         assertEqDecimal(IERC20(token).balanceOf(address(zapper)), 0, 18, "Vault should have no AURA");
         assertEqDecimal(
-            staker.balanceOf(address(vault)), stakerBalance + expectedMintedAmount, 18, "Vault should have same staker balance"
+            staker.balanceOf(address(vault)),
+            stakerBalance + expectedMintedAmount,
+            18,
+            "Vault should have same staker balance"
         );
         assertEqDecimal(vault.balanceOf(alice), expectedShares, 18, "Alice should have expected shares");
     }
@@ -36,6 +38,6 @@ contract ZapEtherToSingleToken is ZapperTest {
 
         vm.prank(alice);
         vm.expectRevert(Errors.ZeroValue.selector);
-        zapper.zapEtherToSingleToken{value: 0}(address(token), alice, data);
+        zapper.zapEtherToSingleToken{ value: 0 }(address(token), alice, data);
     }
 }

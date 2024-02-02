@@ -20,7 +20,8 @@ contract ZapERC20ToMultipleTokens is ZapperTest {
         deal(address(cvx), address(zapper), tokenAmount[1]);
         deal(alice, erc20Amount);
 
-        uint256 expectedMintedAmount = ratios.getMintAmount(address(aura), tokenAmount[0]) + ratios.getMintAmount(address(cvx), tokenAmount[1]);
+        uint256 expectedMintedAmount =
+            ratios.getMintAmount(address(aura), tokenAmount[0]) + ratios.getMintAmount(address(cvx), tokenAmount[1]);
         uint256 expectedShares = vault.previewDeposit(expectedMintedAmount);
 
         vm.startPrank(alice);
@@ -33,7 +34,10 @@ contract ZapERC20ToMultipleTokens is ZapperTest {
         assertEqDecimal(aura.balanceOf(address(zapper)), 0, 18, "Vault should have no AURA");
         assertEqDecimal(cvx.balanceOf(address(zapper)), 0, 18, "Vault should have no CVX");
         assertEqDecimal(
-            staker.balanceOf(address(vault)), stakerBalance + expectedMintedAmount, 18, "Vault should have same staker balance"
+            staker.balanceOf(address(vault)),
+            stakerBalance + expectedMintedAmount,
+            18,
+            "Vault should have same staker balance"
         );
         assertEqDecimal(vault.balanceOf(alice), expectedShares, 18, "Alice should have expected shares");
     }

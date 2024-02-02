@@ -28,7 +28,10 @@ contract ZapERC20ToSingleToken is ZapperTest {
 
         assertEqDecimal(IERC20(token).balanceOf(address(zapper)), 0, 18, "Vault should have no AURA");
         assertEqDecimal(
-            staker.balanceOf(address(vault)), stakerBalance + expectedMintedAmount, 18, "Vault should have same staker balance"
+            staker.balanceOf(address(vault)),
+            stakerBalance + expectedMintedAmount,
+            18,
+            "Vault should have same staker balance"
         );
         assertEqDecimal(vault.balanceOf(alice), expectedShares, 18, "Alice should have expected shares");
     }
