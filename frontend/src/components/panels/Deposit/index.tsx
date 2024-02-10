@@ -23,6 +23,7 @@ import {
   auraAddress,
   auraCvxIconUrl,
   cvxAddress,
+  ethIconUrl,
   stakerAddress,
   vaultAddress,
   warIconUrl,
@@ -36,12 +37,15 @@ import useOrFetchTokenInfos from '../../../hooks/useOrFetchTokenInfos';
 import useTokenRatio from '../../../hooks/useTokenRatio';
 import useOrFetchUserTokenBalance from 'hooks/useOrFetchUserTokenBalance';
 import { useBalance } from 'wagmi';
+import { EthDepositPanel } from '../EthDeposit';
+import useParaswapConversionRate from '../../../hooks/useParaswapConversionRate';
 
 export interface DepositPanelProps {}
 
 const tokensInputs = new Map<string, () => JSX.Element>([
   ['war', () => <WarDepositPanel key={1} />],
-  ['aura/cvx', () => <AuraCvxDepositPanel key={2} />]
+  ['aura/cvx', () => <AuraCvxDepositPanel key={2} />],
+  ['eth', () => <EthDepositPanel key={3} />]
 ]);
 
 const tokensDetails = [
@@ -50,6 +54,11 @@ const tokensDetails = [
     id: 'aura/cvx',
     name: 'AURA/CVX',
     iconUrl: auraCvxIconUrl
+  },
+  {
+    id: 'eth',
+    name: 'ETH',
+    iconUrl: ethIconUrl
   }
 ];
 
@@ -59,6 +68,7 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
   const warDepositAmount = useStore((state) => state.getDepositInputTokenAmount('war'));
   const auraDepositAmount = useStore((state) => state.getDepositInputTokenAmount('aura'));
   const cvxDepositAmount = useStore((state) => state.getDepositInputTokenAmount('cvx'));
+  const ethDepositAmount = useStore((state) => state.getDepositInputTokenAmount('eth'));
   const wstkWAROutputAmount = useStore((state) => state.getDepositOutputTokenAmount('tWAR'));
   const [depositToken, setDepositToken] = useStore((state) => [
     state.depositToken,
@@ -72,7 +82,10 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
   const warBalance = useOrFetchUserTokenBalance({ token: 'war' });
   const auraBalance = useOrFetchUserTokenBalance({ token: 'aura' });
   const cvxBalance = useOrFetchUserTokenBalance({ token: 'cvx' });
+  const ethBalance = useOrFetchUserTokenBalance({ token: 'eth' });
   const wstkWarInfos = useOrFetchTokenInfos({ token: 'tWAR' });
+  const auraInfos = useOrFetchTokenInfos({ token: 'aura' });
+  const cvxInfos = useOrFetchTokenInfos({ token: 'cvx' });
   const wstkWarDecimals = wstkWarInfos?.decimals;
   const wstkWAROutputAmountFormatted = useMemo(
     () =>
@@ -81,17 +94,45 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
         : '0',
     [wstkWAROutputAmount, wstkWarDecimals]
   );
+  const auraFromEth = useParaswapConversionRate({
+    amount: ethDepositAmount,
+    srcToken: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    destToken: auraAddress,
+    srcDecimals: 18,
+    destDecimals: auraInfos?.decimals
+  });
+  const cvxFromEth = useParaswapConversionRate({
+    amount: ethDepositAmount,
+    srcToken: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    destToken: cvxAddress,
+    srcDecimals: 18,
+    destDecimals: cvxInfos?.decimals
+  });
+
   const isDepositDisabled = useMemo(() => {
     if (depositToken === 'war')
       return warDepositAmount === 0n || (warBalance !== undefined && warDepositAmount > warBalance);
-    if (depositToken === 'aura/cvx')
+    else if (depositToken === 'aura/cvx')
       return (
         (auraDepositAmount === 0n && cvxDepositAmount === 0n) ||
         (auraBalance !== undefined && auraDepositAmount > auraBalance) ||
         (cvxBalance !== undefined && cvxDepositAmount > cvxBalance)
       );
+    else if (depositToken === 'eth') {
+      return ethDepositAmount === 0n || (ethBalance !== undefined && ethDepositAmount > ethBalance);
+    }
     return true;
-  }, [depositToken, warDepositAmount, auraDepositAmount, cvxDepositAmount]);
+  }, [
+    depositToken,
+    warDepositAmount,
+    auraDepositAmount,
+    cvxDepositAmount,
+    ethDepositAmount,
+    ethBalance,
+    warBalance,
+    auraBalance,
+    cvxBalance
+  ]);
   const input = tokensInputs.get(depositToken);
 
   const info = useMemo(() => {
@@ -137,13 +178,61 @@ export const DepositPanel: FC<DepositPanelProps> = () => {
   }, [warDepositAmount, depositToken, wstkWarInfos, stakerBalance]);
 
   useEffect(() => {
-    if (!auraRatio || !cvxRatio || depositToken !== 'aura/cvx' || wstkWarInfos?.totalSupply === undefined || stakerBalance === undefined) return;
+    if (
+      !auraRatio ||
+      !cvxRatio ||
+      depositToken !== 'aura/cvx' ||
+      wstkWarInfos?.totalSupply === undefined ||
+      stakerBalance === undefined
+    )
+      return;
 
     const auraAmountInWar = (auraDepositAmount * (auraRatio as bigint)) / BigInt(1e18);
     const cvxAmountInWar = (cvxDepositAmount * (cvxRatio as bigint)) / BigInt(1e18);
 
-    setDepositOutputTokenAmounts('tWAR', (auraAmountInWar + cvxAmountInWar) * wstkWarInfos?.totalSupply / stakerBalance );
-  }, [auraRatio, cvxRatio, auraDepositAmount, cvxDepositAmount, depositToken, wstkWarInfos, stakerBalance]);
+    setDepositOutputTokenAmounts(
+      'tWAR',
+      wstkWarInfos.totalSupply === 0n
+        ? auraAmountInWar + cvxAmountInWar
+        : ((auraAmountInWar + cvxAmountInWar) * wstkWarInfos?.totalSupply) / stakerBalance
+    );
+  }, [
+    auraRatio,
+    cvxRatio,
+    auraDepositAmount,
+    cvxDepositAmount,
+    depositToken,
+    wstkWarInfos,
+    stakerBalance
+  ]);
+
+  useEffect(() => {
+    if (
+      auraFromEth === undefined ||
+      cvxFromEth === undefined ||
+      !auraRatio ||
+      !cvxRatio ||
+      wstkWarInfos?.totalSupply === undefined ||
+      stakerBalance === undefined ||
+      depositToken !== 'eth'
+    )
+      return;
+
+    const auraAmountInWar = (auraFromEth * (auraRatio as bigint)) / BigInt(1e18);
+    const cvxAmountInWar = (cvxFromEth * (cvxRatio as bigint)) / BigInt(1e18);
+
+    if (auraAmountInWar > cvxAmountInWar) {
+      console.log('auraAmountInWar is greater', auraAmountInWar);
+    } else {
+      console.log('cvxAmountInWar is greater', cvxAmountInWar);
+    }
+    const bigger = auraAmountInWar > cvxAmountInWar ? auraAmountInWar : cvxAmountInWar;
+    const tWarAmount =
+      wstkWarInfos.totalSupply === 0n
+        ? bigger
+        : (bigger * wstkWarInfos?.totalSupply) / stakerBalance;
+    setDepositOutputTokenAmounts('tWAR', tWarAmount);
+  }, [auraFromEth, cvxFromEth, ethDepositAmount, auraRatio, cvxRatio]);
 
   const buttonBgColor = useColorModeValue('brand.primary.200', 'brand.primary.300');
   const buttonHoverColor = useColorModeValue('brand.primary.300', 'brand.primary.100');

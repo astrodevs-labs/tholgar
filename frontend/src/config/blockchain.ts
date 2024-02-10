@@ -2,6 +2,8 @@
 export const vaultAddress = '0x188cA46Aa2c7ae10C14A931512B62991D5901453';
 export const zapAddress = '0x0598c652eEB0F95137Af02f32022005139453744';
 
+export const zapperAddress = '0x057cD3082EfED32d5C907801BF3628B27D88fD80';
+
 export const warAuraLocker = '0x7B90e043aaC79AdeA0Dbb0690E3c832757207a3B';
 export const warCvxLocker = '0x700d6d24A55512c6AEC08820B49da4e4193105B3';
 export const stakerAddress = '0xA86c53AF3aadF20bE5d7a8136ACfdbC4B074758A';
@@ -22,6 +24,8 @@ export const auraIconUrl =
 export const cvxIconUrl = 'https://www.convexfinance.com/static/icons/svg/vlcvx.svg';
 export const auraCvxIconUrl = '/images/aura-cvx.svg';
 export const wstkWarIconUrl = '/images/tWAR.png';
+
+export const ethIconUrl = '/images/eth.png';
 
 export const maxAllowance = 2n ** 256n - 1n;
 

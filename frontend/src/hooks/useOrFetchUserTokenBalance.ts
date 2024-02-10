@@ -21,8 +21,12 @@ export default function useOrFetchUserTokenBalance({
 
   let tokenAddress: `0x${string}` | undefined;
   if (token) {
-    const tokensBalances = useStore((state) => state.tokensBalances);
-    tokenAddress = tokensBalances.find((tokenBalance) => tokenBalance.id === token)?.address;
+    if (token === 'eth') {
+      tokenAddress = undefined;
+    } else {
+      const tokensBalances = useStore((state) => state.tokensBalances);
+      tokenAddress = tokensBalances.find((tokenBalance) => tokenBalance.id === token)?.address;
+    }
   } else {
     tokenAddress = address;
   }

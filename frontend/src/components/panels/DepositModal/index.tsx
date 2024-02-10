@@ -12,6 +12,7 @@ import { ProgressStepper } from '../../ui/ProgressStepper';
 import { WarDepositModal } from '../WarDepositModal';
 import { AuraCvxDepositModal } from '../AuraCvxDepositModal';
 import { useStore } from '../../../store';
+import { EthDepositModal } from '../EthDepositModal';
 
 export interface DepositPanelModalProps {
   depositTokens: string;
@@ -39,7 +40,7 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({ open, onClose })
           description: 'Deposit token'
         }
       ];
-    else {
+    else if (depositTokens == 'aura/cvx') {
       let steps = [];
 
       if (auraDepositAmount > 0) {
@@ -63,6 +64,13 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({ open, onClose })
           description: 'Deposit tokens'
         }
       ];
+    } else {
+      return [
+        {
+          label: 'Swap & Deposit',
+          description: 'Swap token for vlTokens and deposit'
+        }
+      ];
     }
   }, [depositTokens, auraDepositAmount, cvxDepositAmount]);
   const { activeStep, goToNext } = useSteps({
@@ -82,7 +90,11 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({ open, onClose })
   useEffect(() => {
     if (depositTokens == 'war' && warDepositAmount === 0n) {
       onClose();
-    } else if (depositTokens != 'war' && auraDepositAmount === 0n && cvxDepositAmount === 0n) {
+    } else if (
+      depositTokens === 'aura/cvx' &&
+      auraDepositAmount === 0n &&
+      cvxDepositAmount === 0n
+    ) {
       onClose();
     }
   }, [depositTokens, auraDepositAmount, cvxDepositAmount, warDepositAmount]);
@@ -96,11 +108,11 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({ open, onClose })
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          {depositTokens == 'war' ? (
-            <WarDepositModal step={activeStep} validateStep={goToNext} />
-          ) : (
+          {depositTokens == 'war' && <WarDepositModal step={activeStep} validateStep={goToNext} />}
+          {depositTokens === 'aura/cvx' && (
             <AuraCvxDepositModal step={activeStep} validateStep={goToNext} />
           )}
+          {depositTokens === 'eth' && <EthDepositModal step={activeStep} validateStep={goToNext} />}
         </ModalBody>
       </ModalContent>
     </Modal>

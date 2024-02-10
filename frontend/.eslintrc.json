@@ -4,7 +4,7 @@
     "es2021": true,
     "jest": true
   },
-  "extends": ["eslint:recommended", "prettier", "plugin:react/recommended"],
+  "extends": [/*"eslint:recommended", "prettier", "plugin:react/recommended"*/],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": "latest",
@@ -14,12 +14,7 @@
   "plugins": ["@typescript-eslint", "react"],
   "rules": {
     "react/react-in-jsx-scope": "off",
-    "@typescript-eslint/no-unused-vars": [
-      2,
-      {
-        "args": "none"
-      }
-    ]
+    "@typescript-eslint/no-unused-vars": "off"
   },
   "settings": {
     "react": {

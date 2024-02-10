@@ -1,7 +1,7 @@
 import { StateCreator } from 'zustand';
 import { Store } from './index';
 
-export type tokensSelection = 'war' | 'aura/cvx';
+export type tokensSelection = 'war' | 'aura/cvx' | 'eth';
 export interface SelectedTokenStore {
   depositToken: tokensSelection;
   withdrawToken: tokensSelection;

@@ -5,7 +5,7 @@ import { BalanceDisplay } from '../../blockchain/BalanceDisplay';
 import { TokenDisplay } from '../../ui/TokenDisplay';
 
 export interface TokenNumberInputProps {
-  token: `0x${string}`;
+  token?: `0x${string}`;
   ticker: string;
   iconUrl: string;
   value?: string;

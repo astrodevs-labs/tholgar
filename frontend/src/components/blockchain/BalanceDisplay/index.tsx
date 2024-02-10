@@ -8,7 +8,7 @@ import { Spinner } from '@chakra-ui/spinner';
 import { useBalance } from 'wagmi';
 
 export interface BalanceDisplayProps {
-  token: `0x${string}`;
+  token?: `0x${string}`;
   account?: `0x${string}`;
   description: string;
   displaySymbol?: boolean;
@@ -23,10 +23,19 @@ export const BalanceDisplay: FC<BalanceDisplayProps> = ({
   inline
 }) => {
   const { isConnected, address } = useConnectedAccount();
-  const balance = useBalance({
+  const erc20Blance = useBalance({
     token,
     address: account ? account : address
   }).data?.value;
+  const ethBalance = useBalance({
+    address: account ? account : address
+  }).data?.value;
+  const balance = useMemo(() => {
+    if (token) {
+      return erc20Blance;
+    }
+    return ethBalance;
+  }, [erc20Blance, ethBalance, token]);
   // const balance = account
   //   ? useBalance({
   //       token,
@@ -34,7 +43,10 @@ export const BalanceDisplay: FC<BalanceDisplayProps> = ({
   //     }).data?.value
   //   : useOrFetchUserTokenBalance({ address: token });
   const infos = useOrFetchTokenInfos({ address: token });
-  const decimals = infos?.decimals;
+  const decimals = useMemo(() => {
+    if (token) return infos?.decimals;
+    return 18;
+  }, [infos, token]);
   const balanceFormatted = useMemo(() => {
     if (balance !== undefined && decimals !== undefined) {
       return convertBigintToFormatted(balance, decimals);
@@ -43,7 +55,7 @@ export const BalanceDisplay: FC<BalanceDisplayProps> = ({
     } else {
       return '?';
     }
-  }, [balance, decimals, isConnected]);
+  }, [erc20Blance, decimals, isConnected]);
   const symbol = displaySymbol ? infos?.symbol || '' : '';
 
   return (
