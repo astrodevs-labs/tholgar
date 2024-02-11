@@ -13,6 +13,7 @@ import { WarDepositModal } from '../WarDepositModal';
 import { AuraCvxDepositModal } from '../AuraCvxDepositModal';
 import { useStore } from '../../../store';
 import { EthDepositModal } from '../EthDepositModal';
+import { WethDepositModal } from '../WethDepositModal';
 
 export interface DepositPanelModalProps {
   depositTokens: string;
@@ -25,6 +26,8 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({ open, onClose })
   const auraDepositAmount = useStore((state) => state.getDepositInputTokenAmount('aura'));
   const cvxDepositAmount = useStore((state) => state.getDepositInputTokenAmount('cvx'));
   const warDepositAmount = useStore((state) => state.getDepositInputTokenAmount('war'));
+  const ethDepositAmount = useStore((state) => state.getDepositInputTokenAmount('eth'));
+  const wethDepositAmount = useStore((state) => state.getDepositInputTokenAmount('weth'));
   const resetBalances = useStore((state) => state.resetBalances);
   const resetStats = useStore((state) => state.resetStats);
   const resetTokenInfos = useStore((state) => state.resetTokenInfos);
@@ -64,8 +67,19 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({ open, onClose })
           description: 'Deposit tokens'
         }
       ];
+    } else if (depositTokens == 'eth') {
+      return [
+        {
+          label: 'Swap & Deposit',
+          description: 'Swap token for vlTokens and deposit'
+        }
+      ];
     } else {
       return [
+        {
+          label: 'Approve WETH',
+          description: 'Approve WETH swap'
+        },
         {
           label: 'Swap & Deposit',
           description: 'Swap token for vlTokens and deposit'
@@ -96,8 +110,20 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({ open, onClose })
       cvxDepositAmount === 0n
     ) {
       onClose();
+    } else if (depositTokens === 'eth' && ethDepositAmount === 0n) {
+      onClose();
+    } else if (depositTokens === 'weth' && wethDepositAmount === 0n) {
+      onClose();
     }
-  }, [depositTokens, auraDepositAmount, cvxDepositAmount, warDepositAmount]);
+  }, [
+    depositTokens,
+    auraDepositAmount,
+    cvxDepositAmount,
+    warDepositAmount,
+    onClose,
+    ethDepositAmount,
+    wethDepositAmount
+  ]);
 
   return (
     <Modal size={'xl'} variant={'brand'} isOpen={open} onClose={onClose} isCentered>
@@ -113,6 +139,9 @@ export const DepositPanelModal: FC<DepositPanelModalProps> = ({ open, onClose })
             <AuraCvxDepositModal step={activeStep} validateStep={goToNext} />
           )}
           {depositTokens === 'eth' && <EthDepositModal step={activeStep} validateStep={goToNext} />}
+          {depositTokens === 'weth' && (
+            <WethDepositModal step={activeStep} validateStep={goToNext} />
+          )}
         </ModalBody>
       </ModalContent>
     </Modal>

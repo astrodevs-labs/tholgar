@@ -1,6 +1,12 @@
 import { StateCreator } from 'zustand';
 import { Store } from './index';
-import { auraAddress, cvxAddress, vaultAddress, warAddress } from '../config/blockchain';
+import {
+  auraAddress,
+  cvxAddress,
+  vaultAddress,
+  warAddress,
+  wethAddress
+} from '../config/blockchain';
 import { Token } from 'types/Token';
 import { FetchTokenResult } from '@wagmi/core';
 
@@ -39,6 +45,10 @@ const defaultTokenInfos: TokenInfo[] = [
   {
     id: 'tWAR',
     address: vaultAddress
+  },
+  {
+    id: 'weth',
+    address: wethAddress
   }
 ];
 
