@@ -7,6 +7,7 @@ import {
   redeemerAddress,
   stakerAddress,
   vaultAddress,
+  warAddress,
   warAuraLocker,
   warCvxLocker,
   warLockerAbi,
@@ -46,8 +47,8 @@ export const TVL: FC<TVLProps> = () => {
     functionName: 'queuedForWithdrawal',
     args: [cvxAddress]
   });
-  const { data: staker } = useToken({
-    address: !tvl ? stakerAddress : undefined
+  const { data: war } = useToken({
+    address: !tvl ? warAddress : undefined
   });
 
   async function computeTVL() {
@@ -55,19 +56,19 @@ export const TVL: FC<TVLProps> = () => {
       cvxLocked === undefined ||
       auraLocked === undefined ||
       warBalance === undefined ||
-      staker === undefined ||
+      war === undefined ||
       auraQueued === undefined ||
       cvxQueued === undefined
     )
       return;
     const auraPrice = await getTotalPricePerToken(
       Number(
-        (((auraLocked as bigint) - (auraQueued as bigint)) * warBalance.value) / staker.totalSupply.value / BigInt(1e15)
+        (((auraLocked as bigint) - (auraQueued as bigint)) * warBalance.value) / war.totalSupply.value / BigInt(1e15)
       ) / 1000,
       auraAddress
     );
     const cvxPrice = await getTotalPricePerToken(
-      Number((((cvxLocked as bigint) - (cvxQueued as bigint)) * warBalance.value) / staker.totalSupply.value / BigInt(1e15)) /
+      Number((((cvxLocked as bigint) - (cvxQueued as bigint)) * warBalance.value) / war.totalSupply.value / BigInt(1e15)) /
         1000,
       cvxAddress
     );
@@ -77,7 +78,7 @@ export const TVL: FC<TVLProps> = () => {
 
   useEffect(() => {
     if (tvl === undefined) computeTVL();
-  }, [cvxLocked, auraLocked, warBalance, staker]);
+  }, [cvxLocked, auraLocked, warBalance, war]);
 
   const textProps =
     useColorMode().colorMode === 'light'

@@ -199,8 +199,6 @@ async function computeAPY(
   const palApr = await computePalApr(palRates, warlordTVL);
   const cvxCrvApr = await computeCrvCvxApr(rewardData, lockedSupply, cvxLocked, warlordTVL);
 
-  console.log(auraBalApr, warApr, wethApr, palApr, cvxCrvApr);
-
   if (
     auraBalApr === undefined ||
     warApr === undefined ||
